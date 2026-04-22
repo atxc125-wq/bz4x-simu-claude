@@ -350,12 +350,12 @@ async function runSimulation(segments, elevations, params) {
             break; 
         }
 
-        // 自動サーチ：感知半径0.5km(FLASHは7.0km)で検索し、未知の充電器ならリルートを要求
+        // 自動サーチ：感知半径(FLASH:7km / SA_PA:3km / その他:1km)で検索し、未知の充電器ならリルートを要求
         if (currentSoc < thresholdSocPct + 10 && (km - lastChargeKm) > 50) {
             const found = chargerDB.find(c => {
                 const dist = haversine(c.lat, c.lng, s.lat, s.lng);
                 const isFlash = c.name.toUpperCase().includes('FLASH') || c.name.includes('フラッシュ') || parseInt(c.powerKw) >= 200;
-                const range = isFlash ? 7.0 : 0.5;
+                const range = isFlash ? 7.0 : c.type === 'sa_pa' ? 3.0 : 1.0;
                 const key = `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
                 return dist < range && !userIgnoredChargers.includes(key) && isValidDirection(c.name, currentTripIsUpbound);
             });
@@ -686,7 +686,7 @@ function drawComboChart() {
                 x: { type: 'linear', ticks: { callback: v => currentAxis==='time'?Math.floor(v/60)+'h'+Math.round(v%60)+'m' : v.toFixed(0)+'km' }, grid: { color: 'rgba(51, 65, 85, 0.3)' } },
                 y: { min: 0, max: 100, position: 'left', grid: { color: 'rgba(51, 65, 85, 0.3)' } },
                 y1: { position: 'right', display: true, grid: { drawOnChartArea: false }, ticks: { color: 'rgba(148, 163, 184, 0.7)' } },
-                y2: { min: 0, suggestedMax: 120, display: false } 
+                y2: { min: 0, max: 100, display: false }
             }
         }
     });
