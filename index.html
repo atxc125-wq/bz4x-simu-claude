@@ -212,7 +212,8 @@ function haversine(l1, g1, l2, g2) {
 // step.html_instructionsから高速道路名を抽出
 function extractRoadName(htmlInstr) {
     const plain = (htmlInstr || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-    const match = plain.match(/[^\s　]*(?:高速道路|自動車道|高速)[^\s　]*/);
+    // 長いパターンを先に試す（"高速道路" > "自動車道" > "高速"の順）
+    const match = plain.match(/\S*高速道路|\S*自動車道|\S*高速/);
     return match ? match[0] : null;
 }
 
