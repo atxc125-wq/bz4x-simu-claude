@@ -417,7 +417,7 @@ async function runSimulation(segments, elevations, params) {
                         const tempSoc = calculateCharging(socBefore, t, chargerInfo);
                         if (t % 5 === 0 || t === duration) profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev });
                     }
-                    stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, isUpbound: currentTripIsUpbound });
+                    stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, isUpbound: currentTripIsUpbound, detectedRoad: s.roadName || '不明' });
                     time += duration;
                     socKwh = (socAfter / 100) * batteryKwh;
                     lastChargeKm = km;
@@ -556,10 +556,12 @@ function renderUI() {
         const kw = st.charger.powerKw ? `${st.charger.powerKw}kW` : '出力不明';
         const authNetwork = isEmergency ? '各種アプリ/クレカ' : getAuthNetwork(st.charger.name, st.charger.powerKw);
 
+        const roadBadge = st.detectedRoad ? `<span style="background:rgba(234,179,8,0.15);color:#fbbf24;border:1px solid rgba(234,179,8,0.3);border-radius:4px;font-size:10px;font-weight:bold;padding:2px 6px;">🛣 ${st.detectedRoad}</span>` : '';
         div.innerHTML = `
             <div class="chg-specs">
                 <span class="chg-chip chip-kw">⚡ ${kw}</span>
                 <span class="chg-chip chip-auth">📱 ${authNetwork}</span>
+                ${roadBadge}
             </div>
             <div style="font-weight:700; color:var(--text); font-size:1.1rem; margin-bottom:6px;">${st.charger.name}</div>
             
