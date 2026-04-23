@@ -384,6 +384,18 @@ async function runSimulation(segments, elevations, params) {
         // Step1: 同方向の高速SA/PAをインライン充電（Google Maps waypoint追加なし → 謎のUターン回避）
         // Step2: SA/PAが無い場合のみFLASH/TEEMO等の下道充電器をwaypointとしてリルート
         if (currentSoc < thresholdSocPct + 10 && (km - lastChargeKm) > 50) {
+            // デバッグ: 近隣SA/PAの道路名マッチング状況をログ出力
+            const nearCandidates = chargerDB.filter(c => c.type === 'sa_pa' && haversine(c.lat, c.lng, s.lat, s.lng) < 5.0);
+            if (nearCandidates.length > 0) {
+                console.log(`[ChargerSearch] km=${km.toFixed(1)} SOC=${currentSoc.toFixed(0)}% roadName="${s.roadName}" isUpbound=${currentTripIsUpbound}`);
+                nearCandidates.forEach(c => {
+                    const dist = haversine(c.lat, c.lng, s.lat, s.lng);
+                    const dirOk = isValidDirection(c.name, currentTripIsUpbound);
+                    const roadOk = roadMatchesCharger(s.roadName, c.name);
+                    console.log(`  → ${c.name} | dist=${dist.toFixed(2)}km | dir=${dirOk} | road=${roadOk}`);
+                });
+            }
+
             const saPa = chargerDB.find(c => {
                 if (c.type !== 'sa_pa') return false;
                 const dist = haversine(c.lat, c.lng, s.lat, s.lng);
