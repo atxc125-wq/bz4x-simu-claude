@@ -315,9 +315,11 @@ async function runSimulation(segments, elevations, params) {
     const totalKm = segments.reduce((sum, s) => sum + s.distKm, 0);
 
     let currentLegIdx = 0;
+    let currentRoadName = null; // 最後に確認した高速道路名を保持（料金所等で名前が消えても引き継ぐ）
 
     for (let i = 0; i < segments.length; i++) {
         const s = segments[i];
+        if (s.roadName) currentRoadName = s.roadName; // 道路名が取れたタイミングで更新
         const progress = km / totalKm;
         const currentElev = elevations[Math.min(elevations.length-1, Math.floor(progress * elevations.length))] || 0;
         
@@ -387,11 +389,11 @@ async function runSimulation(segments, elevations, params) {
             // デバッグ: 近隣SA/PAの道路名マッチング状況をログ出力
             const nearCandidates = chargerDB.filter(c => c.type === 'sa_pa' && haversine(c.lat, c.lng, s.lat, s.lng) < 5.0);
             if (nearCandidates.length > 0) {
-                console.log(`[ChargerSearch] km=${km.toFixed(1)} SOC=${currentSoc.toFixed(0)}% roadName="${s.roadName}" isUpbound=${currentTripIsUpbound}`);
+                console.log(`[ChargerSearch] km=${km.toFixed(1)} SOC=${currentSoc.toFixed(0)}% road="${currentRoadName}" isUpbound=${currentTripIsUpbound}`);
                 nearCandidates.forEach(c => {
                     const dist = haversine(c.lat, c.lng, s.lat, s.lng);
                     const dirOk = isValidDirection(c.name, currentTripIsUpbound);
-                    const roadOk = roadMatchesCharger(s.roadName, c.name);
+                    const roadOk = roadMatchesCharger(currentRoadName, c.name);
                     console.log(`  → ${c.name} | dist=${dist.toFixed(2)}km | dir=${dirOk} | road=${roadOk}`);
                 });
             }
@@ -403,7 +405,7 @@ async function runSimulation(segments, elevations, params) {
                 return dist < 3.0
                     && !userIgnoredChargers.includes(key)
                     && isValidDirection(c.name, currentTripIsUpbound)
-                    && roadMatchesCharger(s.roadName, c.name);  // ★ 走行中の高速名と一致するSA/PAのみ
+                    && roadMatchesCharger(currentRoadName, c.name);  // ★ 走行中の高速名と一致するSA/PAのみ
             });
 
             if (saPa) {
@@ -417,7 +419,7 @@ async function runSimulation(segments, elevations, params) {
                         const tempSoc = calculateCharging(socBefore, t, chargerInfo);
                         if (t % 5 === 0 || t === duration) profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev });
                     }
-                    stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, isUpbound: currentTripIsUpbound, detectedRoad: s.roadName || '不明' });
+                    stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, isUpbound: currentTripIsUpbound, detectedRoad: currentRoadName || '不明' });
                     time += duration;
                     socKwh = (socAfter / 100) * batteryKwh;
                     lastChargeKm = km;
