@@ -2822,6 +2822,86 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
+    "name": "NEOPASA岡崎（下り）",
+    "address": "愛知県岡崎市宮石町六ツ田",
+    "type": "sa_pa",
+    "powers": [150, 90, 50],
+    "lat": 35.034200,
+    "lng": 137.2218000,
+    "powerKw": 150,
+    "direction": "down"
+  },
+  {
+    "name": "NEOPASA浜松（下り）",
+    "address": "静岡県浜松市浜名区",
+    "type": "sa_pa",
+    "powers": [150, 90],
+    "lat": 34.8420000,
+    "lng": 137.7500000,
+    "powerKw": 150,
+    "direction": "down"
+  },
+  {
+    "name": "新東名高速道路　遠州森町ＰＡ下り",
+    "address": "静岡県周智郡森町",
+    "type": "sa_pa",
+    "powers": [90],
+    "lat": 34.8260000,
+    "lng": 137.9055000,
+    "powerKw": 90,
+    "direction": "down"
+  },
+  {
+    "name": "新東名高速道路　掛川ＰＡ上り",
+    "address": "静岡県掛川市倉真",
+    "type": "sa_pa",
+    "powers": [90],
+    "lat": 34.8398000,
+    "lng": 138.0362000,
+    "powerKw": 90,
+    "direction": "up"
+  },
+  {
+    "name": "NEOPASA静岡（下り）",
+    "address": "静岡県静岡市葵区飯間",
+    "type": "sa_pa",
+    "powers": [150, 90],
+    "lat": 34.9680000,
+    "lng": 138.2906000,
+    "powerKw": 150,
+    "direction": "down"
+  },
+  {
+    "name": "NEOPASA清水（下り）",
+    "address": "静岡県静岡市清水区小河内",
+    "type": "sa_pa",
+    "powers": [150, 90],
+    "lat": 35.1320000,
+    "lng": 138.5120000,
+    "powerKw": 150,
+    "direction": "down"
+  },
+  {
+    "name": "富士川SA（下り）",
+    "address": "静岡県富士市木島",
+    "type": "sa_pa",
+    "powers": [90, 50],
+    "lat": 35.1600000,
+    "lng": 138.6175000,
+    "powerKw": 90,
+    "direction": "down"
+  },
+  {
+    "name": "新東名高速道路　駿河湾沼津ＳＡ下り",
+    "address": "静岡県沼津市",
+    "type": "sa_pa",
+    "powers": [150],
+    "lat": 35.1516000,
+    "lng": 138.8110000,
+    "powerKw": 150,
+    "direction": "down"
+  },
+  {
     "name": "名神高速道路　尾張一宮ＰＡ下り",
     "address": "愛知県一宮市丹陽町三ツ井東金浦２７０９",
     "type": "sa_pa",
