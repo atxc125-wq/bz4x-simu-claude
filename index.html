@@ -78,7 +78,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.4.1</span>
+            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.4.2</span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-23</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -213,7 +213,7 @@ function haversine(l1, g1, l2, g2) {
     return R*2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
-// step.html_instructionsから高速道路名を抽出
+// step.instructions（Google Maps JS SDK）から高速道路名を抽出
 function extractRoadName(htmlInstr) {
     const plain = (htmlInstr || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
     // 長いパターンを先に試す（"高速道路" > "自動車道" > "高速"の順）
@@ -493,7 +493,7 @@ async function onCalculate() {
             leg.steps.forEach(step => {
                 const speed = (step.distance.value / step.duration.value) * 3.6 || 60;
                 const path = step.path;
-                const roadName = extractRoadName(step.html_instructions);
+                const roadName = extractRoadName(step.instructions);
                 for(let i=0; i < path.length - 1; i++) {
                     const distKm = google.maps.geometry.spherical.computeDistanceBetween(path[i], path[i+1]) / 1000;
                     segments.push({ distKm, speed, lat: path[i].lat(), lng: path[i].lng(), roadName });
