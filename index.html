@@ -78,7 +78,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.4.2</span>
+            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.4.3</span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-23</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -342,7 +342,7 @@ async function runSimulation(segments, elevations, params) {
                     if(t%5===0 || t===duration) profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev });
                 }
                 
-                stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, isUpbound: isUpboundLegs[currentLegIdx-1] });
+                stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, isUpbound: isUpboundLegs[currentLegIdx-1], detectedRoad: currentRoadName || '不明' });
                 time += duration;
                 socKwh = (socAfter / 100) * batteryKwh;
                 lastChargeKm = km;
@@ -430,7 +430,9 @@ async function runSimulation(segments, elevations, params) {
                     if (c.type === 'sa_pa') return false;
                     const dist = haversine(c.lat, c.lng, s.lat, s.lng);
                     const key = `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
-                    return dist < 7.0 && !userIgnoredChargers.includes(key);
+                    return dist < 7.0
+                        && !userIgnoredChargers.includes(key)
+                        && isValidDirection(c.name, currentTripIsUpbound);
                 });
                 if (offRoute) {
                     const key = `${offRoute.lat.toFixed(4)},${offRoute.lng.toFixed(4)}`;
