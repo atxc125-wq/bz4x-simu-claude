@@ -209,6 +209,31 @@ function haversine(l1, g1, l2, g2) {
     return R*2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
+// step.html_instructionsから高速道路名を抽出
+function extractRoadName(htmlInstr) {
+    const plain = (htmlInstr || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    const match = plain.match(/[^\s　]*(?:高速道路|自動車道|高速)[^\s　]*/);
+    return match ? match[0] : null;
+}
+
+// 高速道路名の末尾（"高速道路","自動車道","高速"）を除いた固有部分を返す
+// 例: "新東名高速道路" → "新東名", "東名高速" → "東名", "北陸自動車道" → "北陸"
+function extractHighwayCore(name) {
+    if (!name) return null;
+    return name.replace(/高速道路$/, '').replace(/自動車道$/, '').replace(/高速$/, '').replace(/道路$/, '');
+}
+
+// 現在走行中の道路名とSA/PAの高速名が一致するか
+function roadMatchesCharger(roadName, chargerName) {
+    if (!roadName) return true; // 道路名不明なら制限なし（一般道・ランプ等）
+    const currentCore = extractHighwayCore(roadName);
+    if (!currentCore) return true;
+    const m = chargerName.match(/^([^\s　]+(?:高速道路|自動車道|高速))/);
+    if (!m) return true; // 充電器名に高速名なし → 制限なし
+    const chargerCore = extractHighwayCore(m[1]);
+    return chargerCore === currentCore;
+}
+
 async function fetchTemp(lat, lng, dateStr) {
     const d = dateStr ? new Date(dateStr) : new Date();
     const month = isNaN(d) ? 4 : d.getMonth() + 1;
@@ -358,7 +383,10 @@ async function runSimulation(segments, elevations, params) {
                 if (c.type !== 'sa_pa') return false;
                 const dist = haversine(c.lat, c.lng, s.lat, s.lng);
                 const key = `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
-                return dist < 3.0 && !userIgnoredChargers.includes(key) && isValidDirection(c.name, currentTripIsUpbound);
+                return dist < 3.0
+                    && !userIgnoredChargers.includes(key)
+                    && isValidDirection(c.name, currentTripIsUpbound)
+                    && roadMatchesCharger(s.roadName, c.name);  // ★ 走行中の高速名と一致するSA/PAのみ
             });
 
             if (saPa) {
@@ -446,9 +474,10 @@ async function onCalculate() {
             leg.steps.forEach(step => {
                 const speed = (step.distance.value / step.duration.value) * 3.6 || 60;
                 const path = step.path;
+                const roadName = extractRoadName(step.html_instructions);
                 for(let i=0; i < path.length - 1; i++) {
                     const distKm = google.maps.geometry.spherical.computeDistanceBetween(path[i], path[i+1]) / 1000;
-                    segments.push({ distKm, speed, lat: path[i].lat(), lng: path[i].lng() });
+                    segments.push({ distKm, speed, lat: path[i].lat(), lng: path[i].lng(), roadName });
                 }
             });
             if (legIdx < res.routes[0].legs.length - 1) waypointIndexes.push(segments.length - 1);
