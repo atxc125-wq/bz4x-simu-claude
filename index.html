@@ -350,21 +350,47 @@ async function runSimulation(segments, elevations, params) {
             break; 
         }
 
-        // 自動サーチ：感知半径(FLASH:7km / SA_PA:3km / その他:1km)で検索し、未知の充電器ならリルートを要求
+        // 自動サーチ: 2段階検索
+        // Step1: 同方向の高速SA/PAをインライン充電（Google Maps waypoint追加なし → 謎のUターン回避）
+        // Step2: SA/PAが無い場合のみFLASH/TEEMO等の下道充電器をwaypointとしてリルート
         if (currentSoc < thresholdSocPct + 10 && (km - lastChargeKm) > 50) {
-            const found = chargerDB.find(c => {
+            const saPa = chargerDB.find(c => {
+                if (c.type !== 'sa_pa') return false;
                 const dist = haversine(c.lat, c.lng, s.lat, s.lng);
-                const isFlash = c.name.toUpperCase().includes('FLASH') || c.name.includes('フラッシュ') || parseInt(c.powerKw) >= 200;
-                const range = isFlash ? 7.0 : c.type === 'sa_pa' ? 3.0 : 1.0;
                 const key = `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
-                return dist < range && !userIgnoredChargers.includes(key) && isValidDirection(c.name, currentTripIsUpbound);
+                return dist < 3.0 && !userIgnoredChargers.includes(key) && isValidDirection(c.name, currentTripIsUpbound);
             });
 
-            if (found) {
-                const key = `${found.lat.toFixed(4)},${found.lng.toFixed(4)}`;
-                if (!allChargerWps.some(ac => (ac.key || `${ac.lat.toFixed(4)},${ac.lng.toFixed(4)}`) === key)) {
-                    autoChargers.push({ ...found, key });
-                    return { requestReroute: true };
+            if (saPa) {
+                const chgKey = `${saPa.lat.toFixed(4)},${saPa.lng.toFixed(4)}`;
+                if (!stops.some(st => `${st.charger.lat.toFixed(4)},${st.charger.lng.toFixed(4)}` === chgKey)) {
+                    const duration = userCustomDurations[chgKey] || 30;
+                    const socBefore = (socKwh / batteryKwh) * 100;
+                    const chargerInfo = { name: saPa.name, lat: saPa.lat, lng: saPa.lng, powerKw: saPa.powerKw };
+                    const socAfter = calculateCharging(socBefore, duration, chargerInfo);
+                    for (let t = 1; t <= duration; t++) {
+                        const tempSoc = calculateCharging(socBefore, t, chargerInfo);
+                        if (t % 5 === 0 || t === duration) profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev });
+                    }
+                    stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, isUpbound: currentTripIsUpbound });
+                    time += duration;
+                    socKwh = (socAfter / 100) * batteryKwh;
+                    lastChargeKm = km;
+                }
+            } else {
+                // SA/PAが同方向に無い → 下道のFLASH/TEEMO等をリルートで追加
+                const offRoute = chargerDB.find(c => {
+                    if (c.type === 'sa_pa') return false;
+                    const dist = haversine(c.lat, c.lng, s.lat, s.lng);
+                    const key = `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
+                    return dist < 7.0 && !userIgnoredChargers.includes(key);
+                });
+                if (offRoute) {
+                    const key = `${offRoute.lat.toFixed(4)},${offRoute.lng.toFixed(4)}`;
+                    if (!allChargerWps.some(ac => (ac.key || `${ac.lat.toFixed(4)},${ac.lng.toFixed(4)}`) === key)) {
+                        autoChargers.push({ ...offRoute, key });
+                        return { requestReroute: true };
+                    }
                 }
             }
         }
@@ -402,7 +428,7 @@ async function onCalculate() {
         combinedWps.unshift({ location: waypointVal, stopover: true });
     }
 
-    directionsService.route({ origin, destination: dest, waypoints: combinedWps, optimizeWaypoints: true, travelMode: 'DRIVING' }, async (res, status) => {
+    directionsService.route({ origin, destination: dest, waypoints: combinedWps, optimizeWaypoints: false, travelMode: 'DRIVING' }, async (res, status) => {
         if (status !== 'OK') return hideLoading() || alert('ルート解析失敗');
 
         // ★ 各Legごとの上り・下りを判定
