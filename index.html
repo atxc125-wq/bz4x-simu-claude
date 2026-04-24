@@ -85,7 +85,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.5.4</span>
+            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.5.5</span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-24</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -211,6 +211,14 @@ function getKwClass(powerKw) {
     if (kw >= 70)  return 'chip-kw-orange';
     if (kw >= 30)  return 'chip-kw-yellow';
     return 'chip-kw-gray';
+}
+
+function getKwColor(powerKw) {
+    const kw = parseInt(powerKw) || 0;
+    if (kw >= 150) return '#ef4444';
+    if (kw >= 70)  return '#f97316';
+    if (kw >= 30)  return '#eab308';
+    return '#94a3b8';
 }
 
 function getAuthNetwork(name, powerKw, type) {
@@ -794,7 +802,7 @@ function drawMarkers(originPoint, destPoint, stops, deadPoint, warningPoint) {
         mapMarkers.push(new google.maps.Marker({
             position: { lat: st.charger.lat, lng: st.charger.lng },
             map: googleMap, title: st.charger.name,
-            icon: { path: "M7 2v11h3v9l7-12h-4l4-8z", fillColor: isEmergency ? "#ef4444" : "#10b981", fillOpacity: 1, strokeWeight: 1, strokeColor: "#ffffff", scale: 1.5, anchor: new google.maps.Point(10, 10) }
+            icon: { path: "M7 2v11h3v9l7-12h-4l4-8z", fillColor: isEmergency ? "#ef4444" : getKwColor(st.charger.powerKw), fillOpacity: 1, strokeWeight: 1, strokeColor: "#ffffff", scale: 1.5, anchor: new google.maps.Point(10, 10) }
         }));
     });
 }
