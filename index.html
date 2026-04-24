@@ -78,7 +78,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.4.5</span>
+            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.4.6</span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-23</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -198,12 +198,12 @@ function getRouteColor(val, mode) {
     }
 }
 
-function getAuthNetwork(name, powerKw) {
+function getAuthNetwork(name, powerKw, type) {
     const n = name.toUpperCase();
     if (n.includes('TESLA') || n.includes('テスラ')) return 'Tesla';
     if (n.includes('TERA') || n.includes('テラチャージ')) return 'TeraCharge';
-    if (n.includes('FLASH') || n.includes('フラッシュ') || parseInt(powerKw) >= 200) return 'FLASH';
-    if (n.includes('TEEMO')) return 'TEEMO';
+    if (n.includes('FLASH') || n.includes('フラッシュ') || parseInt(powerKw) >= 200 || type === 'flash') return 'FLASH';
+    if (n.includes('TEEMO') || type === 'teemo') return 'TEEMO';
     return 'eMP';
 }
 
@@ -337,7 +337,7 @@ async function runSimulation(segments, elevations, params) {
                 const duration = userCustomDurations[chgKey] || 30; 
                 const socBefore = (socKwh / batteryKwh) * 100;
                 
-                const chargerInfo = { name: (hit.isSOS ? `🆘 ` : '') + hit.name, lat: hit.lat, lng: hit.lng, powerKw: hit.powerKw };
+                const chargerInfo = { name: (hit.isSOS ? `🆘 ` : '') + hit.name, lat: hit.lat, lng: hit.lng, powerKw: hit.powerKw, type: hit.type || 'emp' };
                 const socAfter = calculateCharging(socBefore, duration, chargerInfo);
                 
                 for(let t=1; t<=duration; t++) {
@@ -345,7 +345,7 @@ async function runSimulation(segments, elevations, params) {
                     if(t%5===0 || t===duration) profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev });
                 }
                 
-                stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, isUpbound: isUpboundLegs[currentLegIdx-1], detectedRoad: currentRoadName || '不明' });
+                stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, isUpbound: isUpboundLegs[currentLegIdx-1], detectedRoad: hit.type === 'sa_pa' ? (currentRoadName || '不明') : null });
                 time += duration;
                 socKwh = (socAfter / 100) * batteryKwh;
                 lastChargeKm = km;
@@ -416,7 +416,7 @@ async function runSimulation(segments, elevations, params) {
                 if (!stops.some(st => `${st.charger.lat.toFixed(4)},${st.charger.lng.toFixed(4)}` === chgKey)) {
                     const duration = userCustomDurations[chgKey] || 30;
                     const socBefore = (socKwh / batteryKwh) * 100;
-                    const chargerInfo = { name: saPa.name, lat: saPa.lat, lng: saPa.lng, powerKw: saPa.powerKw };
+                    const chargerInfo = { name: saPa.name, lat: saPa.lat, lng: saPa.lng, powerKw: saPa.powerKw, type: 'sa_pa' };
                     const socAfter = calculateCharging(socBefore, duration, chargerInfo);
                     for (let t = 1; t <= duration; t++) {
                         const tempSoc = calculateCharging(socBefore, t, chargerInfo);
@@ -561,9 +561,9 @@ function renderUI() {
         if(isEmergency) div.style.borderColor = '#ef4444';
         
         const kw = st.charger.powerKw ? `${st.charger.powerKw}kW` : '出力不明';
-        const authNetwork = isEmergency ? '各種アプリ/クレカ' : getAuthNetwork(st.charger.name, st.charger.powerKw);
-
-        const roadBadge = st.detectedRoad ? `<span style="background:rgba(234,179,8,0.15);color:#fbbf24;border:1px solid rgba(234,179,8,0.3);border-radius:4px;font-size:10px;font-weight:bold;padding:2px 6px;">🛣 ${st.detectedRoad}</span>` : '';
+        const authNetwork = isEmergency ? '各種アプリ/クレカ' : getAuthNetwork(st.charger.name, st.charger.powerKw, st.charger.type);
+        const isOffRoute = st.charger.type && st.charger.type !== 'sa_pa';
+        const roadBadge = st.detectedRoad ? `<span style="background:rgba(234,179,8,0.15);color:#fbbf24;border:1px solid rgba(234,179,8,0.3);border-radius:4px;font-size:10px;font-weight:bold;padding:2px 6px;">🛣 ${st.detectedRoad}</span>` : (isOffRoute ? `<span style="background:rgba(148,163,184,0.15);color:#94a3b8;border:1px solid rgba(148,163,184,0.3);border-radius:4px;font-size:10px;font-weight:bold;padding:2px 6px;">🏙 一般道</span>` : '');
         div.innerHTML = `
             <div class="chg-specs">
                 <span class="chg-chip chip-kw">⚡ ${kw}</span>
@@ -581,7 +581,7 @@ function renderUI() {
                     <option value="45" ${st.duration==45?'selected':''}>⏱ 45分</option>
                     <option value="60" ${st.duration==60?'selected':''}>⏱ 60分</option>
                 </select>
-                ${!isEmergency ? `<button class="alt-charger-btn" onclick="showAlts(${idx})">⟳ SA変更</button>` : ''}
+                ${!isEmergency ? `<button class="alt-charger-btn" onclick="showAlts(${idx})">⟳ 他の充電器</button>` : ''}
                 <button class="alt-charger-btn" style="background:rgba(239, 68, 68, 0.2); color:#ef4444; border: 1px solid #ef4444;" onclick="removeChg('${st.charger.lat.toFixed(4)},${st.charger.lng.toFixed(4)}')">✖ 削除</button>
             </div>
             ${!isEmergency ? `<div class="alt-list" id="alt-list-${idx}"></div>` : ''}
@@ -674,18 +674,25 @@ window.showAlts = function(idx) {
     const destLat = destPoint.lat(), destLng = destPoint.lng();
     const curDistToDest = haversine(curStop.charger.lat, curStop.charger.lng, destLat, destLng);
     
-    const alts = chargerDB.map(c => {
+    const mapped = chargerDB.map(c => {
         const distToCur = haversine(c.lat, c.lng, curStop.charger.lat, curStop.charger.lng);
-        const direction = haversine(c.lat, c.lng, destLat, destLng) < curDistToDest ? '奥（先）' : '手前'; 
+        const direction = haversine(c.lat, c.lng, destLat, destLng) < curDistToDest ? '奥（先）' : '手前';
         return { ...c, dist: distToCur, direction };
-    }).filter(c => c.dist > 0.1 && c.dist < 60 && c.type === 'sa_pa' && isValidDirection(c.name, curStop.isUpbound)).sort((a, b) => a.dist - b.dist).slice(0, 5);
-    
-    el.innerHTML = alts.map(a => `
+    });
+
+    const saPaAlts = mapped.filter(c => c.dist > 0.1 && c.dist < 60 && c.type === 'sa_pa' && isValidDirection(c.name, curStop.isUpbound)).sort((a, b) => a.dist - b.dist).slice(0, 5);
+    const offAlts  = mapped.filter(c => c.dist > 0.1 && c.dist < 15 && c.type !== 'sa_pa').sort((a, b) => a.dist - b.dist).slice(0, 3);
+
+    const renderOpt = (a) => `
         <div class="alt-opt" onclick="forceChg(${a.lat}, ${a.lng}, ${idx})" style="display:flex; justify-content:space-between; align-items:center;">
             <span>${a.name} <span style="font-size:10px; color:var(--muted)">(${a.powerKw}kW)</span></span>
             <span style="background:rgba(6,182,212,0.15); color:var(--accent2); padding:2px 6px; border-radius:4px; font-size:10px; font-weight:bold;">${a.direction}に ${a.dist.toFixed(1)}km</span>
-        </div>
-    `).join('');
+        </div>`;
+
+    const saPaHtml = saPaAlts.length ? `<div style="font-size:10px;color:var(--muted);padding:4px 0 2px;font-weight:bold;">🛣 高速SA/PA</div>${saPaAlts.map(renderOpt).join('')}` : '';
+    const offHtml  = offAlts.length  ? `<div style="font-size:10px;color:var(--muted);padding:4px 0 2px;font-weight:bold;">🏙 一般道</div>${offAlts.map(renderOpt).join('')}` : '';
+
+    el.innerHTML = (saPaHtml + offHtml) || '<div style="color:var(--muted);font-size:12px;padding:8px;">近くに代替充電器が見つかりません</div>';
 }
 
 window.forceChg = function(lat, lng, idx) {
