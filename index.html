@@ -78,7 +78,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.4.6</span>
+            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.4.7</span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-23</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -684,7 +684,7 @@ window.showAlts = function(idx) {
     const offAlts  = mapped.filter(c => c.dist > 0.1 && c.dist < 15 && c.type !== 'sa_pa').sort((a, b) => a.dist - b.dist).slice(0, 3);
 
     const renderOpt = (a) => `
-        <div class="alt-opt" onclick="forceChg(${a.lat}, ${a.lng}, ${idx})" style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="alt-opt" onclick="forceChg(${a.lat}, ${a.lng}, ${idx}, '${a.name.replace(/'/g, "\\'")}', '${a.type || ''}')" style="display:flex; justify-content:space-between; align-items:center;">
             <span>${a.name} <span style="font-size:10px; color:var(--muted)">(${a.powerKw}kW)</span></span>
             <span style="background:rgba(6,182,212,0.15); color:var(--accent2); padding:2px 6px; border-radius:4px; font-size:10px; font-weight:bold;">${a.direction}に ${a.dist.toFixed(1)}km</span>
         </div>`;
@@ -695,11 +695,16 @@ window.showAlts = function(idx) {
     el.innerHTML = (saPaHtml + offHtml) || '<div style="color:var(--muted);font-size:12px;padding:8px;">近くに代替充電器が見つかりません</div>';
 }
 
-window.forceChg = function(lat, lng, idx) {
-    const found = chargerDB.find(c => c.lat === lat && c.lng === lng);
+window.forceChg = function(lat, lng, idx, name, type) {
+    // 名前優先で検索（同一座標に上り/下りが混在する場合の誤選択を防ぐ）
+    const found = name
+        ? (chargerDB.find(c => c.name === name) || chargerDB.find(c => c.lat === lat && c.lng === lng))
+        : chargerDB.find(c => c.lat === lat && c.lng === lng);
+    if (!found) return;
     const oldChg = currentSim.stops[idx].charger;
     userIgnoredChargers.push(`${oldChg.lat.toFixed(4)},${oldChg.lng.toFixed(4)}`);
-    userWaypoints.push({ lat: found.lat, lng: found.lng, name: found.name, powerKw: found.powerKw, isSOS: false });
+    // type も含めて保存（🏙 一般道 / 🛣 高速 バッジの正確な表示に必要）
+    userWaypoints.push({ lat: found.lat, lng: found.lng, name: found.name, powerKw: found.powerKw, type: found.type, isSOS: false });
     onCalculate();
 }
 
