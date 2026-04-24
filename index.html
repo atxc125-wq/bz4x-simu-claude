@@ -89,7 +89,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.5.9</span>
+            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.6.0</span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-24</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -225,11 +225,14 @@ function getKwColor(powerKw) {
     return '#94a3b8';
 }
 
-// 充電中の瞬間kW → 連続グラデーション色 (130kW=赤 ～ 20kW=黄) ※BZ4X最大受入130kW基準
+// 充電中の瞬間kW → ピンク(高kW) ～ 紫 ～ 青(低kW) グラデーション
 function kwToChargingColor(kw) {
     const t = Math.max(0, Math.min(1, (kw - 20) / (130 - 20)));
-    const hue = Math.round(50 * (1 - t)); // 50(黄) → 0(赤)
-    return `hsl(${hue}, 92%, 58%)`;
+    // t=1(130kW): ピンク #f472b6 / t=0(20kW): 青 #60a5fa / 中間: 薄紫
+    const r = Math.round(96  + (244 - 96)  * t);   // 96→244
+    const g = Math.round(165 + (114 - 165) * t);   // 165→114
+    const b = Math.round(250 + (182 - 250) * t);   // 250→182
+    return `rgb(${r},${g},${b})`;
 }
 
 function getAuthNetwork(name, powerKw, type) {
@@ -828,7 +831,7 @@ function drawComboChart() {
     if (comboChart) comboChart.destroy();
     const ctx = document.getElementById('combo-chart').getContext('2d');
     const getX = p => currentAxis === 'time' ? p.time : p.km;
-    const socData = currentSim.profile.map(p => ({ x: getX(p), y: p.soc }));
+    const socData = currentSim.profile.map(p => ({ x: getX(p), y: p.soc, chargingKw: p.chargingKw, speed: p.speed }));
     const speedData = currentSim.profile.map(p => ({ x: getX(p), y: p.speed }));
     const elevData = currentSim.profile.map(p => ({ x: getX(p), y: Math.max(0, p.elev) }));
     const mode = document.getElementById('color-mode').value;
