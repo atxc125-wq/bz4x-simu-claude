@@ -81,7 +81,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.5.2</span>
+            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.5.3</span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-24</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -216,6 +216,14 @@ function haversine(l1, g1, l2, g2) {
     return R*2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
+// Google Maps の住所から「都道府県+市区」を短縮抽出 例: "大阪府大阪市北区梅田..." → "大阪府大阪市"
+function extractCityName(address) {
+    const clean = (address || '').replace(/,.*$/, '').trim();
+    const m = clean.match(/(.{2,5}[都道府県])(.{1,6}[市区])/);
+    if (m) return m[1] + m[2];
+    return clean.slice(0, 8);
+}
+
 // step.instructions（Google Maps JS SDK）から高速道路名を抽出
 function extractRoadName(htmlInstr) {
     const plain = (htmlInstr || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
@@ -308,7 +316,7 @@ async function findNearbyPOIs(lat, lng) {
 }
 
 // ★ 引数を1つのparamsオブジェクトに集約（エラー防止）
-async function runSimulation(segments, elevations, params) {
+async function runSimulation(segments, elevations, params, onProgress) {
     const { batteryKwh, startSocPct, thresholdSocPct, tripDate, startHour, waypointIndexes, isUpboundLegs, allChargerWps } = params;
     let socKwh = (startSocPct / 100) * batteryKwh, km = 0, time = 0;
     const profile = [], stops = [];
@@ -316,6 +324,7 @@ async function runSimulation(segments, elevations, params) {
     let isDead = false, deadLocation = null, warningLocation = null, warningKm = 0;
     let tempSum = 0, tempCount = 0;
     const totalKm = segments.reduce((sum, s) => sum + s.distKm, 0);
+    let lastProgressKm = -50;
 
     let currentLegIdx = 0;
     let currentRoadName = null;
@@ -380,6 +389,10 @@ async function runSimulation(segments, elevations, params) {
             curBaseTemp = await fetchTemp(s.lat, s.lng, tripDate);
             lastWeatherKm = km;
             lastWeatherElev = currentElev;
+            if (onProgress) {
+                const pct = Math.min(99, Math.round((km / totalKm) * 100));
+                onProgress(`⚡ ${Math.round(km)}km / ${Math.round(totalKm)}km を計算中... (${pct}%)`);
+            }
         }
 
         const currentHourOfDay = (startHour + (time / 60)) % 24;
@@ -436,6 +449,7 @@ async function runSimulation(segments, elevations, params) {
             if (saPa) {
                 const chgKey = `${saPa.lat.toFixed(4)},${saPa.lng.toFixed(4)}`;
                 if (!stops.some(st => `${st.charger.lat.toFixed(4)},${st.charger.lng.toFixed(4)}` === chgKey)) {
+                    if (onProgress) onProgress(`🔌 ${saPa.name.replace(/^.*?　/, '')} を発見 (${Math.round(km)}km地点)`);
                     const duration = userCustomDurations[chgKey] || 30;
                     const socBefore = (socKwh / batteryKwh) * 100;
                     const chargerInfo = { name: saPa.name, lat: saPa.lat, lng: saPa.lng, powerKw: saPa.powerKw, type: 'sa_pa' };
@@ -515,20 +529,26 @@ async function onCalculate() {
     directionsService.route({ origin, destination: dest, waypoints: combinedWps, optimizeWaypoints: false, travelMode: 'DRIVING' }, async (res, status) => {
         if (status !== 'OK') return hideLoading() || alert('ルート解析失敗');
 
-        showLoading(`🗺️ ${origin} → ${dest}`, '高度プロファイルを取得中...');
+        // Google Maps の住所から「○○府○○市」形式に短縮
+        const legs = res.routes[0].legs;
+        const startCity = extractCityName(legs[0].start_address);
+        const endCity = extractCityName(legs[legs.length - 1].end_address);
+        const routeLabel = `🗺️ ${startCity} → ${endCity}`;
+
+        showLoading(routeLabel, '高度プロファイルを取得中...');
 
         // ★ 各Legごとの上り・下りを判定
-        const isUpboundLegs = res.routes[0].legs.map(leg => {
+        const isUpboundLegs = legs.map(leg => {
             const startToTokyo = haversine(leg.start_location.lat(), leg.start_location.lng(), 35.68, 139.76);
             const endToTokyo = haversine(leg.end_location.lat(), leg.end_location.lng(), 35.68, 139.76);
             return endToTokyo < startToTokyo;
         });
 
-        currentDetailedPath = res.routes[0].legs.flatMap(l => l.steps.flatMap(s => s.path));
+        currentDetailedPath = legs.flatMap(l => l.steps.flatMap(s => s.path));
 
         const segments = [];
         const waypointIndexes = [];
-        res.routes[0].legs.forEach((leg, legIdx) => {
+        legs.forEach((leg, legIdx) => {
             leg.steps.forEach(step => {
                 const speed = (step.distance.value / step.duration.value) * 3.6 || 60;
                 const path = step.path;
@@ -538,13 +558,14 @@ async function onCalculate() {
                     segments.push({ distKm, speed, lat: path[i].lat(), lng: path[i].lng(), roadName });
                 }
             });
-            if (legIdx < res.routes[0].legs.length - 1) waypointIndexes.push(segments.length - 1);
+            if (legIdx < legs.length - 1) waypointIndexes.push(segments.length - 1);
         });
 
         elevationService.getElevationAlongPath({ path: res.routes[0].overview_path, samples: 250 }, async (elevRes, status) => {
             const elevations = (status === 'OK' && elevRes) ? elevRes.map(r => r.elevation) : new Array(250).fill(0);
 
-            showLoading(`🗺️ ${origin} → ${dest}`, '⚡ 充電ポイントを最適化中...');
+            showLoading(routeLabel, '⚡ 充電ポイントを計算中...');
+            const onProgress = (msg) => showLoading(routeLabel, msg);
 
             // ★ 引数を1つのparamsオブジェクトにまとめる
             const params = {
@@ -558,7 +579,7 @@ async function onCalculate() {
                 allChargerWps: [...userWaypoints, ...autoChargers]
             };
 
-            const result = await runSimulation(segments, elevations, params);
+            const result = await runSimulation(segments, elevations, params, onProgress);
 
             if (result.requestReroute) return onCalculate();
 
