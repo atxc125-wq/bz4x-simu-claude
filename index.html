@@ -89,7 +89,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.5.7</span>
+            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.5.8</span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-24</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -225,9 +225,9 @@ function getKwColor(powerKw) {
     return '#94a3b8';
 }
 
-// 充電中の瞬間kW → 連続グラデーション色 (150kW=赤 ～ 20kW=黄)
+// 充電中の瞬間kW → 連続グラデーション色 (130kW=赤 ～ 20kW=黄) ※BZ4X最大受入130kW基準
 function kwToChargingColor(kw) {
-    const t = Math.max(0, Math.min(1, (kw - 20) / (150 - 20)));
+    const t = Math.max(0, Math.min(1, (kw - 20) / (130 - 20)));
     const hue = Math.round(50 * (1 - t)); // 50(黄) → 0(赤)
     return `hsl(${hue}, 92%, 58%)`;
 }
@@ -844,7 +844,7 @@ function drawComboChart() {
                         if (!chartArea) return '#3b82f6';
                         if (mode === 'soc') {
                             const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-                            gradient.addColorStop(0, '#ef4444'); gradient.addColorStop(0.2, '#ef4444'); gradient.addColorStop(0.5, '#eab308'); gradient.addColorStop(1, '#06b6d4');
+                            gradient.addColorStop(0, '#ef4444'); gradient.addColorStop(0.2, '#ef4444'); gradient.addColorStop(0.5, '#eab308'); gradient.addColorStop(0.8, '#22c55e'); gradient.addColorStop(1, '#22c55e');
                             return gradient;
                         }
                         return undefined;
