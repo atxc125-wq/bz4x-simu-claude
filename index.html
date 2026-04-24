@@ -89,7 +89,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.5.6</span>
+            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.5.7</span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-24</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -223,6 +223,13 @@ function getKwColor(powerKw) {
     if (kw >= 70)  return '#f97316';
     if (kw >= 30)  return '#eab308';
     return '#94a3b8';
+}
+
+// 充電中の瞬間kW → 連続グラデーション色 (150kW=赤 ～ 20kW=黄)
+function kwToChargingColor(kw) {
+    const t = Math.max(0, Math.min(1, (kw - 20) / (150 - 20)));
+    const hue = Math.round(50 * (1 - t)); // 50(黄) → 0(赤)
+    return `hsl(${hue}, 92%, 58%)`;
 }
 
 function getAuthNetwork(name, powerKw, type) {
@@ -397,7 +404,10 @@ async function runSimulation(segments, elevations, params, onProgress) {
                 
                 for(let t=1; t<=duration; t++) {
                     const tempSoc = calculateCharging(socBefore, t, chargerInfo);
-                    if(t%5===0 || t===duration) profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev });
+                    if(t%5===0 || t===duration) {
+                        const avgKw = ((tempSoc - (t<=5?socBefore:calculateCharging(socBefore,t-5,chargerInfo))) / 100) * batteryKwh * 60 / Math.min(t,5);
+                        profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev, chargingKw: avgKw });
+                    }
                 }
                 
                 stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, isUpbound: isUpboundLegs[currentLegIdx-1], detectedRoad: hit.type === 'sa_pa' ? (currentRoadName || '不明') : null });
@@ -480,7 +490,10 @@ async function runSimulation(segments, elevations, params, onProgress) {
                     const socAfter = calculateCharging(socBefore, duration, chargerInfo);
                     for (let t = 1; t <= duration; t++) {
                         const tempSoc = calculateCharging(socBefore, t, chargerInfo);
-                        if (t % 5 === 0 || t === duration) profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev });
+                        if (t % 5 === 0 || t === duration) {
+                            const avgKw = ((tempSoc - (t<=5?socBefore:calculateCharging(socBefore,t-5,chargerInfo))) / 100) * batteryKwh * 60 / Math.min(t,5);
+                            profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev, chargingKw: avgKw });
+                        }
                     }
                     stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, isUpbound: currentTripIsUpbound, detectedRoad: currentRoadName || '不明' });
                     time += duration;
@@ -836,7 +849,15 @@ function drawComboChart() {
                         }
                         return undefined;
                     },
-                    segment: { borderColor: ctx => mode === 'speed' ? getRouteColor(ctx.p1.raw.speed, mode) : undefined }
+                    segment: {
+                        borderColor: ctx => {
+                            const p = ctx.p1.raw;
+                            if (p.chargingKw != null) return kwToChargingColor(p.chargingKw);
+                            if (mode === 'speed') return getRouteColor(p.speed, mode);
+                            return undefined;
+                        },
+                        borderWidth: ctx => ctx.p1.raw.chargingKw != null ? 4 : 3
+                    }
                 },
                 {
                     label: '速度 (km/h)', data: speedData, yAxisID: 'y2', borderWidth: 1.5, pointRadius: 0, tension: 0.4, fill: true, backgroundColor: 'rgba(71, 85, 105, 0.05)',
