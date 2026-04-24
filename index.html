@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BZ4X Trip Optimizer Pro</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
 <script src="chargers_data.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -89,7 +91,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.6.2</span>
+            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.6.3</span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-24</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -137,6 +139,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
         <div class="chart-ctrl">
             <button class="ctrl-btn active" id="btn-time" onclick="setAxis('time')">時間軸</button>
             <button class="ctrl-btn" id="btn-dist" onclick="setAxis('dist')">距離軸</button>
+            <button class="ctrl-btn" id="btn-zoom-reset" onclick="if(comboChart){comboChart.resetZoom();this.style.display='none';}" style="margin-left:auto;display:none;">🔍 リセット</button>
         </div>
         <div class="chart-container">
             <canvas id="combo-chart"></canvas>
@@ -879,7 +882,18 @@ function drawComboChart() {
             ]
         },
         options: {
-            responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(15,23,42,0.9)' } },
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: { backgroundColor: 'rgba(15,23,42,0.9)' },
+                zoom: {
+                    zoom: { pinch: { enabled: true }, wheel: { enabled: false }, mode: 'x',
+                        onZoom: () => { document.getElementById('btn-zoom-reset').style.display = ''; } },
+                    pan:  { enabled: true, mode: 'x',
+                        onPan:  () => { document.getElementById('btn-zoom-reset').style.display = ''; } },
+                    limits: { x: { minRange: 10 } }
+                }
+            },
             scales: {
                 x: { type: 'linear', ticks: { callback: v => currentAxis==='time'?Math.floor(v/60)+'h'+Math.round(v%60)+'m' : v.toFixed(0)+'km' }, grid: { color: 'rgba(51, 65, 85, 0.3)' } },
                 y: { min: 0, max: 100, position: 'left', grid: { color: 'rgba(51, 65, 85, 0.3)' } },
