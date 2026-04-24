@@ -216,11 +216,20 @@ def load_existing(path):
 
 def is_duplicate(entry, existing, dist_km=1.5):
     """名前または位置が既存データと重複しているか判定"""
+    entry_name = entry.get("name", "")
+    entry_is_up   = "上り" in entry_name
+    entry_is_down = "下り" in entry_name
     for e in existing:
-        if e.get("name") == entry.get("name"):
+        if e.get("name") == entry_name:
             return True
         if e.get("lat") and entry.get("lat"):
             if haversine_km(e["lat"], e["lng"], entry["lat"], entry["lng"]) < dist_km:
+                # 上り/下りが逆向きのペアは同座標でも別施設 → 重複扱いしない
+                e_name = e.get("name", "")
+                e_is_up   = "上り" in e_name
+                e_is_down = "下り" in e_name
+                if (entry_is_up and e_is_down) or (entry_is_down and e_is_up):
+                    continue
                 return True
     return False
 
