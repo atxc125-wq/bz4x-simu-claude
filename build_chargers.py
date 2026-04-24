@@ -90,7 +90,7 @@ def scrape_emp():
     log.info("Scraping EMP SA/PA chargers...")
     out = []
     search_url = "https://www.evcharger.e-mobipower.co.jp/ia-eweb/em/charger_spot_list/?category=1101&check_qc_contained=on"
-    for page in range(1, 13):
+    for page in range(1, 30):  # 最大29ページまで（約580件対応）
         try:
             r = requests.get(f"{search_url}&page={page}", headers=HEADERS, timeout=20)
             lines = [t.strip() for t in BeautifulSoup(r.text, "html.parser").get_text(separator="\n").splitlines() if t.strip()]
@@ -151,9 +151,38 @@ SA_PA_SEED = [
     {"name": "甲南PA（上り）",   "address": "滋賀県甲賀市 新名神高速道路",     "type": "sa_pa", "powers": [90]},
     {"name": "土山SA（下り）",   "address": "滋賀県甲賀市土山 新名神高速道路", "type": "sa_pa", "powers": [90, 50]},
     {"name": "土山SA（上り）",   "address": "滋賀県甲賀市土山 新名神高速道路", "type": "sa_pa", "powers": [90, 50]},
-    # 東北自動車道（補完）
-    {"name": "羽生PA（下り）",   "address": "埼玉県羽生市 東北自動車道", "type": "sa_pa", "powers": [90, 50]},
-    {"name": "羽生PA（上り）",   "address": "埼玉県羽生市 東北自動車道", "type": "sa_pa", "powers": [90, 50]},
+    # 東北自動車道
+    {"name": "羽生PA（下り）",       "address": "埼玉県羽生市 東北自動車道",                   "type": "sa_pa", "powers": [90, 50]},
+    {"name": "羽生PA（上り）",       "address": "埼玉県羽生市 東北自動車道",                   "type": "sa_pa", "powers": [90, 50]},
+    {"name": "蓮田SA（下り）",       "address": "埼玉県蓮田市 東北自動車道",                   "type": "sa_pa", "powers": [90, 50]},
+    {"name": "蓮田SA（上り）",       "address": "埼玉県蓮田市 東北自動車道",                   "type": "sa_pa", "powers": [90, 50]},
+    {"name": "佐野SA（下り）",       "address": "栃木県佐野市 東北自動車道",                   "type": "sa_pa", "powers": [90]},
+    {"name": "佐野SA（上り）",       "address": "栃木県佐野市 東北自動車道",                   "type": "sa_pa", "powers": [90]},
+    {"name": "都賀西方PA（下り）",   "address": "栃木県栃木市都賀町 東北自動車道",             "type": "sa_pa", "powers": [50]},
+    {"name": "上河内SA（下り）",     "address": "栃木県宇都宮市上河内 東北自動車道",           "type": "sa_pa", "powers": [50]},
+    {"name": "那須高原SA（下り）",   "address": "栃木県那須郡那須町 東北自動車道",             "type": "sa_pa", "powers": [90]},
+    {"name": "那須高原SA（上り）",   "address": "栃木県那須郡那須町 東北自動車道",             "type": "sa_pa", "powers": [90]},
+    {"name": "安積PA（下り）",       "address": "福島県郡山市安積町 東北自動車道",             "type": "sa_pa", "powers": [50]},
+    {"name": "安積PA（上り）",       "address": "福島県郡山市安積町 東北自動車道",             "type": "sa_pa", "powers": [50]},
+    {"name": "安達太良SA（下り）",   "address": "福島県本宮市 東北自動車道",                   "type": "sa_pa", "powers": [90]},
+    {"name": "国見SA（下り）",       "address": "福島県伊達郡国見町 東北自動車道",             "type": "sa_pa", "powers": [50]},
+    {"name": "菅生PA（下り）",       "address": "宮城県柴田郡村田町 東北自動車道",             "type": "sa_pa", "powers": [50]},
+    {"name": "鶴巣PA（下り）",       "address": "宮城県黒川郡大和町 東北自動車道",             "type": "sa_pa", "powers": [50]},
+    {"name": "長者原SA（下り）",     "address": "宮城県大崎市古川 東北自動車道",               "type": "sa_pa", "powers": [50]},
+    {"name": "古川SA（下り）",       "address": "宮城県大崎市古川 東北自動車道",               "type": "sa_pa", "powers": [90]},
+    {"name": "前沢SA（下り）",       "address": "岩手県奥州市前沢 東北自動車道",               "type": "sa_pa", "powers": [50]},
+    {"name": "紫波SA（下り）",       "address": "岩手県紫波郡紫波町 東北自動車道",             "type": "sa_pa", "powers": [50]},
+    {"name": "岩手山SA（下り）",     "address": "岩手県八幡平市 東北自動車道",                 "type": "sa_pa", "powers": [50]},
+    {"name": "花輪SA（下り）",       "address": "秋田県鹿角市花輪 東北自動車道",               "type": "sa_pa", "powers": [50]},
+    {"name": "津軽SA（下り）",       "address": "青森県つがる市 東北自動車道",                 "type": "sa_pa", "powers": [50]},
+    # 磐越自動車道
+    {"name": "阿武隈高原SA（下り）", "address": "福島県石川郡玉川村 磐越自動車道",             "type": "sa_pa", "powers": [50]},
+    {"name": "阿武隈高原SA（上り）", "address": "福島県石川郡玉川村 磐越自動車道",             "type": "sa_pa", "powers": [50]},
+    # 常磐自動車道
+    {"name": "守谷SA（下り）",       "address": "茨城県守谷市 常磐自動車道",                   "type": "sa_pa", "powers": [90, 50]},
+    {"name": "守谷SA（上り）",       "address": "茨城県守谷市 常磐自動車道",                   "type": "sa_pa", "powers": [90, 50]},
+    {"name": "中郷SA（下り）",       "address": "茨城県北茨城市 常磐自動車道",                 "type": "sa_pa", "powers": [50]},
+    {"name": "南相馬鹿島SA（下り）", "address": "福島県南相馬市 常磐自動車道",                 "type": "sa_pa", "powers": [50]},
     # 中央自動車道
     {"name": "談合坂SA（下り）", "address": "山梨県上野原市 中央自動車道", "type": "sa_pa", "powers": [90, 50]},
     {"name": "談合坂SA（上り）", "address": "山梨県上野原市 中央自動車道", "type": "sa_pa", "powers": [90, 50]},
@@ -168,22 +197,57 @@ SA_PA_SEED = [
     {"name": "高坂SA（上り）",   "address": "埼玉県東松山市 関越自動車道", "type": "sa_pa", "powers": [50]},
 ]
 
+def load_existing(path):
+    """既存の chargers_data.js があれば読み込む"""
+    if not os.path.exists(path):
+        return []
+    try:
+        with open(path, encoding="utf-8") as f:
+            src = f.read()
+        import re as _re
+        m = _re.search(r'const CHARGER_DATA\s*=\s*(\[[\s\S]*?\]);', src)
+        if m:
+            data = json.loads(m.group(1))
+            log.info(f"Loaded existing data: {len(data)} entries")
+            return data
+    except Exception as e:
+        log.warning(f"Could not load existing data: {e}")
+    return []
+
+def is_duplicate(entry, existing, dist_km=1.5):
+    """名前または位置が既存データと重複しているか判定"""
+    for e in existing:
+        if e.get("name") == entry.get("name"):
+            return True
+        if e.get("lat") and entry.get("lat"):
+            if haversine_km(e["lat"], e["lng"], entry["lat"], entry["lng"]) < dist_km:
+                return True
+    return False
+
 def main():
     log.info("=== BZ4X Charger Data Building Start ===")
     api_key = get_api_key()
+
+    out_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "chargers_data.js")
+
+    # 0. 既存データ読み込み（上書き防止）
+    existing_data = load_existing(out_path)
 
     # 1. 収集
     flash_data = scrape_flash()
     emp_data = scrape_emp()
     raw_data = flash_data + emp_data + SA_PA_SEED
-    log.info(f"Added {len(SA_PA_SEED)} seed SA/PA entries")
-    total = len(raw_data)
-    log.info(f"Total entries: {total} (Flash: {len(flash_data)}, EMP: {len(emp_data)}, Seed: {len(SA_PA_SEED)})")
+    log.info(f"Scraped: Flash={len(flash_data)}, EMP={len(emp_data)}, Seed={len(SA_PA_SEED)}")
+
+    # 既存データと重複しない新規エントリのみジオコード
+    new_entries = [d for d in raw_data if not is_duplicate(d, existing_data)]
+    log.info(f"New entries to geocode: {len(new_entries)} (skipped {len(raw_data)-len(new_entries)} duplicates)")
+    total = len(new_entries)
 
     # 2. ジオコーディング（進捗表示付き）
-    log.info(f"Starting Geocoding for {total} spots...")
+    log.info(f"Starting Geocoding for {total} new spots...")
     geocoded = []
-    for i, d in enumerate(raw_data):
+    for i, d in enumerate(new_entries):
         
         # ▼▼▼ ここを修正 ▼▼▼
         # 施設名と住所を合体させて、Googleの検索精度を上げる
@@ -231,14 +295,15 @@ def main():
     merged = [m for m in merged if m.get("powerKw", 0) >= 10]
     log.info(f"Filtered out {before - len(merged)} entries with powerKw < 10")
 
-    # 6. 保存
-    out_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "chargers_data.js")
+    # 6. 既存データと統合して保存
+    final = existing_data + merged
+    log.info(f"Final dataset: {len(existing_data)} existing + {len(merged)} new = {len(final)} total")
     with open(out_path, "w", encoding="utf-8") as f:
         f.write("const CHARGER_DATA = ")
-        json.dump(merged, f, ensure_ascii=False, indent=2)
+        json.dump(final, f, ensure_ascii=False, indent=2)
         f.write(";")
 
-    log.info(f"Successfully generated: {out_path} (Total spots: {len(merged)})")
+    log.info(f"Successfully saved: {out_path} ({len(final)} total spots)")
     log.info("Check 'build_chargers.log' for detailed execution history.")
 
 if __name__ == "__main__":
