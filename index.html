@@ -44,6 +44,10 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
 .chg-specs { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
 .chg-chip { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
 .chip-kw { background: rgba(6, 182, 212, 0.15); color: var(--accent2); border: 1px solid rgba(6, 182, 212, 0.3); }
+.chip-kw-red    { background: rgba(239,68,68,0.15);  color: #ef4444; border: 1px solid rgba(239,68,68,0.35); }
+.chip-kw-orange { background: rgba(249,115,22,0.15); color: #f97316; border: 1px solid rgba(249,115,22,0.35); }
+.chip-kw-yellow { background: rgba(234,179,8,0.15);  color: #eab308; border: 1px solid rgba(234,179,8,0.35); }
+.chip-kw-gray   { background: rgba(148,163,184,0.12);color: #94a3b8; border: 1px solid rgba(148,163,184,0.3); }
 .chip-auth { background: rgba(59, 130, 246, 0.15); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.3); }
 .poi-tag { display: inline-block; background: rgba(148, 163, 184, 0.1); color: #cbd5e1; font-size: 10px; padding: 3px 8px; border-radius: 12px; margin-right: 6px; margin-top: 8px; }
 
@@ -81,7 +85,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.5.3</span>
+            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.5.4</span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-24</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -199,6 +203,14 @@ function getRouteColor(val, mode) {
         const ratio = (pct - 50) / 50;
         return `rgb(${Math.round(234-(234-6)*ratio)}, ${Math.round(179+(182-179)*ratio)}, ${Math.round(8+(212-8)*ratio)})`;
     }
+}
+
+function getKwClass(powerKw) {
+    const kw = parseInt(powerKw) || 0;
+    if (kw >= 150) return 'chip-kw-red';
+    if (kw >= 70)  return 'chip-kw-orange';
+    if (kw >= 30)  return 'chip-kw-yellow';
+    return 'chip-kw-gray';
 }
 
 function getAuthNetwork(name, powerKw, type) {
@@ -623,7 +635,7 @@ function renderUI() {
         const roadBadge = st.detectedRoad ? `<span style="background:rgba(234,179,8,0.15);color:#fbbf24;border:1px solid rgba(234,179,8,0.3);border-radius:4px;font-size:10px;font-weight:bold;padding:2px 6px;">🛣 ${st.detectedRoad}</span>` : (isOffRoute ? `<span style="background:rgba(148,163,184,0.15);color:#94a3b8;border:1px solid rgba(148,163,184,0.3);border-radius:4px;font-size:10px;font-weight:bold;padding:2px 6px;">🏙 一般道</span>` : '');
         div.innerHTML = `
             <div class="chg-specs">
-                <span class="chg-chip chip-kw">⚡ ${kw}</span>
+                <span class="chg-chip ${getKwClass(st.charger.powerKw)}">⚡ ${kw}</span>
                 <span class="chg-chip chip-auth">📱 ${authNetwork}</span>
                 ${roadBadge}
             </div>
