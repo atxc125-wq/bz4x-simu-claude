@@ -78,7 +78,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.4.4</span>
+            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.4.5</span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-23</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -315,11 +315,14 @@ async function runSimulation(segments, elevations, params) {
     const totalKm = segments.reduce((sum, s) => sum + s.distKm, 0);
 
     let currentLegIdx = 0;
-    let currentRoadName = null; // 最後に確認した高速道路名を保持（料金所等で名前が消えても引き継ぐ）
+    let currentRoadName = null;
+    let currentRoadNameKm = -999; // 道路名を最後に更新したkm位置
 
     for (let i = 0; i < segments.length; i++) {
         const s = segments[i];
-        if (s.roadName) currentRoadName = s.roadName; // 道路名が取れたタイミングで更新
+        if (s.roadName) { currentRoadName = s.roadName; currentRoadNameKm = km; }
+        // 200km以上道路名が更新されていない = 別の高速に入った可能性 → リセットして誤フィルタ防止
+        if (currentRoadName && (km - currentRoadNameKm) > 200) { currentRoadName = null; }
         const progress = km / totalKm;
         const currentElev = elevations[Math.min(elevations.length-1, Math.floor(progress * elevations.length))] || 0;
         

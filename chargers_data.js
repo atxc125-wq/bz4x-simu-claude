@@ -1309,6 +1309,16 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
+    "name": "東北自動車道　古川ＳＡ下り",
+    "address": "宮城県大崎市古川",
+    "type": "sa_pa",
+    "powers": [90],
+    "lat": 38.4840000,
+    "lng": 140.9680000,
+    "powerKw": 90,
+    "direction": "down"
+  },
+  {
     "name": "東北自動車道　菅生ＰＡ下り",
     "address": "宮城県柴田郡村田町菅生字新堀２８",
     "type": "sa_pa",
@@ -1475,6 +1485,16 @@ const CHARGER_DATA = [
     "lng": 140.9213842,
     "powerKw": 90,
     "direction": "up"
+  },
+  {
+    "name": "東北自動車道　安積ＰＡ下り",
+    "address": "福島県郡山市安積町",
+    "type": "sa_pa",
+    "powers": [50],
+    "lat": 37.3780000,
+    "lng": 140.2650000,
+    "powerKw": 50,
+    "direction": "down"
   },
   {
     "name": "東北自動車道　安達太良ＳＡ下り",
