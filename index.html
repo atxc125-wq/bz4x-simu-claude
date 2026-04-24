@@ -786,15 +786,47 @@ function drawComboChart() {
 }
 
 window.onload = () => {
-    const key = localStorage.getItem('gmaps_key');
-    if (key) {
-        document.getElementById('api-key').value = key;
+    // ★ ここにGCPで制限をかけた「標準APIキー」を直接書きます
+    const DEFAULT_API_KEY = 'AIzaSyBov_holyXbQRTOZgr21AuNvZ3PDz-PeiM'; 
+    
+    const userKey = localStorage.getItem('gmaps_key');
+    const apiKeyInput = document.getElementById('api-key');
+    
+    // 今日の日付をセット
+    document.getElementById('trip-date').value = new Date().toISOString().split('T')[0];
+
+    // UIの初期表示
+    if (userKey) {
+        apiKeyInput.value = userKey;
+    } else {
+        apiKeyInput.placeholder = "API KEY (未入力で標準枠を利用)";
+    }
+
+    const activeKey = userKey || DEFAULT_API_KEY;
+
+    // キーが変更された時の処理
+    apiKeyInput.addEventListener('change', (e) => {
+        const inputVal = e.target.value.trim();
+        if (inputVal === '') {
+            localStorage.removeItem('gmaps_key');
+        } else {
+            localStorage.setItem('gmaps_key', inputVal);
+        }
+        location.reload();
+    });
+
+    // APIの読み込み
+    if (activeKey) {
         const s = document.createElement('script');
-        s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&libraries=places,geometry&callback=initApp`;
+        s.src = `https://maps.googleapis.com/maps/api/js?key=${activeKey}&libraries=places,geometry&callback=initApp`;
+        
+        // 制限に達した場合などのエラーハンドリング
+        s.onerror = () => {
+            alert('APIの読み込みに失敗しました。キーの制限設定などを確認してください。');
+            document.getElementById('loading').classList.remove('show');
+        };
         document.head.appendChild(s);
     }
-    document.getElementById('api-key').addEventListener('change', (e) => { localStorage.setItem('gmaps_key', e.target.value); location.reload(); });
-    document.getElementById('trip-date').value = new Date().toISOString().split('T')[0];
 };
 </script>
 </body>
