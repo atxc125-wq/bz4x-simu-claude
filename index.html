@@ -30,6 +30,10 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', syste
 
 .section { padding: 18px 20px; border-bottom: 1px solid var(--border); }
 .field { margin-bottom: 12px; }
+.input-wrap { position: relative; display: flex; align-items: center; }
+.input-wrap input { flex: 1; padding-right: 28px !important; }
+.input-clear { position: absolute; right: 6px; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 0; line-height: 1; opacity: 0.6; }
+.input-clear:hover { opacity: 1; color: var(--text); }
 label { display: block; font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; font-weight: 600; }
 input, select { width: 100%; background: #0f172a; border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 10px; font-size: 14px; transition: border 0.2s; }
 input:focus, select:focus { outline: none; border-color: var(--accent2); }
@@ -85,7 +89,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.5.5</span>
+            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.5.6</span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-24</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -97,9 +101,9 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             <div class="field" style="margin-bottom:0;"><label>出発時間</label><input type="time" id="start-time" value="08:00"></div>
         </div>
         
-        <div class="field"><label>出発地</label><input type="text" id="origin" value="東京"></div>
-        <div class="field"><label>経由地 (往復の場合は目的地)</label><input type="text" id="waypoint" placeholder="例: 大阪城"></div>
-        <div class="field"><label>目的地 (往復の場合は出発地)</label><input type="text" id="dest" value="大阪"></div>
+        <div class="field"><label>出発地</label><div class="input-wrap"><input type="text" id="origin" value="東京"><button class="input-clear" onclick="document.getElementById('origin').value='';document.getElementById('origin').focus()">✕</button></div></div>
+        <div class="field"><label>経由地 (往復の場合は目的地)</label><div class="input-wrap"><input type="text" id="waypoint" placeholder="例: 大阪城"><button class="input-clear" onclick="document.getElementById('waypoint').value='';document.getElementById('waypoint').focus()">✕</button></div></div>
+        <div class="field"><label>目的地 (往復の場合は出発地)</label><div class="input-wrap"><input type="text" id="dest" value="大阪"><button class="input-clear" onclick="document.getElementById('dest').value='';document.getElementById('dest').focus()">✕</button></div></div>
         
         <div class="stat-grid" style="grid-template-columns: 1fr 1fr;">
             <div class="field"><label>出発SOC (%)</label><input type="number" id="start-soc" value="100"></div>
