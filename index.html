@@ -78,7 +78,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.5.0</span>
+            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.5.1</span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-24</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -316,12 +316,31 @@ async function runSimulation(segments, elevations, params) {
 
     let currentLegIdx = 0;
     let currentRoadName = null;
-    let currentRoadNameKm = -999; // 道路名を最後に更新したkm位置
+    let currentRoadNameKm = -999;
+    let pendingRoadName = null;   // 新しい道路名の候補（まだ確定していない）
+    let pendingRoadNameKm = -999;
 
     for (let i = 0; i < segments.length; i++) {
         const s = segments[i];
-        if (s.roadName) { currentRoadName = s.roadName; currentRoadNameKm = km; }
-        // 200km以上道路名が更新されていない = 別の高速に入った可能性 → リセットして誤フィルタ防止
+        if (s.roadName) {
+            if (s.roadName === currentRoadName) {
+                // 同じ道路が続いている → km追跡を更新してペンディングはキャンセル
+                currentRoadNameKm = km;
+                pendingRoadName = null;
+            } else if (s.roadName === pendingRoadName) {
+                // ペンディング中の道路名が5km以上続いた → 正式に切り替え
+                if (km - pendingRoadNameKm >= 5) {
+                    currentRoadName = pendingRoadName;
+                    currentRoadNameKm = km;
+                    pendingRoadName = null;
+                }
+            } else {
+                // 初めて見る新しい道路名 → JCT通過の一瞬かもしれないのでペンディング扱い
+                pendingRoadName = s.roadName;
+                pendingRoadNameKm = km;
+            }
+        }
+        // 200km以上更新なし → リセット
         if (currentRoadName && (km - currentRoadNameKm) > 200) { currentRoadName = null; }
         const progress = km / totalKm;
         const currentElev = elevations[Math.min(elevations.length-1, Math.floor(progress * elevations.length))] || 0;
