@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BZ4X Trip Optimizer Pro</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
 <script src="chargers_data.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -67,7 +65,10 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
 
 #map { flex: 1.3; background: #1e293b; position: relative; }
 .chart-wrap { padding: 16px 20px; background: var(--panel); flex: 0.7; position: relative; border-top: 1px solid var(--border); display: flex; flex-direction: column; }
-.chart-container { flex: 1; position: relative; min-height: 0; }
+.chart-container { flex: 1; position: relative; min-height: 0; overflow: hidden; }
+#chart-zoom-btns { position: absolute; top: 6px; right: 6px; display: none; flex-direction: column; gap: 4px; z-index: 10; }
+.czoom-btn { width: 28px; height: 28px; background: rgba(15,23,42,0.82); border: 1px solid var(--border); color: var(--text); border-radius: 6px; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; user-select: none; }
+.czoom-btn:active { background: rgba(51,65,85,0.95); }
 .chart-title { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
 .chart-ctrl { display: flex; gap: 4px; position: absolute; top: 12px; right: 20px; z-index: 10; }
 .ctrl-btn { background: #334155; border: none; color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; transition: 0.2s; }
@@ -91,7 +92,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.6.3</span>
+            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.6.4</span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-24</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -139,9 +140,13 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
         <div class="chart-ctrl">
             <button class="ctrl-btn active" id="btn-time" onclick="setAxis('time')">時間軸</button>
             <button class="ctrl-btn" id="btn-dist" onclick="setAxis('dist')">距離軸</button>
-            <button class="ctrl-btn" id="btn-zoom-reset" onclick="if(comboChart){comboChart.resetZoom();this.style.display='none';}" style="margin-left:auto;display:none;">🔍 リセット</button>
         </div>
         <div class="chart-container">
+            <div id="chart-zoom-btns">
+                <button class="czoom-btn" onclick="chartZoomIn()" title="拡大">＋</button>
+                <button class="czoom-btn" onclick="chartZoomOut()" title="縮小">－</button>
+                <button class="czoom-btn" onclick="chartZoomReset()" title="全体表示">↺</button>
+            </div>
             <canvas id="combo-chart"></canvas>
         </div>
     </div>
@@ -158,6 +163,8 @@ let autoChargers = [];
 let userCustomDurations = {}; 
 let userIgnoredChargers = []; 
 let currentAxis = 'time';
+let chartFullXMin = 0, chartFullXMax = 0;
+let chartViewMin = 0, chartViewMax = 0;
 
 Chart.defaults.color = '#94a3b8';
 Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
@@ -838,6 +845,11 @@ function drawComboChart() {
     const speedData = currentSim.profile.map(p => ({ x: getX(p), y: p.speed }));
     const elevData = currentSim.profile.map(p => ({ x: getX(p), y: Math.max(0, p.elev) }));
     const mode = document.getElementById('color-mode').value;
+    const allXVals = socData.map(p => p.x);
+    chartFullXMin = Math.min(...allXVals);
+    chartFullXMax = Math.max(...allXVals);
+    chartViewMin = chartFullXMin;
+    chartViewMax = chartFullXMax;
     
     comboChart = new Chart(ctx, {
         type: 'line',
@@ -885,24 +897,113 @@ function drawComboChart() {
             responsive: true, maintainAspectRatio: false,
             plugins: {
                 legend: { display: false },
-                tooltip: { backgroundColor: 'rgba(15,23,42,0.9)' },
-                zoom: {
-                    zoom: { pinch: { enabled: true }, wheel: { enabled: false }, mode: 'x',
-                        onZoom: () => { document.getElementById('btn-zoom-reset').style.display = ''; } },
-                    pan:  { enabled: true, mode: 'x',
-                        onPan:  () => { document.getElementById('btn-zoom-reset').style.display = ''; } },
-                    limits: { x: { minRange: 10 } }
-                }
+                tooltip: { backgroundColor: 'rgba(15,23,42,0.9)' }
             },
             scales: {
-                x: { type: 'linear', ticks: { callback: v => currentAxis==='time'?Math.floor(v/60)+'h'+Math.round(v%60)+'m' : v.toFixed(0)+'km' }, grid: { color: 'rgba(51, 65, 85, 0.3)' } },
+                x: { type: 'linear', min: chartViewMin, max: chartViewMax, ticks: { callback: v => currentAxis==='time'?Math.floor(v/60)+'h'+Math.round(v%60)+'m' : v.toFixed(0)+'km' }, grid: { color: 'rgba(51, 65, 85, 0.3)' } },
                 y: { min: 0, max: 100, position: 'left', grid: { color: 'rgba(51, 65, 85, 0.3)' } },
                 y1: { position: 'right', display: true, grid: { drawOnChartArea: false }, ticks: { color: 'rgba(148, 163, 184, 0.7)' } },
                 y2: { min: 0, max: 100, display: false }
             }
         }
     });
+    document.getElementById('chart-zoom-btns').style.display = 'flex';
 }
+
+function chartApplyView() {
+    if (!comboChart) return;
+    comboChart.options.scales.x.min = chartViewMin;
+    comboChart.options.scales.x.max = chartViewMax;
+    comboChart.update('none');
+}
+
+function chartZoomIn() {
+    const span = chartViewMax - chartViewMin;
+    const center = (chartViewMin + chartViewMax) / 2;
+    const newSpan = span * 0.6;
+    chartViewMin = Math.max(chartFullXMin, center - newSpan / 2);
+    chartViewMax = Math.min(chartFullXMax, center + newSpan / 2);
+    chartApplyView();
+}
+
+function chartZoomOut() {
+    const span = chartViewMax - chartViewMin;
+    const center = (chartViewMin + chartViewMax) / 2;
+    const newSpan = Math.min(chartFullXMax - chartFullXMin, span / 0.6);
+    chartViewMin = Math.max(chartFullXMin, center - newSpan / 2);
+    chartViewMax = Math.min(chartFullXMax, center + newSpan / 2);
+    chartApplyView();
+}
+
+function chartZoomReset() {
+    chartViewMin = chartFullXMin;
+    chartViewMax = chartFullXMax;
+    chartApplyView();
+}
+
+(function() {
+    let pinchStartDist = 0, pinchStartMin = 0, pinchStartMax = 0;
+    let panStartX = 0, panStartMin = 0, panStartMax = 0;
+    let isPinching = false, isPanning = false;
+
+    function getTouchDist(t) {
+        const dx = t[0].clientX - t[1].clientX;
+        const dy = t[0].clientY - t[1].clientY;
+        return Math.sqrt(dx*dx + dy*dy);
+    }
+    function getTouchMidX(t) { return (t[0].clientX + t[1].clientX) / 2; }
+
+    const el = document.getElementById('combo-chart');
+    el.addEventListener('touchstart', e => {
+        if (e.touches.length === 2) {
+            isPinching = true; isPanning = false;
+            pinchStartDist = getTouchDist(e.touches);
+            pinchStartMin = chartViewMin; pinchStartMax = chartViewMax;
+            e.preventDefault();
+        } else if (e.touches.length === 1 && chartViewMax - chartViewMin < chartFullXMax - chartFullXMin - 0.01) {
+            isPanning = true; isPinching = false;
+            panStartX = e.touches[0].clientX;
+            panStartMin = chartViewMin; panStartMax = chartViewMax;
+        }
+    }, { passive: false });
+
+    el.addEventListener('touchmove', e => {
+        if (isPinching && e.touches.length === 2) {
+            const dist = getTouchDist(e.touches);
+            const scale = pinchStartDist / dist;
+            const midX = getTouchMidX(e.touches);
+            const rect = el.getBoundingClientRect();
+            const frac = Math.max(0, Math.min(1, (midX - rect.left) / rect.width));
+            const fullSpan = pinchStartMax - pinchStartMin;
+            const newSpan = Math.min(chartFullXMax - chartFullXMin, fullSpan * scale);
+            const anchor = pinchStartMin + frac * fullSpan;
+            chartViewMin = Math.max(chartFullXMin, anchor - frac * newSpan);
+            chartViewMax = Math.min(chartFullXMax, chartViewMin + newSpan);
+            el.style.transform = `scaleX(${1/scale})`;
+            el.style.transformOrigin = `${midX - rect.left}px center`;
+            e.preventDefault();
+        } else if (isPanning && e.touches.length === 1) {
+            const dx = e.touches[0].clientX - panStartX;
+            const rect = el.getBoundingClientRect();
+            const span = panStartMax - panStartMin;
+            const delta = -(dx / rect.width) * span;
+            chartViewMin = Math.max(chartFullXMin, panStartMin + delta);
+            chartViewMax = chartViewMin + span;
+            if (chartViewMax > chartFullXMax) { chartViewMax = chartFullXMax; chartViewMin = chartViewMax - span; }
+            el.style.transform = `translateX(${-delta / span * rect.width}px)`;
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    el.addEventListener('touchend', () => {
+        if (isPinching || isPanning) {
+            el.style.transform = '';
+            el.style.transformOrigin = '';
+            isPinching = false; isPanning = false;
+            chartApplyView();
+        }
+    });
+})();
 
 window.onload = () => {
     // ★ ここにGCPで制限をかけた「標準APIキー」を直接書きます
