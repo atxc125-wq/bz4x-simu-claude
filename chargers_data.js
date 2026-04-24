@@ -6718,5 +6718,148 @@ const CHARGER_DATA = [
     "lng": 139.9260781,
     "powerKw": 50,
     "direction": "up"
+  },
+  {
+    "name": "東北自動車道　花輪ＳＡ上り",
+    "address": "",
+    "type": "sa_pa",
+    "powers": [
+      50
+    ],
+    "lat": 40.18398,
+    "lng": 140.801479,
+    "powerKw": 50
+  },
+  {
+    "name": "東北自動車道　岩手山ＳＡ上り",
+    "address": "",
+    "type": "sa_pa",
+    "powers": [
+      50
+    ],
+    "lat": 39.915006,
+    "lng": 141.046462,
+    "powerKw": 50
+  },
+  {
+    "name": "東北自動車道　紫波ＳＡ上り",
+    "address": "",
+    "type": "sa_pa",
+    "powers": [
+      90
+    ],
+    "lat": 39.515239,
+    "lng": 141.102876,
+    "powerKw": 90
+  },
+  {
+    "name": "東北自動車道　前沢ＳＡ上り",
+    "address": "",
+    "type": "sa_pa",
+    "powers": [
+      50
+    ],
+    "lat": 39.067441,
+    "lng": 141.102817,
+    "powerKw": 50
+  },
+  {
+    "name": "東北自動車道　長者原ＳＡ上り",
+    "address": "",
+    "type": "sa_pa",
+    "powers": [
+      50
+    ],
+    "lat": 38.637056,
+    "lng": 140.962386,
+    "powerKw": 50
+  },
+  {
+    "name": "東北自動車道　古川ＳＡ上り",
+    "address": "",
+    "type": "sa_pa",
+    "powers": [
+      90
+    ],
+    "lat": 38.484,
+    "lng": 140.968,
+    "powerKw": 90
+  },
+  {
+    "name": "東北自動車道　鶴巣ＰＡ上り",
+    "address": "",
+    "type": "sa_pa",
+    "powers": [
+      50
+    ],
+    "lat": 38.408978,
+    "lng": 140.914357,
+    "powerKw": 50
+  },
+  {
+    "name": "東北自動車道　菅生ＰＡ上り",
+    "address": "",
+    "type": "sa_pa",
+    "powers": [
+      90
+    ],
+    "lat": 38.167443,
+    "lng": 140.76627,
+    "powerKw": 90
+  },
+  {
+    "name": "東北自動車道　国見ＳＡ上り",
+    "address": "",
+    "type": "sa_pa",
+    "powers": [
+      90
+    ],
+    "lat": 37.906767,
+    "lng": 140.578773,
+    "powerKw": 90
+  },
+  {
+    "name": "東北自動車道　安達太良ＳＡ上り",
+    "address": "",
+    "type": "sa_pa",
+    "powers": [
+      90
+    ],
+    "lat": 37.515669,
+    "lng": 140.382162,
+    "powerKw": 90
+  },
+  {
+    "name": "東北自動車道　那須高原ＳＡ上り",
+    "address": "",
+    "type": "sa_pa",
+    "powers": [
+      90
+    ],
+    "lat": 37.056304,
+    "lng": 140.10201,
+    "powerKw": 90
+  },
+  {
+    "name": "東北自動車道　上河内ＳＡ上り",
+    "address": "",
+    "type": "sa_pa",
+    "powers": [
+      150
+    ],
+    "lat": 36.691376,
+    "lng": 139.891778,
+    "powerKw": 150
+  },
+  {
+    "name": "東北自動車道　佐野ＳＡ上り",
+    "address": "",
+    "type": "sa_pa",
+    "powers": [
+      150
+    ],
+    "lat": 36.317191,
+    "lng": 139.619237,
+    "powerKw": 150
   }
 ];
