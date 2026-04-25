@@ -727,7 +727,8 @@ async function onCalculate() {
     let drivingOptions;
     if (tripDateVal && startTimeVal) {
         const deptDate = new Date(`${tripDateVal}T${startTimeVal}:00`);
-        if (!isNaN(deptDate)) drivingOptions = { departureTime: deptDate, trafficModel: 'best_guess' };
+        // trafficModelは文字列不可 → enumを使うかdepartureTimeのみ指定（デフォルトBEST_GUESS）
+        if (!isNaN(deptDate)) drivingOptions = { departureTime: deptDate };
     }
 
     directionsService.route({ origin, destination: dest, waypoints: combinedWps, optimizeWaypoints: false, travelMode: 'DRIVING', ...(drivingOptions ? { drivingOptions } : {}) }, async (res, status) => {
