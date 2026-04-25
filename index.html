@@ -109,7 +109,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.6.9</span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.6.9 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-25</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -283,7 +283,7 @@ function haversine(l1, g1, l2, g2) {
 
 // Google Maps の住所から「都道府県+市区」を短縮抽出 例: "大阪府大阪市北区梅田..." → "大阪府大阪市"
 function extractCityName(address) {
-    const clean = (address || '').replace(/,.*$/, '').trim();
+    const clean = (address || '').replace(/,.*$/, '').replace(/^日本[、,]?\s*/, '').trim();
     const m = clean.match(/([^\x00-\x7F]{1,4}[都道府県])([^\x00-\x7F]{1,6}[市区])/);
     if (m) return m[1] + m[2];
     return clean.slice(0, 8);
