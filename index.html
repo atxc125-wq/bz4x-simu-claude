@@ -109,7 +109,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.6.9 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.7.0 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-25</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -535,13 +535,14 @@ async function runSimulation(segments, elevations, params, onProgress) {
                     lastChargeKm = km;
                 }
             } else {
-                // SA/PAが同方向に無い → 下道のFLASH/TEEMO等をリルートで追加
+                // Step2: 下道の90kW以上急速充電器にリルート
                 const offRoute = chargerDB.find(c => {
                     if (c.type === 'sa_pa') return false;
                     const dist = haversine(c.lat, c.lng, s.lat, s.lng);
                     const key = `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
                     return dist < 7.0
                         && !userIgnoredChargers.includes(key)
+                        && parseInt(c.powerKw) >= 90
                         && isValidDirection(c.name, currentTripIsUpbound);
                 });
                 if (offRoute) {
@@ -549,6 +550,33 @@ async function runSimulation(segments, elevations, params, onProgress) {
                     if (!allChargerWps.some(ac => (ac.key || `${ac.lat.toFixed(4)},${ac.lng.toFixed(4)}`) === key)) {
                         autoChargers.push({ ...offRoute, key });
                         return { requestReroute: true };
+                    }
+                } else {
+                    // Step3: 緊急フォールバック — 道路名不問・方向一致・8km以内のSA/PA
+                    const eKey = c => `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
+                    const emergencySaPa = chargerDB.find(c =>
+                        c.type === 'sa_pa'
+                        && haversine(c.lat, c.lng, s.lat, s.lng) < 8.0
+                        && !userIgnoredChargers.includes(eKey(c))
+                        && isValidDirection(c.name, currentTripIsUpbound)
+                        && !stops.some(st => `${st.charger.lat.toFixed(4)},${st.charger.lng.toFixed(4)}` === eKey(c))
+                    );
+                    if (emergencySaPa) {
+                        const chgKey = eKey(emergencySaPa);
+                        if (onProgress) onProgress(`🔌 ${emergencySaPa.name.replace(/^.*?　/, '')} (緊急 ${emergencySaPa.powerKw}kW) を使用 (${Math.round(km)}km地点)`);
+                        const duration = userCustomDurations[chgKey] || 30;
+                        const socBefore = (socKwh / batteryKwh) * 100;
+                        const chargerInfo = { name: emergencySaPa.name, lat: emergencySaPa.lat, lng: emergencySaPa.lng, powerKw: emergencySaPa.powerKw, type: 'sa_pa' };
+                        const socAfter = calculateCharging(socBefore, duration, chargerInfo);
+                        for (let t = 1; t <= duration; t++) {
+                            const tempSoc = calculateCharging(socBefore, t, chargerInfo);
+                            if (t % 5 === 0 || t === duration) {
+                                const avgKw = ((tempSoc - (t<=5?socBefore:calculateCharging(socBefore,t-5,chargerInfo))) / 100) * batteryKwh * 60 / Math.min(t,5);
+                                profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev, chargingKw: avgKw });
+                            }
+                        }
+                        stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, km, isUpbound: currentTripIsUpbound, detectedRoad: currentRoadName || '不明' });
+                        time += duration; socKwh = (socAfter / 100) * batteryKwh; lastChargeKm = km;
                     }
                 }
             }
