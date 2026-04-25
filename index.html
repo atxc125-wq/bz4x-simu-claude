@@ -109,7 +109,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.8.1 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.8.2 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-25</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -147,14 +147,14 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
                     <div>
                         <label style="font-size:10px; text-transform:none; letter-spacing:0; margin-bottom:2px;">一般道 40km/h</label>
                         <div style="display:flex; align-items:center; gap:3px;">
-                            <input type="number" id="city-eff" step="0.1" min="3" max="15" placeholder="7.3">
+                            <input type="number" id="city-eff" step="0.1" min="3" max="15" placeholder="9.5">
                             <span style="font-size:10px; color:var(--muted); white-space:nowrap;">km/kWh</span>
                         </div>
                     </div>
                     <div>
                         <label style="font-size:10px; text-transform:none; letter-spacing:0; margin-bottom:2px;">高速 100km/h</label>
                         <div style="display:flex; align-items:center; gap:3px;">
-                            <input type="number" id="hwy-eff" step="0.1" min="3" max="15" placeholder="5.0">
+                            <input type="number" id="hwy-eff" step="0.1" min="3" max="15" placeholder="5.4">
                             <span style="font-size:10px; color:var(--muted); white-space:nowrap;">km/kWh</span>
                         </div>
                     </div>
@@ -551,7 +551,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
             const t = Math.max(0, Math.min(1, (s.speed - 40) / 60));
             baseEff = Math.max(3.0, cityEff + (hwyEff - cityEff) * t);
         } else {
-            baseEff = Math.max(3.0, 8.5 - (s.speed * 0.025) - (Math.pow(s.speed, 2) * 0.0001));
+            baseEff = s.speed <= 40 ? 9.5 : Math.max(3.0, 9.5 - 0.06875 * (s.speed - 40));
         }
         const heatingEnergy = (localTemp < 20 ? (20 - localTemp) * 0.15 : 0) * (s.distKm / s.speed);
         const energy = (s.distKm / baseEff) + elevEnergy + heatingEnergy;
@@ -1401,6 +1401,12 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.8.2</span><span class="cl-date">2026-04-25</span>
+        <ul class="cl-items">
+          <li>デフォルト電費を実測ベースの式に変更: 40km/h以下=9.5km/kWh一定、超過後は0.06875km/kWh/km/hで線形低下（100km/h時5.375、120km/h時4.0）</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v1.8.1</span><span class="cl-date">2026-04-25</span>
         <ul class="cl-items">
