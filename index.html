@@ -721,17 +721,7 @@ async function onCalculate() {
         combinedWps.unshift({ location: waypointVal, stopover: true });
     }
 
-    // 出発日時が設定されていれば渋滞予測を適用
-    const tripDateVal = document.getElementById('trip-date').value;
-    const startTimeVal = document.getElementById('start-time').value;
-    let drivingOptions;
-    if (tripDateVal && startTimeVal) {
-        const deptDate = new Date(`${tripDateVal}T${startTimeVal}:00`);
-        // trafficModelは文字列不可 → enumを使うかdepartureTimeのみ指定（デフォルトBEST_GUESS）
-        if (!isNaN(deptDate)) drivingOptions = { departureTime: deptDate };
-    }
-
-    directionsService.route({ origin, destination: dest, waypoints: combinedWps, optimizeWaypoints: false, travelMode: 'DRIVING', ...(drivingOptions ? { drivingOptions } : {}) }, async (res, status) => {
+    directionsService.route({ origin, destination: dest, waypoints: combinedWps, optimizeWaypoints: false, travelMode: 'DRIVING' }, async (res, status) => {
         if (status !== 'OK') return hideLoading() || alert('ルート解析失敗');
 
         // Google Maps の住所から「○○府○○市」形式に短縮
