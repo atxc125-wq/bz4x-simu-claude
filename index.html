@@ -1267,6 +1267,23 @@ window.onload = () => {
     </div>
     <div id="cl-body">
       <div class="cl-ver">
+        <span class="cl-vtag">v1.7.1</span><span class="cl-date">2026-04-25</span>
+        <ul class="cl-items">
+          <li>緊急充電スポット検索をPlaces API (New)に移行</li>
+          <li>CHAdeMO優先でmaxChargeRateKwを取得し充電シミュレーションに反映</li>
+          <li>リスト表示に⚡kWバッジを追加、選択前に出力が確認できる</li>
+          <li>新API失敗時は旧PlacesServiceに自動フォールバック</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.7.0</span><span class="cl-date">2026-04-25</span>
+        <ul class="cl-items">
+          <li>充電選択ロジックを3段階化（Step1: 道路名一致SA/PA → Step2: 下道90kW以上 → Step3: 緊急SA/PA）</li>
+          <li>Step3: 道路名不問・方向一致・8km以内のSA/PAに緊急停車（北海道など50kWのみの区間で電欠防止）</li>
+          <li>下道リルートは90kW以上のみに絞り込み（従来は任意kW）</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
         <span class="cl-vtag">v1.6.9</span><span class="cl-date">2026-04-25</span>
         <ul class="cl-items">
           <li>地名の数字プレフィックス問題を根本修正（正規表現を日本語文字のみに限定）</li>
