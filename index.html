@@ -92,7 +92,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.6.6</span>
+            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.6.7</span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-24</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -266,7 +266,7 @@ function haversine(l1, g1, l2, g2) {
 
 // Google Maps の住所から「都道府県+市区」を短縮抽出 例: "大阪府大阪市北区梅田..." → "大阪府大阪市"
 function extractCityName(address) {
-    const clean = (address || '').replace(/,.*$/, '').trim();
+    const clean = (address || '').replace(/,.*$/, '').replace(/^\d+\s+/, '').trim();
     const m = clean.match(/(.{2,5}[都道府県])(.{1,6}[市区])/);
     if (m) return m[1] + m[2];
     return clean.slice(0, 8);
@@ -427,7 +427,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                     }
                 }
                 
-                stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, isUpbound: isUpboundLegs[currentLegIdx-1], detectedRoad: hit.type === 'sa_pa' ? (currentRoadName || '不明') : null });
+                stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, km, isUpbound: isUpboundLegs[currentLegIdx-1], detectedRoad: hit.type === 'sa_pa' ? (currentRoadName || '不明') : null });
                 time += duration;
                 socKwh = (socAfter / 100) * batteryKwh;
                 lastChargeKm = km;
@@ -512,7 +512,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                             profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev, chargingKw: avgKw });
                         }
                     }
-                    stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, isUpbound: currentTripIsUpbound, detectedRoad: currentRoadName || '不明' });
+                    stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, km, isUpbound: currentTripIsUpbound, detectedRoad: currentRoadName || '不明' });
                     time += duration;
                     socKwh = (socAfter / 100) * batteryKwh;
                     lastChargeKm = km;
@@ -960,6 +960,29 @@ function drawComboChart() {
                     fetchGeoCity(lPos.lat, lPos.lng, lKey, () => { if (comboChart) comboChart.update('none'); });
                 if (rPos && geocodeCache[rKey] === undefined && rKey !== lKey)
                     fetchGeoCity(rPos.lat, rPos.lng, rKey, () => { if (comboChart) comboChart.update('none'); });
+
+                // 充電スポットラベル（モバイルは1箇所のみ、PCは全箇所）
+                const stops = currentSim.stops || [];
+                const isPC = chart.canvas.clientWidth >= 640;
+                if (stops.length > 0 && (isPC || stops.length === 1)) {
+                    for (const stop of stops) {
+                        const startX = currentAxis === 'time' ? stop.time : stop.km;
+                        const pxX = scales.x.getPixelForValue(startX);
+                        if (pxX < chartArea.left || pxX > chartArea.right) continue;
+                        const pxY = scales.y.getPixelForValue(stop.socBefore);
+                        const color = getKwColor(stop.charger.powerKw);
+                        const nm = stop.charger.name;
+                        const label = (nm.length > 14 ? nm.slice(0, 13) + '…' : nm) + `  ${stop.charger.powerKw}kW`;
+                        c.save();
+                        c.font = 'bold 10px "Segoe UI", system-ui, sans-serif';
+                        c.fillStyle = color;
+                        c.textBaseline = 'bottom';
+                        const nearRight = pxX > chartArea.right - 120;
+                        c.textAlign = nearRight ? 'right' : 'left';
+                        c.fillText(label, pxX + (nearRight ? -5 : 5), pxY - 5);
+                        c.restore();
+                    }
+                }
             }
         }],
         options: {
