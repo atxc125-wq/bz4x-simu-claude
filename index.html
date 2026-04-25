@@ -109,7 +109,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.7.3 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.8.0 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-25</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -135,6 +135,47 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
                 <option value="soc">SOC残量 (赤20% / 黄50% / 青100%)</option>
                 <option value="speed">走行速度 (渋滞=赤 / 順調=青)</option>
             </select>
+        </div>
+        <div style="margin-top:10px;">
+            <label style="cursor:pointer; display:flex; align-items:center; gap:6px; margin-bottom:0; text-transform:none; letter-spacing:0;">
+                <input type="checkbox" id="expert-mode" style="width:auto; margin:0;">
+                <span style="font-size:12px; color:var(--muted); font-weight:600;">⚙️ 玄人設定（電費・気温カスタマイズ）</span>
+            </label>
+            <div id="expert-panel" style="display:none; margin-top:8px; padding:10px; background:rgba(255,255,255,0.04); border-radius:8px; border:1px solid rgba(255,255,255,0.1);">
+                <div style="font-size:10px; color:var(--muted); margin-bottom:8px; opacity:0.8;">速度別電費（空欄=速度依存自動計算）</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+                    <div>
+                        <label style="font-size:10px; text-transform:none; letter-spacing:0; margin-bottom:2px;">一般道 40km/h</label>
+                        <div style="display:flex; align-items:center; gap:3px;">
+                            <input type="number" id="city-eff" step="0.1" min="3" max="15" placeholder="7.3">
+                            <span style="font-size:10px; color:var(--muted); white-space:nowrap;">km/kWh</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label style="font-size:10px; text-transform:none; letter-spacing:0; margin-bottom:2px;">高速 100km/h</label>
+                        <div style="display:flex; align-items:center; gap:3px;">
+                            <input type="number" id="hwy-eff" step="0.1" min="3" max="15" placeholder="5.0">
+                            <span style="font-size:10px; color:var(--muted); white-space:nowrap;">km/kWh</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:6px;">
+                    <div>
+                        <label style="font-size:10px; text-transform:none; letter-spacing:0; margin-bottom:2px;">気温（手動）</label>
+                        <div style="display:flex; align-items:center; gap:3px;">
+                            <input type="number" id="manual-temp" step="1" min="-30" max="50" placeholder="API取得">
+                            <span style="font-size:10px; color:var(--muted);">℃</span>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:flex-end; padding-bottom:6px;">
+                        <label style="cursor:pointer; display:flex; align-items:center; gap:5px; font-size:10px; color:var(--muted); text-transform:none; letter-spacing:0; margin-bottom:0; font-weight:400;">
+                            <input type="checkbox" id="alt-correction" checked style="width:auto; margin:0;">
+                            標高補正
+                        </label>
+                    </div>
+                </div>
+                <div style="font-size:10px; color:#fbbf24; opacity:0.85;">🔆 気温≤15℃ + 90kW以上充電時: 到着30分前にバッテリーヒーター作動（3kWh消費）</div>
+            </div>
         </div>
         <button id="calc-btn" style="margin-top:8px;">シミュレーション開始</button>
         <div id="dead-alert"></div>
@@ -216,12 +257,16 @@ function initApp() {
     new google.maps.places.Autocomplete(document.getElementById('waypoint'));
     new google.maps.places.Autocomplete(document.getElementById('dest'));
     
-    document.getElementById('calc-btn').addEventListener('click', () => { 
-        autoChargers = []; 
-        userWaypoints = []; 
-        userCustomDurations = {}; 
-        userIgnoredChargers = []; 
-        onCalculate(); 
+    document.getElementById('expert-mode').addEventListener('change', function() {
+        document.getElementById('expert-panel').style.display = this.checked ? 'block' : 'none';
+    });
+
+    document.getElementById('calc-btn').addEventListener('click', () => {
+        autoChargers = [];
+        userWaypoints = [];
+        userCustomDurations = {};
+        userIgnoredChargers = [];
+        onCalculate();
     });
     
     document.getElementById('color-mode').addEventListener('change', () => { 
@@ -393,10 +438,11 @@ async function findNearbyPOIs(lat, lng) {
 
 // ★ 引数を1つのparamsオブジェクトに集約（エラー防止）
 async function runSimulation(segments, elevations, params, onProgress) {
-    const { batteryKwh, startSocPct, thresholdSocPct, tripDate, startHour, waypointIndexes, isUpboundLegs, allChargerWps } = params;
+    const { batteryKwh, startSocPct, thresholdSocPct, tripDate, startHour, waypointIndexes, isUpboundLegs, allChargerWps, expertMode, cityEff, hwyEff, manualTemp, altCorrection } = params;
     let socKwh = (startSocPct / 100) * batteryKwh, km = 0, time = 0;
     const profile = [], stops = [];
     let lastChargeKm = -999, lastWeatherKm = -999, curBaseTemp = 15, lastWeatherElev = 0;
+    let startElev = null; // 出発地標高（玄人モード標高補正の基準）
     let isDead = false, deadLocation = null, warningLocation = null, warningKm = 0;
     let tempSum = 0, tempCount = 0;
     const totalKm = segments.reduce((sum, s) => sum + s.distKm, 0);
@@ -464,26 +510,44 @@ async function runSimulation(segments, elevations, params, onProgress) {
         
         const currentTripIsUpbound = isUpboundLegs[currentLegIdx] || false;
 
-        if (km - lastWeatherKm >= 50) {
-            curBaseTemp = await fetchTemp(s.lat, s.lng, tripDate);
-            lastWeatherKm = km;
-            lastWeatherElev = currentElev;
-            if (onProgress) {
-                const pct = Math.min(99, Math.round((km / totalKm) * 100));
-                onProgress(`⚡ ${Math.round(km)}km / ${Math.round(totalKm)}km を計算中... (${pct}%)`);
+        if (startElev === null) startElev = currentElev;
+
+        if (!expertMode || manualTemp === null) {
+            if (km - lastWeatherKm >= 50) {
+                curBaseTemp = await fetchTemp(s.lat, s.lng, tripDate);
+                lastWeatherKm = km;
+                lastWeatherElev = currentElev;
+                if (onProgress) {
+                    const pct = Math.min(99, Math.round((km / totalKm) * 100));
+                    onProgress(`⚡ ${Math.round(km)}km / ${Math.round(totalKm)}km を計算中... (${pct}%)`);
+                }
             }
         }
 
         const currentHourOfDay = (startHour + (time / 60)) % 24;
-        const diurnalVar = 4 * Math.sin((currentHourOfDay - 8) * Math.PI / 12); 
-        const localTemp = curBaseTemp - ((currentElev - lastWeatherElev) / 100 * 0.6) + diurnalVar;
+        let localTemp;
+        if (expertMode && manualTemp !== null) {
+            // 手動気温: 出発地基準の標高補正（チェックボックスで切替）
+            const elevDelta = altCorrection ? (currentElev - startElev) / 100 * 0.6 : 0;
+            localTemp = manualTemp - elevDelta;
+        } else {
+            const diurnalVar = 4 * Math.sin((currentHourOfDay - 8) * Math.PI / 12);
+            localTemp = curBaseTemp - ((currentElev - lastWeatherElev) / 100 * 0.6) + diurnalVar;
+        }
         tempSum += localTemp; tempCount++;
-        
+
         const nextProgress = (km + s.distKm) / totalKm;
         const nextElev = elevations[Math.min(elevations.length-1, Math.floor(nextProgress * elevations.length))] || currentElev;
         const elevEnergy = ((nextElev - currentElev) * 2200 * 9.8) / 3.6e6;
 
-        const baseEff = Math.max(3.0, 8.5 - (s.speed * 0.025) - (Math.pow(s.speed, 2) * 0.0001));
+        let baseEff;
+        if (expertMode && cityEff && hwyEff) {
+            // 40km/h→cityEff、100km/h→hwyEff の一次補間
+            const t = Math.max(0, Math.min(1, (s.speed - 40) / 60));
+            baseEff = Math.max(3.0, cityEff + (hwyEff - cityEff) * t);
+        } else {
+            baseEff = Math.max(3.0, 8.5 - (s.speed * 0.025) - (Math.pow(s.speed, 2) * 0.0001));
+        }
         const heatingEnergy = (localTemp < 20 ? (20 - localTemp) * 0.15 : 0) * (s.distKm / s.speed);
         const energy = (s.distKm / baseEff) + elevEnergy + heatingEnergy;
         let currentSoc = (socKwh / batteryKwh) * 100;
@@ -530,6 +594,16 @@ async function runSimulation(segments, elevations, params, onProgress) {
                 if (!stops.some(st => `${st.charger.lat.toFixed(4)},${st.charger.lng.toFixed(4)}` === chgKey)) {
                     if (onProgress) onProgress(`🔌 ${saPa.name.replace(/^.*?　/, '')} を発見 (${Math.round(km)}km地点)`);
                     const duration = userCustomDurations[chgKey] || 30;
+                    // プレコン: 気温≤15℃ + 90kW以上 → 到着30分前に3kWh消費
+                    if (expertMode && localTemp <= 15 && parseInt(saPa.powerKw) >= 90) {
+                        socKwh = Math.max(0.1, socKwh - 3);
+                        const preconStartT = time - 30;
+                        for (let j = profile.length - 1; j >= 0 && profile[j].time >= preconStartT; j--) {
+                            const elapsed = time - profile[j].time;
+                            profile[j].soc = Math.max(0, profile[j].soc - (elapsed / 30) * (3 / batteryKwh) * 100);
+                            profile[j].precon = true;
+                        }
+                    }
                     const socBefore = (socKwh / batteryKwh) * 100;
                     const chargerInfo = { name: saPa.name, lat: saPa.lat, lng: saPa.lng, powerKw: saPa.powerKw, type: 'sa_pa' };
                     const socAfter = calculateCharging(socBefore, duration, chargerInfo);
@@ -577,6 +651,16 @@ async function runSimulation(segments, elevations, params, onProgress) {
                         const chgKey = eKey(emergencySaPa);
                         if (onProgress) onProgress(`🔌 ${emergencySaPa.name.replace(/^.*?　/, '')} (緊急 ${emergencySaPa.powerKw}kW) を使用 (${Math.round(km)}km地点)`);
                         const duration = userCustomDurations[chgKey] || 30;
+                        // プレコン
+                        if (expertMode && localTemp <= 15 && parseInt(emergencySaPa.powerKw) >= 90) {
+                            socKwh = Math.max(0.1, socKwh - 3);
+                            const preconStartT = time - 30;
+                            for (let j = profile.length - 1; j >= 0 && profile[j].time >= preconStartT; j--) {
+                                const elapsed = time - profile[j].time;
+                                profile[j].soc = Math.max(0, profile[j].soc - (elapsed / 30) * (3 / batteryKwh) * 100);
+                                profile[j].precon = true;
+                            }
+                        }
                         const socBefore = (socKwh / batteryKwh) * 100;
                         const chargerInfo = { name: emergencySaPa.name, lat: emergencySaPa.lat, lng: emergencySaPa.lng, powerKw: emergencySaPa.powerKw, type: 'sa_pa' };
                         const socAfter = calculateCharging(socBefore, duration, chargerInfo);
@@ -637,7 +721,16 @@ async function onCalculate() {
         combinedWps.unshift({ location: waypointVal, stopover: true });
     }
 
-    directionsService.route({ origin, destination: dest, waypoints: combinedWps, optimizeWaypoints: false, travelMode: 'DRIVING' }, async (res, status) => {
+    // 出発日時が設定されていれば渋滞予測を適用
+    const tripDateVal = document.getElementById('trip-date').value;
+    const startTimeVal = document.getElementById('start-time').value;
+    let drivingOptions;
+    if (tripDateVal && startTimeVal) {
+        const deptDate = new Date(`${tripDateVal}T${startTimeVal}:00`);
+        if (!isNaN(deptDate)) drivingOptions = { departureTime: deptDate, trafficModel: 'best_guess' };
+    }
+
+    directionsService.route({ origin, destination: dest, waypoints: combinedWps, optimizeWaypoints: false, travelMode: 'DRIVING', ...(drivingOptions ? { drivingOptions } : {}) }, async (res, status) => {
         if (status !== 'OK') return hideLoading() || alert('ルート解析失敗');
 
         // Google Maps の住所から「○○府○○市」形式に短縮
@@ -662,8 +755,11 @@ async function onCalculate() {
         const segments = [];
         const waypointIndexes = [];
         legs.forEach((leg, legIdx) => {
+            // 渋滞考慮: duration_in_traffic があればlegの比率でstep速度を補正
+            const trafficRatio = (leg.duration_in_traffic && leg.duration.value > 0)
+                ? leg.duration_in_traffic.value / leg.duration.value : 1;
             leg.steps.forEach(step => {
-                const speed = (step.distance.value / step.duration.value) * 3.6 || 60;
+                const speed = (step.distance.value / (step.duration.value * trafficRatio)) * 3.6 || 60;
                 const path = step.path;
                 const roadName = extractRoadName(step.instructions);
                 for(let i=0; i < path.length - 1; i++) {
@@ -691,6 +787,9 @@ async function onCalculate() {
             const onProgress = (msg) => showLoading(routeLabel, msg);
 
             // ★ 引数を1つのparamsオブジェクトにまとめる
+            const cityEffVal = parseFloat(document.getElementById('city-eff').value);
+            const hwyEffVal  = parseFloat(document.getElementById('hwy-eff').value);
+            const manualTempVal = parseFloat(document.getElementById('manual-temp').value);
             const params = {
                 batteryKwh: 71.4,
                 startSocPct: parseFloat(document.getElementById('start-soc').value),
@@ -699,7 +798,12 @@ async function onCalculate() {
                 startHour: parseInt(document.getElementById('start-time').value.split(':')[0]) + (parseInt(document.getElementById('start-time').value.split(':')[1]) / 60),
                 waypointIndexes,
                 isUpboundLegs,
-                allChargerWps: [...userWaypoints, ...autoChargers]
+                allChargerWps: [...userWaypoints, ...autoChargers],
+                expertMode: document.getElementById('expert-mode').checked,
+                cityEff: isNaN(cityEffVal) ? null : cityEffVal,
+                hwyEff:  isNaN(hwyEffVal)  ? null : hwyEffVal,
+                manualTemp: isNaN(manualTempVal) ? null : manualTempVal,
+                altCorrection: document.getElementById('alt-correction').checked
             };
 
             const result = await runSimulation(segments, elevations, params, onProgress);
@@ -1111,6 +1215,28 @@ function drawComboChart() {
                         c.restore();
                     }
                 }
+
+                // プレコン中マーカー（黄色点 + 開始ラベル）
+                const preconPts = currentSim.profile.filter(p => p.precon);
+                if (preconPts.length > 0) {
+                    c.save();
+                    c.fillStyle = '#fbbf24';
+                    let labelDrawn = false;
+                    for (const p of preconPts) {
+                        const px = scales.x.getPixelForValue(getX(p));
+                        const py = scales.y.getPixelForValue(p.soc);
+                        if (px < chartArea.left || px > chartArea.right) continue;
+                        c.beginPath(); c.arc(px, py, 2.5, 0, 2 * Math.PI); c.fill();
+                        if (!labelDrawn) {
+                            c.font = 'bold 9px "Segoe UI", system-ui, sans-serif';
+                            c.textAlign = 'left';
+                            c.textBaseline = 'bottom';
+                            c.fillText('🔆プレコン開始', px + 4, py - 3);
+                            labelDrawn = true;
+                        }
+                    }
+                    c.restore();
+                }
             }
         }],
         options: {
@@ -1277,6 +1403,15 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.8.0</span><span class="cl-date">2026-04-25</span>
+        <ul class="cl-items">
+          <li>【玄人設定】速度別電費カスタマイズ（一般道40km/h・高速100km/hを入力→一次補間で全速度に適用）</li>
+          <li>【玄人設定】気温手動入力 + 標高補正チェックボックス（出発地気温ベース）</li>
+          <li>【玄人設定】プレコン: 気温≤15℃ + 90kW以上充電時に到着30分前バッテリーヒーター作動（3kWh消費・グラフに黄色マーカー表示）</li>
+          <li>出発日時を設定すると渋滞予測をルート計算に反映（Google Maps drivingOptions）</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v1.7.3</span><span class="cl-date">2026-04-25</span>
         <ul class="cl-items">
