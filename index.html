@@ -92,7 +92,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.6.4</span>
+            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.6.5</span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-24</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -165,6 +165,7 @@ let userIgnoredChargers = [];
 let currentAxis = 'time';
 let chartFullXMin = 0, chartFullXMax = 0;
 let chartViewMin = 0, chartViewMax = 0;
+let chartStartCity = '', chartEndCity = '';
 
 Chart.defaults.color = '#94a3b8';
 Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
@@ -583,6 +584,8 @@ async function onCalculate() {
         const legs = res.routes[0].legs;
         const startCity = extractCityName(legs[0].start_address);
         const endCity = extractCityName(legs[legs.length - 1].end_address);
+        chartStartCity = startCity;
+        chartEndCity = endCity;
         const routeLabel = `🗺️ ${startCity} → ${endCity}`;
 
         showLoading(routeLabel, '高度プロファイルを取得中...');
@@ -893,8 +896,26 @@ function drawComboChart() {
                 { label: '標高 (m)', data: elevData, yAxisID: 'y1', borderColor: 'rgba(148, 163, 184, 0.4)', borderWidth: 1, pointRadius: 0, fill: true, backgroundColor: 'rgba(148, 163, 184, 0.05)' }
             ]
         },
+        plugins: [{
+            id: 'cityLabels',
+            afterDraw(chart) {
+                if (!chartStartCity && !chartEndCity) return;
+                const {ctx: c, chartArea} = chart;
+                const y = chart.canvas.height / (window.devicePixelRatio || 1) - 3;
+                c.save();
+                c.font = '500 9px "Segoe UI", system-ui, sans-serif';
+                c.fillStyle = 'rgba(148, 163, 184, 0.72)';
+                c.textBaseline = 'bottom';
+                c.textAlign = 'left';
+                c.fillText(chartStartCity, chartArea.left, y);
+                c.textAlign = 'right';
+                c.fillText(chartEndCity, chartArea.right, y);
+                c.restore();
+            }
+        }],
         options: {
             responsive: true, maintainAspectRatio: false,
+            layout: { padding: { bottom: 14 } },
             plugins: {
                 legend: { display: false },
                 tooltip: { backgroundColor: 'rgba(15,23,42,0.9)' }
@@ -945,6 +966,7 @@ function chartZoomReset() {
     let pinchStartDist = 0, pinchStartMin = 0, pinchStartMax = 0;
     let panStartX = 0, panStartMin = 0, panStartMax = 0;
     let isPinching = false, isPanning = false;
+    let rafPending = false;
 
     function getTouchDist(t) {
         const dx = t[0].clientX - t[1].clientX;
@@ -952,6 +974,11 @@ function chartZoomReset() {
         return Math.sqrt(dx*dx + dy*dy);
     }
     function getTouchMidX(t) { return (t[0].clientX + t[1].clientX) / 2; }
+    function scheduleUpdate() {
+        if (rafPending) return;
+        rafPending = true;
+        requestAnimationFrame(() => { rafPending = false; chartApplyView(); });
+    }
 
     const el = document.getElementById('combo-chart');
     el.addEventListener('touchstart', e => {
@@ -979,8 +1006,7 @@ function chartZoomReset() {
             const anchor = pinchStartMin + frac * fullSpan;
             chartViewMin = Math.max(chartFullXMin, anchor - frac * newSpan);
             chartViewMax = Math.min(chartFullXMax, chartViewMin + newSpan);
-            el.style.transform = `scaleX(${1/scale})`;
-            el.style.transformOrigin = `${midX - rect.left}px center`;
+            scheduleUpdate();
             e.preventDefault();
         } else if (isPanning && e.touches.length === 1) {
             const dx = e.touches[0].clientX - panStartX;
@@ -990,19 +1016,12 @@ function chartZoomReset() {
             chartViewMin = Math.max(chartFullXMin, panStartMin + delta);
             chartViewMax = chartViewMin + span;
             if (chartViewMax > chartFullXMax) { chartViewMax = chartFullXMax; chartViewMin = chartViewMax - span; }
-            el.style.transform = `translateX(${-delta / span * rect.width}px)`;
+            scheduleUpdate();
             e.preventDefault();
         }
     }, { passive: false });
 
-    el.addEventListener('touchend', () => {
-        if (isPinching || isPanning) {
-            el.style.transform = '';
-            el.style.transformOrigin = '';
-            isPinching = false; isPanning = false;
-            chartApplyView();
-        }
-    });
+    el.addEventListener('touchend', () => { isPinching = false; isPanning = false; });
 })();
 
 window.onload = () => {
