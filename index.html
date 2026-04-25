@@ -81,6 +81,23 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
 #loading-sub { color: var(--muted); font-size: 12px; min-height: 16px; }
 .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--accent2); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* changelog modal */
+#cl-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9000; align-items:center; justify-content:center; }
+#cl-overlay.open { display:flex; }
+#cl-box { background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); width:min(520px,94vw); max-height:80vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.5); }
+#cl-header { padding:16px 20px 12px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+#cl-header h3 { font-size:14px; font-weight:700; color:var(--text); }
+#cl-close { background:none; border:none; color:var(--muted); font-size:18px; cursor:pointer; line-height:1; }
+#cl-close:hover { color:var(--text); }
+#cl-body { overflow-y:auto; padding:12px 20px 20px; }
+.cl-ver { margin-top:14px; }
+.cl-ver:first-child { margin-top:4px; }
+.cl-vtag { display:inline-block; background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:1px 7px; margin-right:8px; }
+.cl-date { font-size:10px; color:var(--muted); }
+.cl-items { list-style:none; margin-top:6px; display:flex; flex-direction:column; gap:3px; }
+.cl-items li { font-size:12px; color:var(--muted); padding-left:12px; position:relative; }
+.cl-items li::before { content:'·'; position:absolute; left:2px; color:var(--accent2); }
 </style>
 </head>
 <body>
@@ -92,8 +109,8 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.6.9</span>
-            <span style="color:var(--muted); font-size:10px;">更新: 2026-04-24</span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.6.9</span>
+            <span style="color:var(--muted); font-size:10px;">更新: 2026-04-25</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
     </div>
@@ -1146,5 +1163,143 @@ window.onload = () => {
     }
 };
 </script>
+
+<div id="cl-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div id="cl-box">
+    <div id="cl-header">
+      <h3>📋 更新履歴</h3>
+      <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
+    </div>
+    <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.6.9</span><span class="cl-date">2026-04-25</span>
+        <ul class="cl-items">
+          <li>地名の数字プレフィックス問題を根本修正（正規表現を日本語文字のみに限定）</li>
+          <li>充電ラベルの表示判定を「表示域内の停車数」に変更（ズーム連動）</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.6.8</span><span class="cl-date">2026-04-25</span>
+        <ul class="cl-items">
+          <li>充電ラベルをVの谷の真下に2行表示（スポット名／出力）</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.6.7</span><span class="cl-date">2026-04-25</span>
+        <ul class="cl-items">
+          <li>地名の先頭数字除去（都道府県コード混入対策）</li>
+          <li>グラフに充電スポット名・出力kWをラベル表示（モバイルは1箇所のみ、PCは全箇所）</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.6.6</span><span class="cl-date">2026-04-25</span>
+        <ul class="cl-items">
+          <li>X軸地名ラベルをズーム/パンに連動して動的取得（Google Geocoder + 5kmキャッシュ）</li>
+          <li>約15km間隔の座標テーブルで逆ジオコーディングを軽量化</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.6.5</span><span class="cl-date">2026-04-25</span>
+        <ul class="cl-items">
+          <li>パン操作をCSS transform廃止→rAFスロットル再描画に変更（グラフ枠が動かなくなった）</li>
+          <li>X軸の両端に出発地・目的地の地名を表示</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.6.4</span><span class="cl-date">2026-04-25</span>
+        <ul class="cl-items">
+          <li>ズーム機能をボタン（＋/－/↺）＋ピンチ操作で刷新（軽量実装）</li>
+          <li>chartjs-plugin-zoom・Hammer.jsを廃止</li>
+          <li>ピンチ中はCSS transform即フィードバック→touchend時に1回だけ再描画</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.6.3</span><span class="cl-date">2026-04-24</span>
+        <ul class="cl-items">
+          <li>ズーム機能を試験実装（chartjs-plugin-zoom）※動作重く後継版で刷新</li>
+          <li>X軸幅ずれを二重requestAnimationFrameで修正</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.6.2</span><span class="cl-date">2026-04-24</span>
+        <ul class="cl-items">
+          <li>FLASHチャージャーが誤って90kW制限されていたバグ修正（isFlash判定修正）</li>
+          <li>180kW EIFER AUTOなど200kW未満のFLASH機も正しくブーストを適用</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.6.0–1.6.1</span><span class="cl-date">2026-04-24</span>
+        <ul class="cl-items">
+          <li>充電グラフのkWカラー描画が機能しないバグ修正（socDataにchargingKwを追加）</li>
+          <li>充電中ライン太さを4px（走行中3px）に変更して視認性向上</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.5.9</span><span class="cl-date">2026-04-24</span>
+        <ul class="cl-items">
+          <li>充電中グラフをkW別カラーで描画（ピンク=高kW → 薄紫 → 青=低kW）</li>
+          <li>15分ブースト切れの瞬間が視覚的に確認できる</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.5.8</span><span class="cl-date">2026-04-24</span>
+        <ul class="cl-items">
+          <li>出発地・経由地・目的地の入力欄に✕クリアボタンを追加</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.5.6–1.5.7</span><span class="cl-date">2026-04-23</span>
+        <ul class="cl-items">
+          <li>充電器の稲妻バッジをkW別カラー化（赤150kW↑ / 橙70kW↑ / 黄30kW↑ / グレー）</li>
+          <li>マップ上の充電マーカーも同じカラールールで描画</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.5.5</span><span class="cl-date">2026-04-23</span>
+        <ul class="cl-items">
+          <li>東北道上り方面の充電スポット13箇所を手動追加（青森→浜松などで電欠対策）</li>
+          <li>is_duplicate()を上り/下りペアを別スポットとして許容するよう修正</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.5.4</span><span class="cl-date">2026-04-23</span>
+        <ul class="cl-items">
+          <li>ルート計算中の進捗をリアルタイム表示（都市名・km・%）</li>
+          <li>出発地→目的地のラベルをローディング画面に表示</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.5.3</span><span class="cl-date">2026-04-22</span>
+        <ul class="cl-items">
+          <li>制限付きAPIキーを埋め込み（訪問者がAPIキー不要で利用可能に）</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.5.0–1.5.2</span><span class="cl-date">2026-04-20</span>
+        <ul class="cl-items">
+          <li>菖蒲PAが東北道ルートで誤選択される問題を修正（pendingRoadName 5km確認システム）</li>
+          <li>JCT通過時の道路名一時切り替えによる誤認を防止</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.4.x</span><span class="cl-date">2026-04-初旬</span>
+        <ul class="cl-items">
+          <li>往復ルート対応（上り/下り自動判定）</li>
+          <li>SA/PA自動充電スポット検出</li>
+          <li>マップ連動描画（ルートカラー・充電マーカー）</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.0–1.3</span><span class="cl-date">2026-03</span>
+        <ul class="cl-items">
+          <li>BZ4X充電シミュレーション基盤（SOC/速度/標高プロファイル）</li>
+          <li>天気データ連動による消費電力補正</li>
+          <li>Google Maps Directions/Elevation API統合</li>
+          <li>充電スポットDBスクレイピング自動化（build_chargers.py）</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
