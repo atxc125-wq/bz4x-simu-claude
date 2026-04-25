@@ -109,7 +109,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.8.2 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.8.3 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-25</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -123,7 +123,12 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
         
         <div class="field"><label>出発地</label><div class="input-wrap"><input type="text" id="origin" value="東京"><button class="input-clear" onclick="document.getElementById('origin').value='';document.getElementById('origin').focus()">✕</button></div></div>
         <div class="field"><label>経由地 (往復の場合は目的地)</label><div class="input-wrap"><input type="text" id="waypoint" placeholder="例: 大阪城"><button class="input-clear" onclick="document.getElementById('waypoint').value='';document.getElementById('waypoint').focus()">✕</button></div></div>
-        <div class="field"><label>目的地 (往復の場合は出発地)</label><div class="input-wrap"><input type="text" id="dest" value="大阪"><button class="input-clear" onclick="document.getElementById('dest').value='';document.getElementById('dest').focus()">✕</button></div></div>
+        <div class="field"><label>目的地 (往復の場合は出発地)</label><div class="input-wrap"><input type="text" id="dest" value="大阪"><button class="input-clear" onclick="document.getElementById('dest').value='';document.getElementById('dest').focus()">✕</button></div>
+            <label style="cursor:pointer; display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--muted); margin-top:5px;">
+                <input type="checkbox" id="precon-dest" style="width:auto; margin:0;">
+                🔆 目的地到着前にもプレコン
+            </label>
+        </div>
         
         <div class="stat-grid" style="grid-template-columns: 1fr 1fr;">
             <div class="field"><label>出発SOC (%)</label><input type="number" id="start-soc" value="100"></div>
@@ -443,10 +448,11 @@ async function findNearbyPOIs(lat, lng) {
 
 // ★ 引数を1つのparamsオブジェクトに集約（エラー防止）
 async function runSimulation(segments, elevations, params, onProgress) {
-    const { batteryKwh, startSocPct, thresholdSocPct, tripDate, startHour, waypointIndexes, isUpboundLegs, allChargerWps, expertMode, cityEff, hwyEff, manualTemp, altCorrection, preconTempThreshold = 15 } = params;
+    const { batteryKwh, startSocPct, thresholdSocPct, tripDate, startHour, waypointIndexes, isUpboundLegs, allChargerWps, expertMode, cityEff, hwyEff, manualTemp, altCorrection, preconTempThreshold = 15, preconDest = false } = params;
     let socKwh = (startSocPct / 100) * batteryKwh, km = 0, time = 0;
     const profile = [], stops = [];
     let lastChargeKm = -999, lastWeatherKm = -999, curBaseTemp = 15, lastWeatherElev = 0;
+    let lastLocalTemp = 15;
     let startElev = null; // 出発地標高（玄人モード標高補正の基準）
     let isDead = false, deadLocation = null, warningLocation = null, warningKm = 0;
     let tempSum = 0, tempCount = 0;
@@ -540,6 +546,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
             localTemp = curBaseTemp - ((currentElev - lastWeatherElev) / 100 * 0.6) + diurnalVar;
         }
         tempSum += localTemp; tempCount++;
+        lastLocalTemp = localTemp;
 
         const nextProgress = (km + s.distKm) / totalKm;
         const nextElev = elevations[Math.min(elevations.length-1, Math.floor(nextProgress * elevations.length))] || currentElev;
@@ -690,6 +697,18 @@ async function runSimulation(segments, elevations, params, onProgress) {
     }
     
     warningLocation = warningLocation || deadLocation;
+
+    // 目的地到着前プレコン
+    if (preconDest && !isDead && lastLocalTemp <= preconTempThreshold) {
+        socKwh = Math.max(0.1, socKwh - 3);
+        const preconStartT = time - 30;
+        for (let j = profile.length - 1; j >= 0 && profile[j].time >= preconStartT; j--) {
+            const preconElapsed = profile[j].time - preconStartT;
+            profile[j].soc = Math.max(0, profile[j].soc - (preconElapsed / 30) * (3 / batteryKwh) * 100);
+            profile[j].precon = true;
+        }
+    }
+
     const avgTemp = tempCount > 0 ? tempSum / tempCount : 15;
     return { profile, stops, arrivalSoc: isDead ? 0 : (socKwh/batteryKwh)*100, eta: time, isDead, deadKm: km, deadLocation, warningLocation, warningKm, avgTemp };
 }
@@ -801,7 +820,8 @@ async function onCalculate() {
                 hwyEff:  isNaN(hwyEffVal)  ? null : hwyEffVal,
                 manualTemp: isNaN(manualTempVal) ? null : manualTempVal,
                 altCorrection: document.getElementById('alt-correction').checked,
-                preconTempThreshold: parseFloat(document.getElementById('precon-temp').value) || 15
+                preconTempThreshold: parseFloat(document.getElementById('precon-temp').value) || 15,
+                preconDest: document.getElementById('precon-dest').checked
             };
 
             const result = await runSimulation(segments, elevations, params, onProgress);
@@ -1401,6 +1421,12 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.8.3</span><span class="cl-date">2026-04-25</span>
+        <ul class="cl-items">
+          <li>目的地到着前プレコン対応: 目的地フィールド下のチェックボックスで有効化（充電スポットを目的地にする場合に使用）</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v1.8.2</span><span class="cl-date">2026-04-25</span>
         <ul class="cl-items">
