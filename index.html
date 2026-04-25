@@ -92,7 +92,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.6.5</span>
+            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.6.6</span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-24</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -166,6 +166,9 @@ let currentAxis = 'time';
 let chartFullXMin = 0, chartFullXMax = 0;
 let chartViewMin = 0, chartViewMax = 0;
 let chartStartCity = '', chartEndCity = '';
+let routeKmLatLng = []; // sparse [{km, lat, lng}] for reverse geocoding
+let geocodeCache = {};  // km-key → city string | null (pending)
+let geocoder = null;
 
 Chart.defaults.color = '#94a3b8';
 Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
@@ -614,6 +617,16 @@ async function onCalculate() {
             if (legIdx < legs.length - 1) waypointIndexes.push(segments.length - 1);
         });
 
+        // 逆ジオコーディング用スパース座標テーブル（約15km間隔）
+        geocodeCache = {};
+        { let _km = 0, _next = 0;
+          routeKmLatLng = [{ km: 0, lat: segments[0].lat, lng: segments[0].lng }];
+          for (const seg of segments) { _km += seg.distKm; if (_km >= _next + 15) { routeKmLatLng.push({ km: _km, lat: seg.lat, lng: seg.lng }); _next = _km; } }
+          const ls = segments[segments.length - 1]; routeKmLatLng.push({ km: _km, lat: ls.lat, lng: ls.lng });
+          geocodeCache[0] = chartStartCity;
+          geocodeCache[Math.round(_km / 5) * 5] = chartEndCity;
+        }
+
         elevationService.getElevationAlongPath({ path: res.routes[0].overview_path, samples: 250 }, async (elevRes, status) => {
             const elevations = (status === 'OK' && elevRes) ? elevRes.map(r => r.elevation) : new Array(250).fill(0);
 
@@ -840,6 +853,32 @@ function drawMarkers(originPoint, destPoint, stops, deadPoint, warningPoint) {
     });
 }
 
+function getKmFromChartX(x) {
+    if (currentAxis !== 'time') return x;
+    const p = currentSim.profile;
+    let lo = 0, hi = p.length - 1;
+    while (lo < hi) { const m = (lo + hi) >> 1; if (p[m].time < x) lo = m + 1; else hi = m; }
+    return p[lo].km;
+}
+
+function getLatLngAtKm(km) {
+    if (!routeKmLatLng.length) return null;
+    let lo = 0, hi = routeKmLatLng.length - 1;
+    while (lo < hi) { const m = (lo + hi) >> 1; if (routeKmLatLng[m].km < km) lo = m + 1; else hi = m; }
+    return routeKmLatLng[lo];
+}
+
+function fetchGeoCity(lat, lng, key, cb) {
+    if (geocodeCache[key] !== undefined) { cb(geocodeCache[key] || ''); return; }
+    geocodeCache[key] = null;
+    if (!geocoder) geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ location: { lat, lng }, language: 'ja' }, (res, st) => {
+        const city = (st === 'OK' && res && res[0]) ? extractCityName(res[0].formatted_address) : '';
+        geocodeCache[key] = city;
+        cb(city);
+    });
+}
+
 function drawComboChart() {
     if (comboChart) comboChart.destroy();
     const ctx = document.getElementById('combo-chart').getContext('2d');
@@ -899,18 +938,28 @@ function drawComboChart() {
         plugins: [{
             id: 'cityLabels',
             afterDraw(chart) {
-                if (!chartStartCity && !chartEndCity) return;
-                const {ctx: c, chartArea} = chart;
+                if (!currentSim || !routeKmLatLng.length) return;
+                const {ctx: c, chartArea, scales} = chart;
+                const leftKm  = getKmFromChartX(scales.x.min);
+                const rightKm = getKmFromChartX(scales.x.max);
+                const lKey = Math.round(leftKm  / 5) * 5;
+                const rKey = Math.round(rightKm / 5) * 5;
+                const leftCity  = (geocodeCache[lKey] != null) ? geocodeCache[lKey] : chartStartCity;
+                const rightCity = (geocodeCache[rKey] != null) ? geocodeCache[rKey] : chartEndCity;
                 const y = chart.canvas.height / (window.devicePixelRatio || 1) - 3;
                 c.save();
                 c.font = '500 9px "Segoe UI", system-ui, sans-serif';
                 c.fillStyle = 'rgba(148, 163, 184, 0.72)';
                 c.textBaseline = 'bottom';
-                c.textAlign = 'left';
-                c.fillText(chartStartCity, chartArea.left, y);
-                c.textAlign = 'right';
-                c.fillText(chartEndCity, chartArea.right, y);
+                c.textAlign = 'left';  c.fillText(leftCity,  chartArea.left,  y);
+                c.textAlign = 'right'; c.fillText(rightCity, chartArea.right, y);
                 c.restore();
+                const lPos = getLatLngAtKm(leftKm);
+                const rPos = getLatLngAtKm(rightKm);
+                if (lPos && geocodeCache[lKey] === undefined)
+                    fetchGeoCity(lPos.lat, lPos.lng, lKey, () => { if (comboChart) comboChart.update('none'); });
+                if (rPos && geocodeCache[rKey] === undefined && rKey !== lKey)
+                    fetchGeoCity(rPos.lat, rPos.lng, rKey, () => { if (comboChart) comboChart.update('none'); });
             }
         }],
         options: {
