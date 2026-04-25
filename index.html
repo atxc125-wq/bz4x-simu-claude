@@ -92,7 +92,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.6.7</span>
+            <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em;">v1.6.8</span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-24</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -972,14 +972,16 @@ function drawComboChart() {
                         const pxY = scales.y.getPixelForValue(stop.socBefore);
                         const color = getKwColor(stop.charger.powerKw);
                         const nm = stop.charger.name;
-                        const label = (nm.length > 14 ? nm.slice(0, 13) + '…' : nm) + `  ${stop.charger.powerKw}kW`;
+                        const line1 = nm.length > 14 ? nm.slice(0, 13) + '…' : nm;
+                        const line2 = `${stop.charger.powerKw}kW`;
+                        const labelX = Math.max(chartArea.left + 36, Math.min(chartArea.right - 36, pxX));
                         c.save();
                         c.font = 'bold 10px "Segoe UI", system-ui, sans-serif';
                         c.fillStyle = color;
-                        c.textBaseline = 'bottom';
-                        const nearRight = pxX > chartArea.right - 120;
-                        c.textAlign = nearRight ? 'right' : 'left';
-                        c.fillText(label, pxX + (nearRight ? -5 : 5), pxY - 5);
+                        c.textAlign = 'center';
+                        c.textBaseline = 'top';
+                        c.fillText(line1, labelX, pxY + 5);
+                        c.fillText(line2, labelX, pxY + 17);
                         c.restore();
                     }
                 }
