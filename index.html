@@ -174,7 +174,12 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
                         </label>
                     </div>
                 </div>
-                <div style="font-size:10px; color:#fbbf24; opacity:0.85;">🔆 気温≤15℃ + 90kW以上充電時: 到着30分前にバッテリーヒーター作動（3kWh消費）</div>
+                <div style="font-size:10px; color:#fbbf24; opacity:0.85; margin-bottom:6px;">🔆 プレコン: 気温が閾値以下 + 90kW以上充電時に到着30分前バッテリーヒーター作動（3kWh消費）</div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <span style="font-size:10px; color:#fbbf24;">└ 作動閾値</span>
+                    <input type="number" id="precon-temp" step="1" min="-20" max="25" value="15" style="width:64px; padding:4px 6px; font-size:12px;">
+                    <span style="font-size:10px; color:var(--muted);">℃以下（デフォルト15℃）</span>
+                </div>
             </div>
         </div>
         <button id="calc-btn" style="margin-top:8px;">シミュレーション開始</button>
@@ -438,7 +443,7 @@ async function findNearbyPOIs(lat, lng) {
 
 // ★ 引数を1つのparamsオブジェクトに集約（エラー防止）
 async function runSimulation(segments, elevations, params, onProgress) {
-    const { batteryKwh, startSocPct, thresholdSocPct, tripDate, startHour, waypointIndexes, isUpboundLegs, allChargerWps, expertMode, cityEff, hwyEff, manualTemp, altCorrection } = params;
+    const { batteryKwh, startSocPct, thresholdSocPct, tripDate, startHour, waypointIndexes, isUpboundLegs, allChargerWps, expertMode, cityEff, hwyEff, manualTemp, altCorrection, preconTempThreshold = 15 } = params;
     let socKwh = (startSocPct / 100) * batteryKwh, km = 0, time = 0;
     const profile = [], stops = [];
     let lastChargeKm = -999, lastWeatherKm = -999, curBaseTemp = 15, lastWeatherElev = 0;
@@ -594,13 +599,14 @@ async function runSimulation(segments, elevations, params, onProgress) {
                 if (!stops.some(st => `${st.charger.lat.toFixed(4)},${st.charger.lng.toFixed(4)}` === chgKey)) {
                     if (onProgress) onProgress(`🔌 ${saPa.name.replace(/^.*?　/, '')} を発見 (${Math.round(km)}km地点)`);
                     const duration = userCustomDurations[chgKey] || 30;
-                    // プレコン: 気温≤15℃ + 90kW以上 → 到着30分前に3kWh消費
-                    if (expertMode && localTemp <= 15 && parseInt(saPa.powerKw) >= 90) {
+                    // プレコン: 閾値以下 + 90kW以上 → 到着30分前から3kWh追加消費（常時有効）
+                    if (localTemp <= preconTempThreshold && parseInt(saPa.powerKw) >= 90) {
                         socKwh = Math.max(0.1, socKwh - 3);
                         const preconStartT = time - 30;
                         for (let j = profile.length - 1; j >= 0 && profile[j].time >= preconStartT; j--) {
-                            const elapsed = time - profile[j].time;
-                            profile[j].soc = Math.max(0, profile[j].soc - (elapsed / 30) * (3 / batteryKwh) * 100);
+                            // preconElapsed: プレコン開始からの経過分 → 時間が進むほどSOC低下が大きい
+                            const preconElapsed = profile[j].time - preconStartT;
+                            profile[j].soc = Math.max(0, profile[j].soc - (preconElapsed / 30) * (3 / batteryKwh) * 100);
                             profile[j].precon = true;
                         }
                     }
@@ -651,13 +657,13 @@ async function runSimulation(segments, elevations, params, onProgress) {
                         const chgKey = eKey(emergencySaPa);
                         if (onProgress) onProgress(`🔌 ${emergencySaPa.name.replace(/^.*?　/, '')} (緊急 ${emergencySaPa.powerKw}kW) を使用 (${Math.round(km)}km地点)`);
                         const duration = userCustomDurations[chgKey] || 30;
-                        // プレコン
-                        if (expertMode && localTemp <= 15 && parseInt(emergencySaPa.powerKw) >= 90) {
+                        // プレコン（常時有効）
+                        if (localTemp <= preconTempThreshold && parseInt(emergencySaPa.powerKw) >= 90) {
                             socKwh = Math.max(0.1, socKwh - 3);
                             const preconStartT = time - 30;
                             for (let j = profile.length - 1; j >= 0 && profile[j].time >= preconStartT; j--) {
-                                const elapsed = time - profile[j].time;
-                                profile[j].soc = Math.max(0, profile[j].soc - (elapsed / 30) * (3 / batteryKwh) * 100);
+                                const preconElapsed = profile[j].time - preconStartT;
+                                profile[j].soc = Math.max(0, profile[j].soc - (preconElapsed / 30) * (3 / batteryKwh) * 100);
                                 profile[j].precon = true;
                             }
                         }
@@ -794,7 +800,8 @@ async function onCalculate() {
                 cityEff: isNaN(cityEffVal) ? null : cityEffVal,
                 hwyEff:  isNaN(hwyEffVal)  ? null : hwyEffVal,
                 manualTemp: isNaN(manualTempVal) ? null : manualTempVal,
-                altCorrection: document.getElementById('alt-correction').checked
+                altCorrection: document.getElementById('alt-correction').checked,
+                preconTempThreshold: parseFloat(document.getElementById('precon-temp').value) || 15
             };
 
             const result = await runSimulation(segments, elevations, params, onProgress);
