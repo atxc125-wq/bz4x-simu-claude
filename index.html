@@ -109,7 +109,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.8.0 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.8.1 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-25</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -1402,12 +1402,19 @@ window.onload = () => {
     </div>
     <div id="cl-body">
       <div class="cl-ver">
+        <span class="cl-vtag">v1.8.1</span><span class="cl-date">2026-04-25</span>
+        <ul class="cl-items">
+          <li>プレコンをデフォルト常時有効化（玄人設定不要）</li>
+          <li>プレコンSOC計算の方向バグ修正（到着時に向かって徐々に消費される正しい傾斜に）</li>
+          <li>玄人設定にプレコン作動閾値温度を追加（デフォルト15℃、変更可能）</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
         <span class="cl-vtag">v1.8.0</span><span class="cl-date">2026-04-25</span>
         <ul class="cl-items">
           <li>【玄人設定】速度別電費カスタマイズ（一般道40km/h・高速100km/hを入力→一次補間で全速度に適用）</li>
           <li>【玄人設定】気温手動入力 + 標高補正チェックボックス（出発地気温ベース）</li>
-          <li>【玄人設定】プレコン: 気温≤15℃ + 90kW以上充電時に到着30分前バッテリーヒーター作動（3kWh消費・グラフに黄色マーカー表示）</li>
-          <li>出発日時を設定すると渋滞予測をルート計算に反映（Google Maps drivingOptions）</li>
+          <li>【玄人設定】プレコン: 90kW以上充電時に到着30分前バッテリーヒーター作動（3kWh消費・グラフに黄色マーカー表示）</li>
         </ul>
       </div>
       <div class="cl-ver">
