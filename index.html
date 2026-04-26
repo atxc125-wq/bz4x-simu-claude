@@ -1225,15 +1225,25 @@ function getLatLngAtKm(km) {
     return routeKmLatLng[lo];
 }
 
-function fetchGeoCity(lat, lng, key, cb) {
+async function fetchGeoCity(lat, lng, key, cb) {
     if (geocodeCache[key] !== undefined) { cb(geocodeCache[key] || ''); return; }
     geocodeCache[key] = null;
-    if (!geocoder) geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ location: { lat, lng }, language: 'ja' }, (res, st) => {
-        const city = (st === 'OK' && res && res[0]) ? extractCityName(res[0].formatted_address) : '';
+    // 1) Google Geocoder
+    const gCity = await new Promise(resolve => {
+        if (!geocoder) geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ location: { lat, lng }, language: 'ja' }, (res, st) =>
+            resolve((st === 'OK' && res?.[0]) ? extractCityName(res[0].formatted_address) : null));
+    });
+    if (gCity !== null) { geocodeCache[key] = gCity; cb(gCity); return; }
+    // 2) Nominatim fallback
+    try {
+        const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat.toFixed(6)}&lon=${lng.toFixed(6)}&format=json&accept-language=ja`);
+        const d = await r.json();
+        const a = d.address || {};
+        const city = (a.state || '') + (a.city || a.town || a.village || a.county || '');
         geocodeCache[key] = city;
         cb(city);
-    });
+    } catch { geocodeCache[key] = ''; cb(''); }
 }
 
 function drawComboChart() {
@@ -1378,7 +1388,15 @@ function drawComboChart() {
                 tooltip: { backgroundColor: 'rgba(15,23,42,0.9)' }
             },
             scales: {
-                x: { type: 'linear', min: chartViewMin, max: chartViewMax, ticks: { callback: v => currentAxis==='time'?Math.floor(v/60)+'h'+Math.round(v%60)+'m' : v.toFixed(0)+'km' }, grid: { color: 'rgba(51, 65, 85, 0.3)' } },
+                x: { type: 'linear', min: chartViewMin, max: chartViewMax, ticks: { font: { size: 9 }, callback: v => {
+                    if (currentAxis !== 'time') return v.toFixed(0) + 'km';
+                    const elapsed = Math.floor(v/60) + 'h' + Math.round(v%60) + 'm';
+                    const stVal = document.getElementById('start-time').value || '00:00';
+                    const [sh, sm] = stVal.split(':').map(Number);
+                    const depMin = sh * 60 + (sm || 0);
+                    const t = Math.round((depMin + v) % 1440);
+                    return [elapsed, String(Math.floor(t/60)).padStart(2,'0') + ':' + String(t%60).padStart(2,'0')];
+                } }, grid: { color: 'rgba(51, 65, 85, 0.3)' } },
                 y: { min: 0, max: 100, position: 'left', grid: { color: 'rgba(51, 65, 85, 0.3)' } },
                 y1: { position: 'right', display: true, grid: { drawOnChartArea: false }, ticks: { color: 'rgba(148, 163, 184, 0.7)' } },
                 y2: { min: 0, max: 100, display: false }
