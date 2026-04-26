@@ -128,7 +128,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.8.7 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.8.8 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-26</span>
         </div>
@@ -471,6 +471,17 @@ function extractRoadName(htmlInstr) {
 function extractHighwayCore(name) {
     if (!name) return null;
     return name.replace(/高速道路$/, '').replace(/自動車道$/, '').replace(/高速$/, '').replace(/道路$/, '');
+}
+
+function shortHighway(name) {
+    if (!name) return '';
+    return name.replace(/高速道路$/, '').replace(/高速自動車道$/, '').replace(/自動車道$/, '道').replace(/高速$/, '');
+}
+
+// 現在のルートパス（routeKmLatLng）から threshKm 以内かチェック
+function isNearRoute(lat, lng, threshKm = 10) {
+    if (!routeKmLatLng.length) return true;
+    return routeKmLatLng.some(pt => haversine(lat, lng, pt.lat, pt.lng) < threshKm);
 }
 
 // 現在走行中の道路名とSA/PAの高速名が一致するか
@@ -1160,14 +1171,25 @@ window.showAlts = function(idx) {
         return { ...c, dist: distToCur, direction };
     });
 
-    const saPaAlts = mapped.filter(c => c.dist > 0.1 && c.dist < 60 && c.type === 'sa_pa' && isValidDirection(c.name, curStop.isUpbound) && roadMatchesCharger(curStop.detectedRoad, c.name)).sort((a, b) => a.dist - b.dist).slice(0, 5);
+    const saPaAlts = mapped.filter(c =>
+        c.dist > 0.1 && c.dist < 60 && c.type === 'sa_pa' &&
+        isValidDirection(c.name, curStop.isUpbound) &&
+        roadMatchesCharger(curStop.detectedRoad, c.name) &&
+        isNearRoute(c.lat, c.lng)
+    ).sort((a, b) => a.dist - b.dist).slice(0, 5);
     const offAlts  = mapped.filter(c => c.dist > 0.1 && c.dist < 15 && c.type !== 'sa_pa').sort((a, b) => a.dist - b.dist).slice(0, 3);
 
-    const renderOpt = (a) => `
+    const renderOpt = (a) => {
+        const hwM = a.name.match(/^([^\s　]+(高速道路|高速自動車道|自動車道|高速))[\s　]+/);
+        const hwShort = hwM ? shortHighway(hwM[1]) : shortHighway(curStop.detectedRoad || '');
+        const displayName = hwM ? a.name.slice(hwM[0].length) : a.name;
+        const badge = hwShort ? `<span style="background:rgba(52,211,153,0.12);color:#6ee7b7;border:1px solid rgba(52,211,153,0.25);border-radius:3px;font-size:9px;font-weight:bold;padding:1px 4px;margin-right:4px;">${hwShort}</span>` : '';
+        return `
         <div class="alt-opt" onclick="forceChg(${a.lat}, ${a.lng}, ${idx}, '${a.name.replace(/'/g, "\\'")}', '${a.type || ''}')" style="display:flex; justify-content:space-between; align-items:center;">
-            <span>${a.name} <span style="font-size:10px; color:var(--muted)">(${a.powerKw}kW)</span></span>
+            <span>${badge}${displayName} <span style="font-size:10px; color:var(--muted)">(${a.powerKw}kW)</span></span>
             <span style="background:rgba(6,182,212,0.15); color:var(--accent2); padding:2px 6px; border-radius:4px; font-size:10px; font-weight:bold;">${a.direction}に ${a.dist.toFixed(1)}km</span>
         </div>`;
+    };
 
     const saPaHtml = saPaAlts.length ? `<div style="font-size:10px;color:var(--muted);padding:4px 0 2px;font-weight:bold;">🛣 高速SA/PA</div>${saPaAlts.map(renderOpt).join('')}` : '';
     const offHtml  = offAlts.length  ? `<div style="font-size:10px;color:var(--muted);padding:4px 0 2px;font-weight:bold;">🏙 一般道</div>${offAlts.map(renderOpt).join('')}` : '';
@@ -1554,6 +1576,13 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.8.8</span><span class="cl-date">2026-04-26</span>
+        <ul class="cl-items">
+          <li>代替充電器フィルター強化：現在走行中のルートパスから10km超の充電スポットを除外（異なる高速道路への誤選択を防止）</li>
+          <li>代替充電器リストに高速道路バッジを追加：「東名」「新東名」など短縮名で表示。長い名前から高速名プレフィックスを自動除去</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v1.8.7</span><span class="cl-date">2026-04-26</span>
         <ul class="cl-items">
