@@ -128,7 +128,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.8.9 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.9.0 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-26</span>
         </div>
@@ -252,6 +252,7 @@ let googleMap, directionsService, placesService, elevationService;
 let chargerDB = (typeof CHARGER_DATA !== 'undefined') ? CHARGER_DATA : [];
 let currentSim = null, currentDetailedPath = null;
 let routePolylines = [], comboChart = null, mapMarkers = [], emergencyMarkers = [];
+let dbChargerMarkers = [], dbPinsOn = false;
 let userWaypoints = []; 
 let autoChargers = []; 
 let userCustomDurations = {}; 
@@ -270,10 +271,13 @@ Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
 
 function initApp() {
     const dbStatusEl = document.getElementById('db-status');
+    dbStatusEl.style.cursor = 'pointer';
+    dbStatusEl.title = '全充電スポットをマップに表示';
+    dbStatusEl.onclick = toggleDbPins;
     if (chargerDB.length > 0) {
-        dbStatusEl.innerHTML = `<span style="color:#10b981; font-size:11px; font-weight:bold;">✓ DB: ${chargerDB.length}件ロード済</span>`;
+        dbStatusEl.innerHTML = `<span style="color:#10b981;font-size:11px;font-weight:bold;">📍 DB: ${chargerDB.length}件 <span style="font-weight:400;opacity:0.7;">タップで表示</span></span>`;
     } else {
-        dbStatusEl.innerHTML = `<span style="color:#ef4444; font-size:11px; font-weight:bold;">⚠️ DB未読み込み (chargers_data.jsを確認)</span>`;
+        dbStatusEl.innerHTML = `<span style="color:#ef4444;font-size:11px;font-weight:bold;">⚠️ DB未読み込み (chargers_data.jsを確認)</span>`;
     }
 
     googleMap = new google.maps.Map(document.getElementById('map'), {
@@ -1223,6 +1227,39 @@ window.forceChg = function(lat, lng, idx, name, type) {
     onCalculate();
 }
 
+function toggleDbPins() {
+    if (dbPinsOn) {
+        dbChargerMarkers.forEach(m => m.setMap(null));
+        dbChargerMarkers = [];
+        dbPinsOn = false;
+    } else {
+        for (const c of chargerDB) {
+            dbChargerMarkers.push(new google.maps.Marker({
+                position: { lat: c.lat, lng: c.lng },
+                map: googleMap,
+                title: `${c.name} (${c.powerKw}kW)`,
+                icon: { path: google.maps.SymbolPath.CIRCLE, scale: 5,
+                    fillColor: getKwColor(c.powerKw), fillOpacity: 0.8,
+                    strokeWeight: 1, strokeColor: '#ffffff' },
+                zIndex: 0
+            }));
+        }
+        dbPinsOn = true;
+        document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    _updateDbBadge();
+}
+
+function _updateDbBadge() {
+    const el = document.getElementById('db-status');
+    if (!el) return;
+    if (dbPinsOn) {
+        el.innerHTML = `<span style="color:#f97316;font-size:11px;font-weight:bold;">📍 DB: ${chargerDB.length}件 表示中 <span style="font-weight:400;opacity:0.7;">タップで非表示</span></span>`;
+    } else {
+        el.innerHTML = `<span style="color:#10b981;font-size:11px;font-weight:bold;">📍 DB: ${chargerDB.length}件 <span style="font-weight:400;opacity:0.7;">タップで表示</span></span>`;
+    }
+}
+
 function drawMarkers(originPoint, destPoint, stops, deadPoint, warningPoint) {
     mapMarkers.forEach(m => m.setMap(null)); mapMarkers = [];
     const addMarker = (pos, lbl, color, z = 1, title = "") => {
@@ -1589,6 +1626,12 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.9.0</span><span class="cl-date">2026-04-26</span>
+        <ul class="cl-items">
+          <li>「DB: 〇〇件」バッジをタップで全充電スポットをマップにピン表示／非表示できるようになった。色はkWに対応（赤:150kW+ / 橙:70kW+ / 黄:30kW+ / 灰:それ以下）</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v1.8.9</span><span class="cl-date">2026-04-26</span>
         <ul class="cl-items">
