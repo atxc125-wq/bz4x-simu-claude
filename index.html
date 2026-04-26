@@ -100,6 +100,23 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
 .cl-items { list-style:none; margin-top:6px; display:flex; flex-direction:column; gap:3px; }
 .cl-items li { font-size:12px; color:var(--muted); padding-left:12px; position:relative; }
 .cl-items li::before { content:'·'; position:absolute; left:2px; color:var(--accent2); }
+
+/* help modal */
+#help-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9000; align-items:center; justify-content:center; }
+#help-overlay.open { display:flex; }
+#help-box { background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); width:min(520px,94vw); max-height:80vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.5); }
+#help-header { padding:16px 20px 12px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+#help-header h3 { font-size:14px; font-weight:700; color:var(--text); }
+#help-close { background:none; border:none; color:var(--muted); font-size:18px; cursor:pointer; line-height:1; }
+#help-close:hover { color:var(--text); }
+#help-body { overflow-y:auto; padding:12px 20px 20px; }
+.help-section { margin-top:16px; }
+.help-section:first-child { margin-top:4px; }
+.help-section h4 { font-size:11px; color:var(--accent2); text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px; border-bottom:1px solid var(--border); padding-bottom:4px; font-weight:700; }
+.help-item { display:flex; gap:10px; margin-bottom:10px; font-size:13px; line-height:1.55; }
+.help-icon { font-size:17px; flex-shrink:0; width:24px; text-align:center; margin-top:1px; }
+.help-item strong { color:var(--text); font-weight:600; }
+.help-item span { color:var(--muted); }
 </style>
 </head>
 <body>
@@ -111,8 +128,9 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.8.4 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
-            <span style="color:var(--muted); font-size:10px;">更新: 2026-04-25</span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.8.5 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
+            <span style="color:var(--muted); font-size:10px;">更新: 2026-04-26</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
     </div>
@@ -1476,6 +1494,12 @@ window.onload = () => {
     </div>
     <div id="cl-body">
       <div class="cl-ver">
+        <span class="cl-vtag">v1.8.5</span><span class="cl-date">2026-04-26</span>
+        <ul class="cl-items">
+          <li>説明書モーダル追加：「使い方」バッジからアクセスできる基本・高度な使い方ガイド</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
         <span class="cl-vtag">v1.8.4</span><span class="cl-date">2026-04-25</span>
         <ul class="cl-items">
           <li>出発時刻のデフォルト値を現在時刻に変更</li>
@@ -1667,6 +1691,75 @@ window.onload = () => {
           <li>Google Maps Directions/Elevation API統合</li>
           <li>充電スポットDBスクレイピング自動化（build_chargers.py）</li>
         </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="help-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div id="help-box">
+    <div id="help-header">
+      <h3>📖 使い方ガイド</h3>
+      <button id="help-close" onclick="document.getElementById('help-overlay').classList.remove('open')">✕</button>
+    </div>
+    <div id="help-body">
+      <div class="help-section">
+        <h4>🟢 基本的な使い方</h4>
+        <div class="help-item">
+          <div class="help-icon">📍</div>
+          <div><strong>出発地・目的地の入力</strong><br><span>テキストで直接入力するか、マップを長押し（PC: 右クリック）して「出発地にセット」「目的地にセット」を選択。住所に自動変換されます。</span></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">🔀</div>
+          <div><strong>経由地</strong><br><span>往復ルートでは折り返し地点として使用。途中の充電スポットを手動追加する際にも活用できます。</span></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">🗓</div>
+          <div><strong>出発日時</strong><br><span>現在の日時が自動入力されます。天気データ取得に使用されるため、実際の出発時刻に合わせてください。</span></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">⚡</div>
+          <div><strong>シミュレーション開始</strong><br><span>ボタンを押すと充電スポットを自動計算します。電欠しそうな区間はリルートして代替充電器を探します。</span></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">📊</div>
+          <div><strong>グラフの見方</strong><br><span>青線=SOC残量 / オレンジ=充電中 / 薄い線=速度 / グレー=標高。ピンチで拡大、スワイプでスクロールできます。</span></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">🔌</div>
+          <div><strong>充電スポット管理</strong><br><span>結果リストから充電時間の変更・スポットの削除・代替充電器への変更が可能です。変更後は自動で再シミュレーションします。</span></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">☠️</div>
+          <div><strong>電欠警告</strong><br><span>SOCが0%に到達した場合、周辺の急速充電スタンドをマップで検索し、手動で追加して再計算してください。</span></div>
+        </div>
+      </div>
+      <div class="help-section">
+        <h4>⚙️ 高度な使い方</h4>
+        <div class="help-item">
+          <div class="help-icon">🔢</div>
+          <div><strong>玄人設定（電費カスタマイズ）</strong><br><span>チェックを入れると速度別電費（40km/h / 100km/h）を手動入力できます。空欄の場合は速度依存の自動計算式を使用します。</span></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">🌡</div>
+          <div><strong>気温の手動入力</strong><br><span>玄人設定内で固定温度を指定できます。標高補正のON/OFFも選択可能です（高地での消費電力増加補正）。</span></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">🔆</div>
+          <div><strong>プレコン（バッテリーヒーター）</strong><br><span>設定閾値℃以下 かつ 90kW以上の充電スポット到着前30分に3kWh自動消費。グラフに黄色マーカーで表示されます。</span></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">🏁</div>
+          <div><strong>目的地プレコン</strong><br><span>目的地が充電スポットの場合、到着前にもプレコンを作動させるチェックボックスです（目的地フィールド下）。</span></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">🔍</div>
+          <div><strong>グラフ操作</strong><br><span>時間軸／距離軸の切替ボタン、ピンチで拡大・スワイプでスクロール・↺ボタンで全体表示にリセットできます。</span></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">🔁</div>
+          <div><strong>代替充電器</strong><br><span>充電スポットリストの「他の充電器」で、同方向・同高速道路上の別SA/PAに変更できます。</span></div>
+        </div>
       </div>
     </div>
   </div>
