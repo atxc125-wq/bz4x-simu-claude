@@ -221,7 +221,8 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
   </div>
   <div id="right">
     <div id="map"></div>
-    <div id="map-ctx" style="position:fixed; display:none; background:#1e293b; border:1px solid rgba(255,255,255,0.15); border-radius:10px; box-shadow:0 6px 24px rgba(0,0,0,0.6); z-index:9999; overflow:hidden; min-width:160px;">
+    <div id="map-ctx" style="position:fixed; display:none; background:#1e293b; border:1px solid rgba(255,255,255,0.15); border-radius:10px; box-shadow:0 6px 24px rgba(0,0,0,0.6); z-index:9999; overflow:hidden; min-width:170px;">
+        <div id="map-ctx-loc" style="padding:7px 14px 6px; font-size:11px; color:rgba(241,245,249,0.55); border-bottom:1px solid rgba(255,255,255,0.08); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:220px; pointer-events:none;">…</div>
         <div class="map-ctx-item" onclick="setFromMap('origin')">📍 出発地にセット</div>
         <div class="map-ctx-item" style="border-top:1px solid rgba(255,255,255,0.08);" onclick="setFromMap('waypoint')">🔀 経由地にセット</div>
         <div class="map-ctx-item" style="border-top:1px solid rgba(255,255,255,0.08);" onclick="setFromMap('dest')">🏁 目的地にセット</div>
@@ -293,15 +294,38 @@ function initApp() {
     new google.maps.places.Autocomplete(document.getElementById('dest'));
 
     // マップ長押し（モバイル）/ 右クリック（PC）→ 出発地・経由地・目的地セットメニュー
-    let _ctxLatLng = null, _lpTimer = null;
+    let _ctxLatLng = null, _lpTimer = null, _ctxGeoResult = null;
     const _ctxMenu = document.getElementById('map-ctx');
+    const _ctxLocLabel = document.getElementById('map-ctx-loc');
+
+    function _parseGeoLabel(r) {
+        const comps = r.address_components;
+        const poi = comps.find(c => c.types.some(t => ['point_of_interest','establishment','natural_feature','premise'].includes(t)));
+        if (poi) return poi.long_name;
+        const pref = comps.find(c => c.types.includes('administrative_area_level_1'));
+        const ward = comps.find(c => c.types.includes('sublocality_level_1'));
+        const city = comps.find(c => c.types.includes('locality'));
+        return [pref?.short_name, (ward || city)?.long_name].filter(Boolean).join(' ')
+            || r.formatted_address.replace(/^日本[、,]?\s*/, '');
+    }
 
     function _showCtx(latLng, x, y) {
         _ctxLatLng = latLng;
+        _ctxGeoResult = null;
+        _ctxLocLabel.textContent = '…';
         _ctxMenu.style.display = 'block';
-        const w = _ctxMenu.offsetWidth || 165, h = _ctxMenu.offsetHeight || 120;
+        const w = _ctxMenu.offsetWidth || 175, h = _ctxMenu.offsetHeight || 140;
         _ctxMenu.style.left = Math.min(x + 4, window.innerWidth  - w - 8) + 'px';
         _ctxMenu.style.top  = Math.min(y + 4, window.innerHeight - h - 8) + 'px';
+        if (!geocoder) geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ location: latLng, language: 'ja' }, (res, status) => {
+            if (status === 'OK' && res?.[0]) {
+                _ctxGeoResult = res[0];
+                _ctxLocLabel.textContent = _parseGeoLabel(res[0]);
+            } else {
+                _ctxLocLabel.textContent = `${latLng.lat().toFixed(4)}, ${latLng.lng().toFixed(4)}`;
+            }
+        });
     }
     function _hideCtx() { _ctxMenu.style.display = 'none'; }
     function _cancelLp() { clearTimeout(_lpTimer); _lpTimer = null; }
@@ -328,12 +352,15 @@ function initApp() {
     window.setFromMap = function(field) {
         _hideCtx();
         if (!_ctxLatLng) return;
+        const apply = r => {
+            document.getElementById(field).value = r
+                ? r.formatted_address.replace(/^日本[、,]?\s*/, '')
+                : `${_ctxLatLng.lat().toFixed(5)},${_ctxLatLng.lng().toFixed(5)}`;
+        };
+        if (_ctxGeoResult) { apply(_ctxGeoResult); return; }
         if (!geocoder) geocoder = new google.maps.Geocoder();
         geocoder.geocode({ location: _ctxLatLng, language: 'ja' }, (res, status) => {
-            const addr = (status === 'OK' && res?.[0])
-                ? res[0].formatted_address.replace(/^日本[、,]?\s*/, '')
-                : `${_ctxLatLng.lat().toFixed(5)},${_ctxLatLng.lng().toFixed(5)}`;
-            document.getElementById(field).value = addr;
+            apply(status === 'OK' && res?.[0] ? res[0] : null);
         });
     };
 
