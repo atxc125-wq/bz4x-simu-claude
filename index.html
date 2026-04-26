@@ -60,6 +60,8 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
 .alt-list { display: none; margin-top: 6px; flex-direction: column; gap: 4px; }
 .alt-opt { background: #0b1120; border: 1px solid var(--border); color: #f1f5f9; padding: 8px; font-size: 0.75rem; text-align: left; cursor: pointer; border-radius: 4px; transition: 0.2s; }
 .alt-opt:hover { border-color: var(--accent2); background: rgba(6, 182, 212, 0.1); }
+.map-ctx-item { padding: 11px 16px; font-size: 13px; color: #f1f5f9; cursor: pointer; transition: background 0.15s; user-select: none; }
+.map-ctx-item:hover, .map-ctx-item:active { background: rgba(6, 182, 212, 0.15); }
 
 #dead-alert { display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #fca5a5; padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 0.85rem; font-weight: bold; text-align: center; }
 
@@ -109,7 +111,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.8.3 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.8.4 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-25</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -201,6 +203,11 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
   </div>
   <div id="right">
     <div id="map"></div>
+    <div id="map-ctx" style="position:fixed; display:none; background:#1e293b; border:1px solid rgba(255,255,255,0.15); border-radius:10px; box-shadow:0 6px 24px rgba(0,0,0,0.6); z-index:9999; overflow:hidden; min-width:160px;">
+        <div class="map-ctx-item" onclick="setFromMap('origin')">📍 出発地にセット</div>
+        <div class="map-ctx-item" style="border-top:1px solid rgba(255,255,255,0.08);" onclick="setFromMap('waypoint')">🔀 経由地にセット</div>
+        <div class="map-ctx-item" style="border-top:1px solid rgba(255,255,255,0.08);" onclick="setFromMap('dest')">🏁 目的地にセット</div>
+    </div>
     <div class="chart-wrap">
         <div class="chart-title">
             <span>SOC / 速度 / 標高 プロファイル</span>
@@ -266,7 +273,52 @@ function initApp() {
     new google.maps.places.Autocomplete(document.getElementById('origin'));
     new google.maps.places.Autocomplete(document.getElementById('waypoint'));
     new google.maps.places.Autocomplete(document.getElementById('dest'));
-    
+
+    // マップ長押し（モバイル）/ 右クリック（PC）→ 出発地・経由地・目的地セットメニュー
+    let _ctxLatLng = null, _lpTimer = null;
+    const _ctxMenu = document.getElementById('map-ctx');
+
+    function _showCtx(latLng, x, y) {
+        _ctxLatLng = latLng;
+        _ctxMenu.style.display = 'block';
+        const w = _ctxMenu.offsetWidth || 165, h = _ctxMenu.offsetHeight || 120;
+        _ctxMenu.style.left = Math.min(x + 4, window.innerWidth  - w - 8) + 'px';
+        _ctxMenu.style.top  = Math.min(y + 4, window.innerHeight - h - 8) + 'px';
+    }
+    function _hideCtx() { _ctxMenu.style.display = 'none'; }
+    function _cancelLp() { clearTimeout(_lpTimer); _lpTimer = null; }
+
+    // 右クリック（PC）
+    google.maps.event.addListener(googleMap, 'rightclick', e =>
+        _showCtx(e.latLng, e.domEvent.clientX, e.domEvent.clientY));
+
+    // 長押し（モバイル・PC共通）: mousedown → 600ms保持で発火
+    google.maps.event.addListener(googleMap, 'mousedown', e => {
+        const cx = e.domEvent.clientX ?? e.domEvent.touches?.[0]?.clientX ?? 0;
+        const cy = e.domEvent.clientY ?? e.domEvent.touches?.[0]?.clientY ?? 0;
+        _cancelLp();
+        _lpTimer = setTimeout(() => _showCtx(e.latLng, cx, cy), 600);
+    });
+    ['mouseup', 'dragstart'].forEach(ev =>
+        google.maps.event.addListener(googleMap, ev, _cancelLp));
+
+    // メニュー外タップで閉じる
+    document.addEventListener('pointerdown', e => {
+        if (!_ctxMenu.contains(e.target)) _hideCtx();
+    }, true);
+
+    window.setFromMap = function(field) {
+        _hideCtx();
+        if (!_ctxLatLng) return;
+        if (!geocoder) geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ location: _ctxLatLng, language: 'ja' }, (res, status) => {
+            const addr = (status === 'OK' && res?.[0])
+                ? res[0].formatted_address.replace(/^日本[、,]?\s*/, '')
+                : `${_ctxLatLng.lat().toFixed(5)},${_ctxLatLng.lng().toFixed(5)}`;
+            document.getElementById(field).value = addr;
+        });
+    };
+
     document.getElementById('expert-mode').addEventListener('change', function() {
         document.getElementById('expert-panel').style.display = this.checked ? 'block' : 'none';
     });
@@ -1375,8 +1427,10 @@ window.onload = () => {
     const userKey = localStorage.getItem('gmaps_key');
     const apiKeyInput = document.getElementById('api-key');
     
-    // 今日の日付をセット
-    document.getElementById('trip-date').value = new Date().toISOString().split('T')[0];
+    // 今日の日付・現在時刻をセット
+    const _now = new Date();
+    document.getElementById('trip-date').value = _now.toISOString().split('T')[0];
+    document.getElementById('start-time').value = String(_now.getHours()).padStart(2,'0') + ':' + String(_now.getMinutes()).padStart(2,'0');
 
     // UIの初期表示
     if (userKey) {
@@ -1421,6 +1475,13 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.8.4</span><span class="cl-date">2026-04-25</span>
+        <ul class="cl-items">
+          <li>出発時刻のデフォルト値を現在時刻に変更</li>
+          <li>マップ長押し（モバイル）/ 右クリック（PC）でコンテキストメニューを表示: 出発地・経由地・目的地をワンタップでセット（逆ジオコードで住所に変換）</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v1.8.3</span><span class="cl-date">2026-04-25</span>
         <ul class="cl-items">
