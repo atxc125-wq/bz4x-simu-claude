@@ -294,38 +294,60 @@ function initApp() {
     new google.maps.places.Autocomplete(document.getElementById('dest'));
 
     // マップ長押し（モバイル）/ 右クリック（PC）→ 出発地・経由地・目的地セットメニュー
-    let _ctxLatLng = null, _lpTimer = null, _ctxGeoResult = null;
+    let _ctxLatLng = null, _lpTimer = null, _ctxGeoPromise = null, _ctxGeo = null;
     const _ctxMenu = document.getElementById('map-ctx');
     const _ctxLocLabel = document.getElementById('map-ctx-loc');
 
-    function _parseGeoLabel(r) {
-        const comps = r.address_components;
-        const poi = comps.find(c => c.types.some(t => ['point_of_interest','establishment','natural_feature','premise'].includes(t)));
-        if (poi) return poi.long_name;
-        const pref = comps.find(c => c.types.includes('administrative_area_level_1'));
-        const ward = comps.find(c => c.types.includes('sublocality_level_1'));
-        const city = comps.find(c => c.types.includes('locality'));
-        return [pref?.short_name, (ward || city)?.long_name].filter(Boolean).join(' ')
-            || r.formatted_address.replace(/^日本[、,]?\s*/, '');
+    async function _reverseGeocode(latLng) {
+        // 1) Google Geocoder
+        const gResult = await new Promise(resolve => {
+            if (!geocoder) geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ location: latLng, language: 'ja' }, (res, status) => {
+                if (status === 'OK' && res?.[0]) {
+                    const r = res[0], comps = r.address_components;
+                    const poi = comps.find(c => c.types.some(t =>
+                        ['point_of_interest','establishment','natural_feature','premise'].includes(t)));
+                    const pref = comps.find(c => c.types.includes('administrative_area_level_1'));
+                    const ward = comps.find(c => c.types.includes('sublocality_level_1'));
+                    const city = comps.find(c => c.types.includes('locality'));
+                    const label = poi?.long_name
+                        || [pref?.short_name, (ward || city)?.long_name].filter(Boolean).join(' ')
+                        || r.formatted_address.replace(/^日本[、,]?\s*/, '');
+                    resolve({ label, address: r.formatted_address.replace(/^日本[、,]?\s*/, '') });
+                } else { resolve(null); }
+            });
+        });
+        if (gResult) return gResult;
+
+        // 2) Nominatim fallback (APIキー不要)
+        try {
+            const res = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?lat=${latLng.lat().toFixed(6)}&lon=${latLng.lng().toFixed(6)}&format=json&accept-language=ja`,
+                { headers: { 'Accept-Language': 'ja' } }
+            );
+            const d = await res.json();
+            const a = d.address || {};
+            const name = d.name || a.amenity || a.tourism || a.leisure || a.shop;
+            const pref  = a.state || a.province || '';
+            const city  = a.city  || a.town || a.village || a.county || '';
+            const road  = a.road  || a.pedestrian || a.path || '';
+            const label   = name || [pref, city].filter(Boolean).join(' ') || null;
+            const address = [pref, city, road].filter(Boolean).join('') || label;
+            return label ? { label, address } : null;
+        } catch { return null; }
     }
 
-    function _showCtx(latLng, x, y) {
+    async function _showCtx(latLng, x, y) {
         _ctxLatLng = latLng;
-        _ctxGeoResult = null;
+        _ctxGeo = null;
         _ctxLocLabel.textContent = '…';
         _ctxMenu.style.display = 'block';
         const w = _ctxMenu.offsetWidth || 175, h = _ctxMenu.offsetHeight || 140;
         _ctxMenu.style.left = Math.min(x + 4, window.innerWidth  - w - 8) + 'px';
         _ctxMenu.style.top  = Math.min(y + 4, window.innerHeight - h - 8) + 'px';
-        if (!geocoder) geocoder = new google.maps.Geocoder();
-        geocoder.geocode({ location: latLng, language: 'ja' }, (res, status) => {
-            if (status === 'OK' && res?.[0]) {
-                _ctxGeoResult = res[0];
-                _ctxLocLabel.textContent = _parseGeoLabel(res[0]);
-            } else {
-                _ctxLocLabel.textContent = `${latLng.lat().toFixed(4)}, ${latLng.lng().toFixed(4)}`;
-            }
-        });
+        _ctxGeoPromise = _reverseGeocode(latLng);
+        _ctxGeo = await _ctxGeoPromise;
+        _ctxLocLabel.textContent = _ctxGeo?.label || `${latLng.lat().toFixed(4)}, ${latLng.lng().toFixed(4)}`;
     }
     function _hideCtx() { _ctxMenu.style.display = 'none'; }
     function _cancelLp() { clearTimeout(_lpTimer); _lpTimer = null; }
@@ -349,19 +371,13 @@ function initApp() {
         if (!_ctxMenu.contains(e.target)) _hideCtx();
     }, true);
 
-    window.setFromMap = function(field) {
+    window.setFromMap = async function(field) {
         _hideCtx();
         if (!_ctxLatLng) return;
-        const apply = r => {
-            document.getElementById(field).value = r
-                ? r.formatted_address.replace(/^日本[、,]?\s*/, '')
-                : `${_ctxLatLng.lat().toFixed(5)},${_ctxLatLng.lng().toFixed(5)}`;
-        };
-        if (_ctxGeoResult) { apply(_ctxGeoResult); return; }
-        if (!geocoder) geocoder = new google.maps.Geocoder();
-        geocoder.geocode({ location: _ctxLatLng, language: 'ja' }, (res, status) => {
-            apply(status === 'OK' && res?.[0] ? res[0] : null);
-        });
+        const el = document.getElementById(field);
+        el.value = '取得中…';
+        const result = _ctxGeoPromise ? await _ctxGeoPromise : await _reverseGeocode(_ctxLatLng);
+        el.value = result?.address || `${_ctxLatLng.lat().toFixed(5)},${_ctxLatLng.lng().toFixed(5)}`;
     };
 
     document.getElementById('expert-mode').addEventListener('change', function() {
