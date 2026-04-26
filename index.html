@@ -128,7 +128,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.8.8 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.8.9 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-26</span>
         </div>
@@ -1203,10 +1203,23 @@ window.forceChg = function(lat, lng, idx, name, type) {
         ? (chargerDB.find(c => c.name === name) || chargerDB.find(c => c.lat === lat && c.lng === lng))
         : chargerDB.find(c => c.lat === lat && c.lng === lng);
     if (!found) return;
+
+    // SA/PAはDBの座標が上り/下り逆になっている場合があるため、
+    // 現在のルートパス上の最近傍点にスナップして正しい線側を使う
+    let wpLat = found.lat, wpLng = found.lng;
+    if (found.type === 'sa_pa' && currentDetailedPath.length) {
+        const step = Math.max(1, Math.floor(currentDetailedPath.length / 500));
+        let bestDist = Infinity;
+        for (let i = 0; i < currentDetailedPath.length; i += step) {
+            const pt = currentDetailedPath[i];
+            const d = haversine(found.lat, found.lng, pt.lat(), pt.lng());
+            if (d < bestDist) { bestDist = d; wpLat = pt.lat(); wpLng = pt.lng(); }
+        }
+    }
+
     const oldChg = currentSim.stops[idx].charger;
     userIgnoredChargers.push(`${oldChg.lat.toFixed(4)},${oldChg.lng.toFixed(4)}`);
-    // type も含めて保存（🏙 一般道 / 🛣 高速 バッジの正確な表示に必要）
-    userWaypoints.push({ lat: found.lat, lng: found.lng, name: found.name, powerKw: found.powerKw, type: found.type, isSOS: false });
+    userWaypoints.push({ lat: wpLat, lng: wpLng, name: found.name, powerKw: found.powerKw, type: found.type, isSOS: false });
     onCalculate();
 }
 
@@ -1576,6 +1589,12 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.8.9</span><span class="cl-date">2026-04-26</span>
+        <ul class="cl-items">
+          <li>代替充電器選択時の迂回ルートを修正：SA/PAのDB座標が上り/下り逆の場合でも、現在のルートパス上の最近傍点にスナップして正しい線側を経由するようにした</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v1.8.8</span><span class="cl-date">2026-04-26</span>
         <ul class="cl-items">
