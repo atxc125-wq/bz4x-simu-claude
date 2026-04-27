@@ -129,7 +129,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.9.2 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.9.4 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-26</span>
         </div>
@@ -1666,6 +1666,18 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.9.4</span><span class="cl-date">2026-04-27</span>
+        <ul class="cl-items">
+          <li>到着SOCの充電回数表示から括弧を削除し、走行距離内訳と同じスタイルに統一</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.9.3</span><span class="cl-date">2026-04-27</span>
+        <ul class="cl-items">
+          <li>走行距離サブテキストを1行に収まるよう改善：ラベル・単位を0.72emに縮小し数字は通常サイズを維持</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v1.9.2</span><span class="cl-date">2026-04-27</span>
         <ul class="cl-items">
