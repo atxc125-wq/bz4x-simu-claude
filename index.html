@@ -129,7 +129,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.9.4 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.9.5 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-26</span>
         </div>
@@ -1490,6 +1490,54 @@ function drawComboChart() {
                     }
                     c.restore();
                 }
+
+                // 最長連続運転アノテーション（120分超のみ）
+                {
+                    const prof = currentSim.profile;
+                    let maxMin = 0, maxStart = null, maxEnd = null;
+                    let segT0 = null, segK0 = null, segT1 = null, segK1 = null;
+                    for (const p of prof) {
+                        if (!(p.chargingKw > 0)) {
+                            if (segT0 === null) { segT0 = p.time; segK0 = p.km; }
+                            segT1 = p.time; segK1 = p.km;
+                        } else {
+                            if (segT0 !== null) {
+                                const dur = segT1 - segT0;
+                                if (dur > maxMin) { maxMin = dur; maxStart = { time: segT0, km: segK0 }; maxEnd = { time: segT1, km: segK1 }; }
+                                segT0 = null;
+                            }
+                        }
+                    }
+                    if (segT0 !== null) {
+                        const dur = segT1 - segT0;
+                        if (dur > maxMin) { maxMin = dur; maxStart = { time: segT0, km: segK0 }; maxEnd = { time: segT1, km: segK1 }; }
+                    }
+                    if (maxMin >= 120 && maxStart && maxEnd) {
+                        const x1v = currentAxis === 'time' ? maxStart.time : maxStart.km;
+                        const x2v = currentAxis === 'time' ? maxEnd.time   : maxEnd.km;
+                        const px1 = Math.max(chartArea.left,  scales.x.getPixelForValue(x1v));
+                        const px2 = Math.min(chartArea.right, scales.x.getPixelForValue(x2v));
+                        if (px2 > px1 + 10) {
+                            const h = Math.floor(maxMin / 60), m = Math.round(maxMin % 60);
+                            const lbl = `⚠ ${h}h${m}m 連続運転`;
+                            const barY = chartArea.top + 5;
+                            c.save();
+                            c.fillStyle = 'rgba(251,146,60,0.07)';
+                            c.fillRect(px1, chartArea.top, px2 - px1, chartArea.bottom - chartArea.top);
+                            c.fillStyle = 'rgba(251,146,60,0.75)';
+                            c.fillRect(px1, barY, px2 - px1, 2.5);
+                            c.fillRect(px1, barY, 2, 9);
+                            c.fillRect(px2 - 2, barY, 2, 9);
+                            c.font = 'bold 9px "Segoe UI", system-ui, sans-serif';
+                            c.fillStyle = 'rgba(251,146,60,0.95)';
+                            c.textAlign = 'center';
+                            c.textBaseline = 'top';
+                            const lx = Math.max(chartArea.left + 44, Math.min(chartArea.right - 44, (px1 + px2) / 2));
+                            c.fillText(lbl, lx, barY + 5);
+                            c.restore();
+                        }
+                    }
+                }
             }
         }],
         options: {
@@ -1666,6 +1714,12 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.9.5</span><span class="cl-date">2026-04-27</span>
+        <ul class="cl-items">
+          <li>グラフに最長連続運転アノテーションを追加：120分超の連続走行区間をオレンジのバー＋「⚠ Xh Ym 連続運転」ラベルで表示</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v1.9.4</span><span class="cl-date">2026-04-27</span>
         <ul class="cl-items">
