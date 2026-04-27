@@ -129,7 +129,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.9.7 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.9.8 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-26</span>
         </div>
@@ -207,17 +207,23 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
                     <span style="font-size:10px; color:var(--muted);">℃以下（デフォルト15℃）</span>
                 </div>
                 <div style="margin-top:8px; border-top:1px solid rgba(255,255,255,0.06); padding-top:8px;">
-                    <label style="font-size:10px; color:var(--muted); display:block; margin-bottom:4px; text-transform:none; letter-spacing:0;">⚡ 充電ストラテジー</label>
-                    <select id="charge-strategy" style="font-size:11px; padding:4px 6px; width:100%;" onchange="document.getElementById('rest-interval-row').style.display=this.value==='rest'?'flex':'none'">
-                        <option value="standard">標準（自動最適）</option>
-                        <option value="boost15">15分ブーストモード（150kW機は15分で切り上げ）</option>
-                        <option value="hv90only">90kW以上のみ</option>
-                        <option value="hv150only">150kW以上のみ（超急速縛り）</option>
-                        <option value="rest">X分おき休憩モード（自動15分充電）</option>
-                    </select>
-                    <div id="rest-interval-row" style="display:none; align-items:center; gap:6px; margin-top:6px;">
-                        <span style="font-size:10px; color:var(--muted);">└ 休憩間隔</span>
-                        <input type="number" id="rest-interval" min="30" max="180" step="15" value="90" style="width:64px; padding:4px 6px; font-size:12px;">
+                    <div style="font-size:10px; color:var(--muted); margin-bottom:6px;">⚡ ストラテジー（複数組み合わせ可）</div>
+                    <div style="font-size:10px; color:var(--muted); opacity:0.7; margin-bottom:4px;">最低kW</div>
+                    <div style="display:flex; gap:10px; margin-bottom:8px;">
+                        <label style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text); text-transform:none; letter-spacing:0; margin-bottom:0; font-weight:400; cursor:pointer;"><input type="radio" name="strategy-minkw" value="0" checked style="width:auto; margin:0;"> 制限なし</label>
+                        <label style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text); text-transform:none; letter-spacing:0; margin-bottom:0; font-weight:400; cursor:pointer;"><input type="radio" name="strategy-minkw" value="90" style="width:auto; margin:0;"> 90kW以上</label>
+                        <label style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text); text-transform:none; letter-spacing:0; margin-bottom:0; font-weight:400; cursor:pointer;"><input type="radio" name="strategy-minkw" value="150" style="width:auto; margin:0;"> 150kW以上</label>
+                    </div>
+                    <label style="display:flex; align-items:center; gap:5px; font-size:11px; color:var(--text); text-transform:none; letter-spacing:0; margin-bottom:6px; font-weight:400; cursor:pointer;">
+                        <input type="checkbox" id="strategy-boost15" style="width:auto; margin:0;">
+                        150kW機は15分で切り上げ
+                    </label>
+                    <label style="display:flex; align-items:center; gap:5px; font-size:11px; color:var(--text); text-transform:none; letter-spacing:0; margin-bottom:0; font-weight:400; cursor:pointer;">
+                        <input type="checkbox" id="strategy-rest" style="width:auto; margin:0;" onchange="document.getElementById('rest-interval-row').style.display=this.checked?'flex':'none'">
+                        X分おき休憩モード
+                    </label>
+                    <div id="rest-interval-row" style="display:none; align-items:center; gap:6px; margin-top:5px; padding-left:18px;">
+                        <input type="number" id="rest-interval" min="30" max="180" step="15" value="90" style="width:56px; padding:4px 6px; font-size:12px;">
                         <span style="font-size:10px; color:var(--muted);">分おきに15分充電</span>
                     </div>
                 </div>
@@ -607,8 +613,8 @@ async function findNearbyPOIs(lat, lng) {
 
 // ★ 引数を1つのparamsオブジェクトに集約（エラー防止）
 async function runSimulation(segments, elevations, params, onProgress) {
-    const { batteryKwh, startSocPct, thresholdSocPct, tripDate, startHour, waypointIndexes, isUpboundLegs, allChargerWps, expertMode, cityEff, hwyEff, manualTemp, altCorrection, preconTempThreshold = 15, preconDest = false, chargeStrategy = 'standard', restIntervalMin = 90 } = params;
-    const minKw = chargeStrategy === 'hv150only' ? 150 : chargeStrategy === 'hv90only' ? 90 : 0;
+    const { batteryKwh, startSocPct, thresholdSocPct, tripDate, startHour, waypointIndexes, isUpboundLegs, allChargerWps, expertMode, cityEff, hwyEff, manualTemp, altCorrection, preconTempThreshold = 15, preconDest = false, strategyMinKw = 0, strategyBoost15 = false, strategyRest = false, restIntervalMin = 90 } = params;
+    const minKw = strategyMinKw;
     let socKwh = (startSocPct / 100) * batteryKwh, km = 0, time = 0;
     const profile = [], stops = [];
     let lastChargeKm = -999, lastWeatherKm = -999, curBaseTemp = 15, lastWeatherElev = 0;
@@ -660,7 +666,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
             const hit = allChargerWps.find(c => haversine(c.lat, c.lng, s.lat, s.lng) < 0.5);
             if (hit && (km - lastChargeKm) > 5) {
                 const chgKey = hit.key || `${hit.lat.toFixed(4)},${hit.lng.toFixed(4)}`;
-                const defaultDur = (chargeStrategy === 'boost15' && parseInt(hit.powerKw) >= 150) ? 15 : 30;
+                const defaultDur = (strategyBoost15 && parseInt(hit.powerKw) >= 150) ? 15 : 30;
                 const duration = userCustomDurations[chgKey] || defaultDur;
                 const socBefore = (socKwh / batteryKwh) * 100;
                 
@@ -743,7 +749,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
         // Step1: 同方向の高速SA/PAをインライン充電（Google Maps waypoint追加なし → 謎のUターン回避）
         // Step2: SA/PAが無い場合のみFLASH/TEEMO等の下道充電器をwaypointとしてリルート
         const continuousDrivingMin = time - lastChargeTime;
-        const needRestStop = chargeStrategy === 'rest' && continuousDrivingMin >= restIntervalMin && (km - lastChargeKm) > 30;
+        const needRestStop = strategyRest && continuousDrivingMin >= restIntervalMin && (km - lastChargeKm) > 30;
         if ((currentSoc < thresholdSocPct + 10 || needRestStop) && (km - lastChargeKm) > (needRestStop ? 30 : 50)) {
             // デバッグ: 近隣SA/PAの道路名マッチング状況をログ出力
             const nearCandidates = chargerDB.filter(c => c.type === 'sa_pa' && haversine(c.lat, c.lng, s.lat, s.lng) < 5.0);
@@ -773,7 +779,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                 if (!stops.some(st => `${st.charger.lat.toFixed(4)},${st.charger.lng.toFixed(4)}` === chgKey)) {
                     if (onProgress) onProgress(`🔌 ${saPa.name.replace(/^.*?　/, '')} を発見 (${Math.round(km)}km地点)`);
                     const isRestStop = needRestStop && currentSoc >= thresholdSocPct;
-                    const defaultDur = isRestStop ? 15 : (chargeStrategy === 'boost15' && parseInt(saPa.powerKw) >= 150) ? 15 : 30;
+                    const defaultDur = isRestStop ? 15 : (strategyBoost15 && parseInt(saPa.powerKw) >= 150) ? 15 : 30;
                     const duration = userCustomDurations[chgKey] || defaultDur;
                     // プレコン: 閾値以下 + 90kW以上 → 到着30分前から3kWh追加消費（常時有効）
                     if (localTemp <= preconTempThreshold && parseInt(saPa.powerKw) >= 90) {
@@ -834,7 +840,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                     if (emergencySaPa) {
                         const chgKey = eKey(emergencySaPa);
                         if (onProgress) onProgress(`🔌 ${emergencySaPa.name.replace(/^.*?　/, '')} (緊急 ${emergencySaPa.powerKw}kW) を使用 (${Math.round(km)}km地点)`);
-                        const defaultDur = (chargeStrategy === 'boost15' && parseInt(emergencySaPa.powerKw) >= 150) ? 15 : 30;
+                        const defaultDur = (strategyBoost15 && parseInt(emergencySaPa.powerKw) >= 150) ? 15 : 30;
                         const duration = userCustomDurations[chgKey] || defaultDur;
                         // プレコン（常時有効）
                         if (localTemp <= preconTempThreshold && parseInt(emergencySaPa.powerKw) >= 90) {
@@ -994,7 +1000,9 @@ async function onCalculate() {
                 altCorrection: document.getElementById('alt-correction').checked,
                 preconTempThreshold: parseFloat(document.getElementById('precon-temp').value) || 15,
                 preconDest: document.getElementById('precon-dest').checked,
-                chargeStrategy: document.getElementById('charge-strategy').value,
+                strategyMinKw: parseInt(document.querySelector('input[name="strategy-minkw"]:checked')?.value || '0'),
+                strategyBoost15: document.getElementById('strategy-boost15').checked,
+                strategyRest: document.getElementById('strategy-rest').checked,
                 restIntervalMin: parseInt(document.getElementById('rest-interval').value) || 90
             };
 
@@ -1041,16 +1049,16 @@ function renderUI() {
     if (currentSim.isDead) {
         const alertEl = document.getElementById('dead-alert');
         alertEl.style.display = 'block';
-        const strategy = document.getElementById('charge-strategy').value;
-        const strategyMsg = strategy === 'hv150only'
+        const curMinKw = parseInt(document.querySelector('input[name="strategy-minkw"]:checked')?.value || '0');
+        const strategyMsg = curMinKw >= 150
             ? `<div style="margin-top:6px; font-size:11px; color:#fbbf24;">この区間に150kW以上の充電器が見つかりませんでした</div>
-               <button class="alt-charger-btn" onclick="retryWithLowerKw('hv90only')" style="margin-top:6px; background:#92400e; color:#fef3c7; border:1px solid #b45309; padding:8px; width:100%; border-radius:6px; font-size:12px;">
+               <button class="alt-charger-btn" onclick="retryWithLowerKw(90)" style="margin-top:6px; background:#92400e; color:#fef3c7; border:1px solid #b45309; padding:8px; width:100%; border-radius:6px; font-size:12px;">
                    ⚡ 90kW以上で再試行
                </button>`
-            : strategy === 'hv90only'
+            : curMinKw >= 90
             ? `<div style="margin-top:6px; font-size:11px; color:#fbbf24;">この区間に90kW以上の充電器が見つかりませんでした</div>
-               <button class="alt-charger-btn" onclick="retryWithLowerKw('standard')" style="margin-top:6px; background:#92400e; color:#fef3c7; border:1px solid #b45309; padding:8px; width:100%; border-radius:6px; font-size:12px;">
-                   ⚡ 標準モードで再試行（kW縛り解除）
+               <button class="alt-charger-btn" onclick="retryWithLowerKw(0)" style="margin-top:6px; background:#92400e; color:#fef3c7; border:1px solid #b45309; padding:8px; width:100%; border-radius:6px; font-size:12px;">
+                   ⚡ kW縛り解除で再試行
                </button>`
             : `<div style="margin-top:10px; font-size:12px; color:var(--text);">SOC20%付近で下道に降りて探します。</div>`;
         alertEl.innerHTML = `
@@ -1256,7 +1264,7 @@ window.showAlts = function(idx) {
         return { ...c, dist: distToCur, direction };
     });
 
-    const strategyMinKw = { hv150only: 150, hv90only: 90 }[document.getElementById('charge-strategy').value] || 0;
+    const strategyMinKw = parseInt(document.querySelector('input[name="strategy-minkw"]:checked')?.value || '0');
     const saPaAlts = mapped.filter(c =>
         c.dist > 0.1 && c.dist < 60 && c.type === 'sa_pa' &&
         isValidDirection(c.name, curStop.isUpbound) &&
@@ -1287,8 +1295,9 @@ window.showAlts = function(idx) {
     el.innerHTML = (saPaHtml + offHtml) || '<div style="color:var(--muted);font-size:12px;padding:8px;">近くに代替充電器が見つかりません</div>';
 }
 
-window.retryWithLowerKw = function(newStrategy) {
-    document.getElementById('charge-strategy').value = newStrategy;
+window.retryWithLowerKw = function(newMinKw) {
+    const radio = document.querySelector(`input[name="strategy-minkw"][value="${newMinKw}"]`);
+    if (radio) radio.checked = true;
     userIgnoredChargers = [];
     userWaypoints = [];
     autoChargers = [];
@@ -1768,6 +1777,12 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.9.8</span><span class="cl-date">2026-04-27</span>
+        <ul class="cl-items">
+          <li>ストラテジーを複数同時選択可能に：kW縛り（ラジオ）＋15分ブースト（チェック）＋休憩モード（チェック）を独立して組み合わせられるよう構造変更</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v1.9.7</span><span class="cl-date">2026-04-27</span>
         <ul class="cl-items">
