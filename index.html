@@ -211,10 +211,17 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
         <div id="dead-alert"></div>
     </div>
     <div class="section" id="results" style="display:none; border-bottom:none;">
+        <div style="font-size:10px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">シミュレーション結果</div>
         <div class="stat-grid">
-            <div class="stat"><div class="lbl">総所要時間</div><div class="val" id="r-eta">--:--</div></div>
+            <div class="stat">
+                <div class="lbl">総所要時間</div>
+                <div class="val" id="r-eta">--:--</div>
+                <div id="r-charge" style="font-size:10px; color:var(--muted); margin-top:3px;"></div>
+            </div>
             <div class="stat"><div class="lbl">到着SOC</div><div class="val" id="r-soc">--%</div></div>
             <div class="stat"><div class="lbl">平均気温</div><div class="val" id="r-temp">--℃</div></div>
+            <div class="stat"><div class="lbl">走行距離</div><div class="val" id="r-dist">--km</div></div>
+            <div class="stat"><div class="lbl">総合電費</div><div class="val" id="r-eff">--</div></div>
         </div>
         <div id="stop-list" style="margin-top:20px"></div>
     </div>
@@ -838,7 +845,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
     }
 
     const avgTemp = tempCount > 0 ? tempSum / tempCount : 15;
-    return { profile, stops, arrivalSoc: isDead ? 0 : (socKwh/batteryKwh)*100, eta: time, isDead, deadKm: km, deadLocation, warningLocation, warningKm, avgTemp };
+    return { profile, stops, arrivalSoc: isDead ? 0 : (socKwh/batteryKwh)*100, eta: time, isDead, deadKm: km, deadLocation, warningLocation, warningKm, avgTemp, totalKm, startSocPct };
 }
 
 function showLoading(msg, sub) {
@@ -967,7 +974,19 @@ function renderUI() {
     document.getElementById('results').style.display = 'block';
     document.getElementById('r-soc').textContent = currentSim.isDead ? '0%' : currentSim.arrivalSoc.toFixed(0) + '%';
     document.getElementById('r-eta').textContent = Math.floor(currentSim.eta/60) + 'h ' + Math.round(currentSim.eta%60) + 'm';
-    document.getElementById('r-temp').textContent = currentSim.avgTemp.toFixed(1) + '℃'; 
+    document.getElementById('r-temp').textContent = currentSim.avgTemp.toFixed(1) + '℃';
+    document.getElementById('r-dist').textContent = Math.round(currentSim.totalKm) + 'km';
+
+    { // 充電時間・総合電費
+        const chargeMins = currentSim.stops.reduce((s, st) => s + st.duration, 0);
+        const chH = Math.floor(chargeMins / 60), chM = Math.round(chargeMins % 60);
+        document.getElementById('r-charge').textContent =
+            chargeMins > 0 ? (chH > 0 ? `充電 ${chH}h${chM}m` : `充電 ${chM}分`) : '';
+        const chargedSoc = currentSim.stops.reduce((s, st) => s + (st.socAfter - st.socBefore), 0);
+        const consumedKwh = ((currentSim.startSocPct || 100) + chargedSoc - (currentSim.isDead ? 0 : currentSim.arrivalSoc)) / 100 * 71.4;
+        const eff = consumedKwh > 0.1 ? currentSim.totalKm / consumedKwh : 0;
+        document.getElementById('r-eff').textContent = eff > 0 ? eff.toFixed(1) + 'km/kWh' : '--';
+    }
     
     if (currentSim.isDead) {
         const alertEl = document.getElementById('dead-alert');
@@ -1630,6 +1649,7 @@ window.onload = () => {
         <span class="cl-vtag">v1.9.0</span><span class="cl-date">2026-04-26</span>
         <ul class="cl-items">
           <li>「DB: 〇〇件」バッジをタップで全充電スポットをマップにピン表示／非表示できるようになった。色はkWに対応（赤:150kW+ / 橙:70kW+ / 黄:30kW+ / 灰:それ以下）</li>
+          <li>シミュレーション結果エリアにタイトル追加、走行距離・総合電費カードを追加、総所要時間カードに充電時間を小さく表示</li>
         </ul>
       </div>
       <div class="cl-ver">
