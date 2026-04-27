@@ -1520,14 +1520,14 @@ function drawComboChart() {
                         if (px2 > px1 + 10) {
                             const h = Math.floor(maxMin / 60), m = Math.round(maxMin % 60);
                             const lbl = `⚠ ${h}h${m}m 連続運転`;
-                            const barY = chartArea.top + 5;
+                            const barY = chartArea.top;
                             c.save();
                             c.fillStyle = 'rgba(251,146,60,0.07)';
                             c.fillRect(px1, chartArea.top, px2 - px1, chartArea.bottom - chartArea.top);
                             c.fillStyle = 'rgba(251,146,60,0.75)';
-                            c.fillRect(px1, barY, px2 - px1, 2.5);
-                            c.fillRect(px1, barY, 2, 9);
-                            c.fillRect(px2 - 2, barY, 2, 9);
+                            c.fillRect(px1, barY, px2 - px1, 3);
+                            c.fillRect(px1, barY, 2, 10);
+                            c.fillRect(px2 - 2, barY, 2, 10);
                             c.font = 'bold 9px "Segoe UI", system-ui, sans-serif';
                             c.fillStyle = 'rgba(251,146,60,0.95)';
                             c.textAlign = 'center';
