@@ -215,13 +215,21 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
         <div style="font-size:10px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">シミュレーション結果</div>
         <div class="stat-grid">
             <div class="stat">
+                <div class="lbl">到着SOC</div>
+                <div class="val" id="r-soc">--%</div>
+                <div id="r-stops" style="font-size:10px; color:var(--muted); margin-top:3px;"></div>
+            </div>
+            <div class="stat">
+                <div class="lbl">走行距離</div>
+                <div class="val" id="r-dist">--km</div>
+                <div id="r-road" style="font-size:10px; color:var(--muted); margin-top:3px;"></div>
+            </div>
+            <div class="stat">
                 <div class="lbl">総所要時間</div>
                 <div class="val" id="r-eta">--:--</div>
                 <div id="r-charge" style="font-size:10px; color:var(--muted); margin-top:3px;"></div>
             </div>
-            <div class="stat"><div class="lbl">到着SOC</div><div class="val" id="r-soc">--%</div></div>
             <div class="stat"><div class="lbl">平均気温</div><div class="val" id="r-temp">--℃</div></div>
-            <div class="stat"><div class="lbl">走行距離</div><div class="val" id="r-dist">--km</div></div>
             <div class="stat"><div class="lbl">総合電費</div><div class="val" id="r-eff">--</div></div>
         </div>
         <div id="stop-list" style="margin-top:20px"></div>
@@ -593,6 +601,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
     let isDead = false, deadLocation = null, warningLocation = null, warningKm = 0;
     let tempSum = 0, tempCount = 0;
     const totalKm = segments.reduce((sum, s) => sum + s.distKm, 0);
+    const hwyKm   = segments.reduce((sum, s) => s.roadName ? sum + s.distKm : sum, 0);
     let lastProgressKm = -50;
 
     let currentLegIdx = 0;
@@ -846,7 +855,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
     }
 
     const avgTemp = tempCount > 0 ? tempSum / tempCount : 15;
-    return { profile, stops, arrivalSoc: isDead ? 0 : (socKwh/batteryKwh)*100, eta: time, isDead, deadKm: km, deadLocation, warningLocation, warningKm, avgTemp, totalKm, startSocPct };
+    return { profile, stops, arrivalSoc: isDead ? 0 : (socKwh/batteryKwh)*100, eta: time, isDead, deadKm: km, deadLocation, warningLocation, warningKm, avgTemp, totalKm, hwyKm, startSocPct };
 }
 
 function showLoading(msg, sub) {
@@ -978,6 +987,14 @@ function renderUI() {
     document.getElementById('r-eta').innerHTML = Math.floor(currentSim.eta/60) + u('h') + ' ' + Math.round(currentSim.eta%60) + u('m');
     document.getElementById('r-temp').innerHTML = currentSim.avgTemp.toFixed(1) + u('℃');
     document.getElementById('r-dist').innerHTML = Math.round(currentSim.totalKm) + u('km');
+
+    // 到着SOCサブ: 充電回数
+    document.getElementById('r-stops').textContent =
+        currentSim.stops.length > 0 ? `（${currentSim.stops.length}回充電）` : '（充電なし）';
+
+    // 走行距離サブ: 高速/一般内訳
+    { const hw = Math.round(currentSim.hwyKm || 0), gn = Math.round(currentSim.totalKm - (currentSim.hwyKm || 0));
+      document.getElementById('r-road').textContent = `高速${hw}km/一般${gn}km`; }
 
     { // 充電時間・総合電費
         const chargeMins = currentSim.stops.reduce((s, st) => s + st.duration, 0);
