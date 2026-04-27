@@ -988,9 +988,10 @@ function renderUI() {
     document.getElementById('r-temp').innerHTML = currentSim.avgTemp.toFixed(1) + u('℃');
     document.getElementById('r-dist').innerHTML = Math.round(currentSim.totalKm) + u('km');
 
-    // 到着SOCサブ: 充電回数
-    document.getElementById('r-stops').textContent =
-        currentSim.stops.length > 0 ? `（${currentSim.stops.length}回充電）` : '（充電なし）';
+    // 到着SOCサブ: 充電回数（括弧なし、ラベルを小さく）
+    { const n = currentSim.stops.length;
+      const s = t => `<span style="font-size:0.72em;opacity:0.75">${t}</span>`;
+      document.getElementById('r-stops').innerHTML = n > 0 ? `${n}${s('回充電')}` : s('充電なし'); }
 
     // 走行距離サブ: 高速/一般内訳（ラベル・単位を小さく、数字は通常サイズで1行に収める）
     { const hw = Math.round(currentSim.hwyKm || 0), gn = Math.round(currentSim.totalKm - (currentSim.hwyKm || 0));
