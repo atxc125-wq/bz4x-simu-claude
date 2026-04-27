@@ -992,9 +992,10 @@ function renderUI() {
     document.getElementById('r-stops').textContent =
         currentSim.stops.length > 0 ? `（${currentSim.stops.length}回充電）` : '（充電なし）';
 
-    // 走行距離サブ: 高速/一般内訳
+    // 走行距離サブ: 高速/一般内訳（ラベル・単位を小さく、数字は通常サイズで1行に収める）
     { const hw = Math.round(currentSim.hwyKm || 0), gn = Math.round(currentSim.totalKm - (currentSim.hwyKm || 0));
-      document.getElementById('r-road').textContent = `高速${hw}km/一般${gn}km`; }
+      const s = t => `<span style="font-size:0.72em;opacity:0.75">${t}</span>`;
+      document.getElementById('r-road').innerHTML = `${s('高速')}${hw}${s('km / 一般')}${gn}${s('km')}`; }
 
     { // 充電時間・総合電費
         const chargeMins = currentSim.stops.reduce((s, st) => s + st.duration, 0);
