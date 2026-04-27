@@ -42,6 +42,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
 .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px; }
 .stat { background: #0f172a; border-radius: 8px; padding: 10px 4px; text-align: center; border: 1px solid var(--border); }
 .stat .val { font-size: 1.2rem; font-weight: 700; color: var(--accent2); margin-top: 4px; }
+.stat .val .unit { font-size: 0.55em; font-weight: 400; opacity: 0.8; }
 .stat .lbl { font-size: 0.65rem; }
 
 .stop-item { background: #0f172a; border-radius: 8px; padding: 16px; margin-bottom: 12px; border-left: 4px solid #10b981; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
@@ -972,10 +973,11 @@ async function onCalculate() {
 
 function renderUI() {
     document.getElementById('results').style.display = 'block';
-    document.getElementById('r-soc').textContent = currentSim.isDead ? '0%' : currentSim.arrivalSoc.toFixed(0) + '%';
-    document.getElementById('r-eta').textContent = Math.floor(currentSim.eta/60) + 'h ' + Math.round(currentSim.eta%60) + 'm';
-    document.getElementById('r-temp').textContent = currentSim.avgTemp.toFixed(1) + '℃';
-    document.getElementById('r-dist').textContent = Math.round(currentSim.totalKm) + 'km';
+    const u = s => `<span class="unit">${s}</span>`;
+    document.getElementById('r-soc').innerHTML = currentSim.isDead ? `0${u('%')}` : currentSim.arrivalSoc.toFixed(0) + u('%');
+    document.getElementById('r-eta').innerHTML = Math.floor(currentSim.eta/60) + u('h') + ' ' + Math.round(currentSim.eta%60) + u('m');
+    document.getElementById('r-temp').innerHTML = currentSim.avgTemp.toFixed(1) + u('℃');
+    document.getElementById('r-dist').innerHTML = Math.round(currentSim.totalKm) + u('km');
 
     { // 充電時間・総合電費
         const chargeMins = currentSim.stops.reduce((s, st) => s + st.duration, 0);
@@ -985,7 +987,7 @@ function renderUI() {
         const chargedSoc = currentSim.stops.reduce((s, st) => s + (st.socAfter - st.socBefore), 0);
         const consumedKwh = ((currentSim.startSocPct || 100) + chargedSoc - (currentSim.isDead ? 0 : currentSim.arrivalSoc)) / 100 * 71.4;
         const eff = consumedKwh > 0.1 ? currentSim.totalKm / consumedKwh : 0;
-        document.getElementById('r-eff').textContent = eff > 0 ? eff.toFixed(1) + 'km/kWh' : '--';
+        document.getElementById('r-eff').innerHTML = eff > 0 ? eff.toFixed(1) + u('km/kWh') : '--';
     }
     
     if (currentSim.isDead) {
