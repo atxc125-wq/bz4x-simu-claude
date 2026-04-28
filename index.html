@@ -129,7 +129,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.9.8 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.9.9 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-26</span>
         </div>
@@ -730,8 +730,9 @@ async function runSimulation(segments, elevations, params, onProgress) {
         } else {
             baseEff = s.speed <= 40 ? 9.5 : Math.max(3.0, 9.5 - 0.06875 * (s.speed - 40));
         }
-        const heatingEnergy = (localTemp < 20 ? (20 - localTemp) * 0.15 : 0) * (s.distKm / s.speed);
-        const energy = (s.distKm / baseEff) + elevEnergy + heatingEnergy;
+        const hvacKw = localTemp < 20 ? (20 - localTemp) * 0.19 : (localTemp - 20) * 0.1;
+        const hvacEnergy = hvacKw * (s.distKm / s.speed);
+        const energy = (s.distKm / baseEff) + elevEnergy + hvacEnergy;
         let currentSoc = (socKwh / batteryKwh) * 100;
 
         if (currentSoc <= 20 && !warningLocation) {
@@ -1819,6 +1820,13 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v1.9.9</span><span class="cl-date">2026-04-28</span>
+        <ul class="cl-items">
+          <li>冷房消費を追加：20℃で0kW → 40℃で2kW（傾き0.1kW/℃）の線形モデル</li>
+          <li>暖房モデルを実測データ（13℃=1.62kW）ベースに更新：傾き0.15→0.19（0℃=3.8kW、20℃=0kW）</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v1.9.8</span><span class="cl-date">2026-04-27</span>
         <ul class="cl-items">
