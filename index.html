@@ -1634,6 +1634,8 @@ function chartApplyView() {
     comboChart.options.scales.x.min = chartViewMin;
     comboChart.options.scales.x.max = chartViewMax;
     comboChart.update('none');
+    const el = document.getElementById('combo-chart');
+    if (el) el.style.cursor = chartViewMax - chartViewMin < chartFullXMax - chartFullXMin - 0.01 ? 'grab' : 'default';
 }
 
 function chartZoomIn() {
@@ -1720,6 +1722,46 @@ function chartZoomReset() {
     }, { passive: false });
 
     el.addEventListener('touchend', () => { isPinching = false; isPanning = false; });
+
+    // PC: マウスホイールで左右パン
+    el.addEventListener('wheel', e => {
+        if (chartViewMax - chartViewMin >= chartFullXMax - chartFullXMin - 0.01) return;
+        e.preventDefault();
+        const span = chartViewMax - chartViewMin;
+        const rawDelta = e.deltaX !== 0 ? e.deltaX : e.deltaY;
+        const delta = rawDelta / 600 * span;
+        chartViewMin = Math.max(chartFullXMin, chartViewMin + delta);
+        chartViewMax = chartViewMin + span;
+        if (chartViewMax > chartFullXMax) { chartViewMax = chartFullXMax; chartViewMin = chartViewMax - span; }
+        scheduleUpdate();
+    }, { passive: false });
+
+    // PC: ドラッグでパン
+    let isMousePanning = false, mousePanStartX = 0, mousePanStartMin = 0, mousePanStartMax = 0;
+    el.addEventListener('mousedown', e => {
+        if (chartViewMax - chartViewMin >= chartFullXMax - chartFullXMin - 0.01) return;
+        isMousePanning = true;
+        mousePanStartX = e.clientX;
+        mousePanStartMin = chartViewMin; mousePanStartMax = chartViewMax;
+        el.style.cursor = 'grabbing';
+        e.preventDefault();
+    });
+    document.addEventListener('mousemove', e => {
+        if (!isMousePanning) return;
+        const dx = e.clientX - mousePanStartX;
+        const rect = el.getBoundingClientRect();
+        const span = mousePanStartMax - mousePanStartMin;
+        const delta = -(dx / rect.width) * span;
+        chartViewMin = Math.max(chartFullXMin, mousePanStartMin + delta);
+        chartViewMax = chartViewMin + span;
+        if (chartViewMax > chartFullXMax) { chartViewMax = chartFullXMax; chartViewMin = chartViewMax - span; }
+        scheduleUpdate();
+    });
+    document.addEventListener('mouseup', () => {
+        if (!isMousePanning) return;
+        isMousePanning = false;
+        el.style.cursor = chartViewMax - chartViewMin < chartFullXMax - chartFullXMin - 0.01 ? 'grab' : 'default';
+    });
 })();
 
 window.onload = () => {
