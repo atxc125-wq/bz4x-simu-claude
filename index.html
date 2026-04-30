@@ -129,7 +129,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v1.9.9 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.0.0 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-26</span>
         </div>
@@ -154,6 +154,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
         <div class="stat-grid" style="grid-template-columns: 1fr 1fr;">
             <div class="field"><label>出発SOC (%)</label><input type="number" id="start-soc" value="100"></div>
             <div class="field"><label>充電閾値 (%)</label><input type="number" id="threshold-soc" value="20"></div>
+            <div class="field"><label>目標到着SOC (%)</label><input type="number" id="target-arrival-soc" value="15" min="0" max="80"></div>
         </div>
         <div class="field" style="margin-top:8px;">
             <label>マップ表示モード</label>
@@ -1012,6 +1013,51 @@ async function onCalculate() {
             if (result.requestReroute) return onCalculate();
 
             currentSim = result;
+
+            // ① 到着SOC自動調整
+            const targetArrivalSoc = parseFloat(document.getElementById('target-arrival-soc').value) || 15;
+            if (!result.isDead) {
+                const diff = result.arrivalSoc - targetArrivalSoc;
+                if (diff > 5 && currentSim.stops.length > 0) {
+                    // 過充電 → 最後の停車の充電時間を二分探索で短縮
+                    const lastStop = currentSim.stops[currentSim.stops.length - 1];
+                    const lastKey = `${lastStop.charger.lat.toFixed(4)},${lastStop.charger.lng.toFixed(4)}`;
+                    const segEnergy = (result.arrivalSoc - lastStop.socAfter) / 100 * 71.4; // 最後停車→目的地の消費kWh（負）
+                    const neededExitSoc = targetArrivalSoc - (result.arrivalSoc - lastStop.socAfter); // 出発時に必要なSOC
+                    let lo = 1, hi = lastStop.duration, bestMins = lastStop.duration;
+                    for (let iter = 0; iter < 10; iter++) {
+                        const mid = Math.round((lo + hi) / 2);
+                        const soc = calculateCharging(lastStop.socBefore, mid, lastStop.charger);
+                        if (soc >= neededExitSoc) { bestMins = mid; hi = mid - 1; } else { lo = mid + 1; }
+                    }
+                    if (bestMins < lastStop.duration) {
+                        userCustomDurations[lastKey] = bestMins;
+                        return onCalculate(); // 短縮時間で再計算
+                    }
+                } else if (diff < -3) {
+                    // 不足 → 目的地手前のchargerDBから近傍充電器を探して追加
+                    const dest = currentDetailedPath[currentDetailedPath.length - 1];
+                    const destLat = dest.lat(), destLng = dest.lng();
+                    const neededKwh = (targetArrivalSoc - result.arrivalSoc) / 100 * 71.4;
+                    const nearDest = chargerDB
+                        .filter(c => {
+                            const d = haversine(c.lat, c.lng, destLat, destLng);
+                            return d < 50 && d > 3 && parseInt(c.powerKw) >= 50
+                                && !userWaypoints.some(w => haversine(w.lat, w.lng, c.lat, c.lng) < 1)
+                                && !userIgnoredChargers.includes(`${c.lat.toFixed(4)},${c.lng.toFixed(4)}`);
+                        })
+                        .sort((a, b) => haversine(a.lat, a.lng, destLat, destLng) - haversine(b.lat, b.lng, destLat, destLng));
+                    if (nearDest.length > 0) {
+                        const pick = nearDest[0];
+                        const neededMins = Math.ceil(neededKwh / (parseInt(pick.powerKw) / 60));
+                        const key = `${pick.lat.toFixed(4)},${pick.lng.toFixed(4)}`;
+                        userCustomDurations[key] = Math.max(5, Math.min(60, neededMins));
+                        userWaypoints.push({ lat: pick.lat, lng: pick.lng, name: pick.name, powerKw: pick.powerKw, type: pick.type, isSOS: false, key });
+                        return onCalculate();
+                    }
+                }
+            }
+
             hideLoading();
             renderUI();
         });
@@ -1021,7 +1067,12 @@ async function onCalculate() {
 function renderUI() {
     document.getElementById('results').style.display = 'block';
     const u = s => `<span class="unit">${s}</span>`;
-    document.getElementById('r-soc').innerHTML = currentSim.isDead ? `0${u('%')}` : currentSim.arrivalSoc.toFixed(0) + u('%');
+    { const targetSoc = parseFloat(document.getElementById('target-arrival-soc').value) || 15;
+      const arr = currentSim.isDead ? 0 : currentSim.arrivalSoc;
+      const diff = arr - targetSoc;
+      const color = currentSim.isDead ? '#ef4444' : Math.abs(diff) <= 5 ? '#10b981' : diff > 5 ? '#f97316' : '#ef4444';
+      document.getElementById('r-soc').style.color = color;
+      document.getElementById('r-soc').innerHTML = currentSim.isDead ? `0${u('%')}` : arr.toFixed(0) + u('%'); }
     document.getElementById('r-eta').innerHTML = Math.floor(currentSim.eta/60) + u('h') + ' ' + Math.round(currentSim.eta%60) + u('m');
     document.getElementById('r-temp').innerHTML = currentSim.avgTemp.toFixed(1) + u('℃');
     document.getElementById('r-dist').innerHTML = Math.round(currentSim.totalKm) + u('km');
@@ -1075,11 +1126,15 @@ function renderUI() {
     }
 
     const list = document.getElementById('stop-list'); list.innerHTML = '';
+    const chgPresets = [5, 10, 15, 20, 25, 30, 45, 60];
     currentSim.stops.forEach((st, idx) => {
         const div = document.createElement('div'); div.className = 'stop-item';
         const isEmergency = st.charger.name.includes("🆘");
         if(isEmergency) div.style.borderColor = '#ef4444';
-        
+
+        const chgKey = `${st.charger.lat.toFixed(4)},${st.charger.lng.toFixed(4)}`;
+        const safeId = chgKey.replace(/[.,]/g, '_');
+        const isCustomDur = !chgPresets.includes(st.duration);
         const kw = st.charger.powerKw ? `${st.charger.powerKw}kW` : '出力不明';
         const authNetwork = isEmergency ? '各種アプリ/クレカ' : getAuthNetwork(st.charger.name, st.charger.powerKw, st.charger.type);
         const isOffRoute = st.charger.type && st.charger.type !== 'sa_pa';
@@ -1095,14 +1150,13 @@ function renderUI() {
             <div style="font-size:12px; color:var(--muted); margin-bottom:10px;">到着 ${st.socBefore.toFixed(0)}% ➔ 出発 ${st.socAfter.toFixed(0)}%</div>
             
             <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-                <select onchange="updateChgTime('${st.charger.lat.toFixed(4)},${st.charger.lng.toFixed(4)}', this.value)" style="width:auto; padding:5px; font-size:11px;">
-                    <option value="15" ${st.duration==15?'selected':''}>⏱ 15分</option>
-                    <option value="30" ${st.duration==30?'selected':''}>⏱ 30分</option>
-                    <option value="45" ${st.duration==45?'selected':''}>⏱ 45分</option>
-                    <option value="60" ${st.duration==60?'selected':''}>⏱ 60分</option>
+                <select id="chgsel-${safeId}" onchange="onChgSelChange('${chgKey}','${safeId}',this.value)" style="width:auto; padding:5px; font-size:11px;">
+                    ${chgPresets.map(m => `<option value="${m}" ${!isCustomDur && st.duration==m?'selected':''}">⏱ ${m}分</option>`).join('')}
+                    <option value="custom" ${isCustomDur?'selected':''}>✏ 手入力</option>
                 </select>
+                <input id="chginp-${safeId}" type="number" min="1" max="180" value="${st.duration}" style="display:${isCustomDur?'inline-block':'none'}; width:52px; padding:4px 6px; font-size:11px;" onchange="updateChgTime('${chgKey}', this.value)">
                 ${!isEmergency ? `<button class="alt-charger-btn" onclick="showAlts(${idx})">⟳ 他の充電器</button>` : ''}
-                <button class="alt-charger-btn" style="background:rgba(239, 68, 68, 0.2); color:#ef4444; border: 1px solid #ef4444;" onclick="removeChg('${st.charger.lat.toFixed(4)},${st.charger.lng.toFixed(4)}')">✖ 削除</button>
+                <button class="alt-charger-btn" style="background:rgba(239, 68, 68, 0.2); color:#ef4444; border: 1px solid #ef4444;" onclick="removeChg('${chgKey}')">✖ 削除</button>
             </div>
             ${!isEmergency ? `<div class="alt-list" id="alt-list-${idx}"></div>` : ''}
         `;
@@ -1115,6 +1169,15 @@ function renderUI() {
 }
 
 window.updateChgTime = (key, mins) => { userCustomDurations[key] = parseInt(mins); onCalculate(); };
+window.onChgSelChange = (key, safeId, val) => {
+    const inp = document.getElementById('chginp-' + safeId);
+    if (val === 'custom') {
+        if (inp) inp.style.display = 'inline-block';
+    } else {
+        if (inp) inp.style.display = 'none';
+        updateChgTime(key, val);
+    }
+};
 window.removeChg = (key) => { 
     userIgnoredChargers.push(key); 
     autoChargers = autoChargers.filter(ac => (ac.key || `${ac.lat.toFixed(4)},${ac.lng.toFixed(4)}`) !== key);
@@ -1820,6 +1883,14 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.0.0</span><span class="cl-date">2026-04-28</span>
+        <ul class="cl-items">
+          <li>充電時間プリセットを拡張：5/10/15/20/25/30/45/60分＋手入力に対応</li>
+          <li>目標到着SOC指定を追加：過充電の場合は最終停車を自動短縮、不足の場合は目的地手前の充電スポットを自動追加・最小時間計算で再シミュレーション</li>
+          <li>到着SOC表示色：目標±5%以内は緑、超過はオレンジ、不足は赤</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v1.9.9</span><span class="cl-date">2026-04-28</span>
         <ul class="cl-items">
