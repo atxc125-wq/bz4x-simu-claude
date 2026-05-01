@@ -1368,14 +1368,15 @@ window.showDestAreaChargers = function() {
         ...userIgnoredChargers
     ]);
 
-    const candidates = chargerDB
-        .filter(c => {
-            const d = haversine(c.lat, c.lng, destLat, destLng);
-            return d >= 2 && d <= 60 && parseInt(c.powerKw) >= 50
-                && !already.has(`${c.lat.toFixed(4)},${c.lng.toFixed(4)}`);
-        })
-        .sort((a, b) => parseInt(b.powerKw) - parseInt(a.powerKw) || haversine(a.lat, a.lng, destLat, destLng) - haversine(b.lat, b.lng, destLat, destLng))
-        .slice(0, 8);
+    const byKwDist = (a, b) => parseInt(b.powerKw) - parseInt(a.powerKw) || haversine(a.lat, a.lng, destLat, destLng) - haversine(b.lat, b.lng, destLat, destLng);
+    const pool = chargerDB.filter(c => {
+        const d = haversine(c.lat, c.lng, destLat, destLng);
+        return d >= 2 && d <= 60 && parseInt(c.powerKw) >= 50
+            && !already.has(`${c.lat.toFixed(4)},${c.lng.toFixed(4)}`);
+    });
+    const offRoute = pool.filter(c => c.type !== 'sa_pa').sort(byKwDist).slice(0, 5);
+    const onRoute  = pool.filter(c => c.type === 'sa_pa').sort(byKwDist).slice(0, 2);
+    const candidates = [...offRoute, ...onRoute];
 
     if (candidates.length === 0) {
         listEl.style.display = 'flex';
