@@ -129,7 +129,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.0.5 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.0.6 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-26</span>
         </div>
@@ -1062,27 +1062,15 @@ async function onCalculate() {
                     const neededKwh = (targetArrivalSoc - result.arrivalSoc) / 100 * 71.4;
 
                     let pick = null;
-                    // ① Google Places API
-                    try {
-                        const res = await fetch('https://places.googleapis.com/v1/places:searchText', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': activeApiKey, 'X-Goog-FieldMask': 'places.displayName,places.location,places.evChargeOptions' },
-                            body: JSON.stringify({ textQuery: 'EV急速充電', locationBias: { circle: { center: { latitude: destLat, longitude: destLng }, radius: 30000 } }, maxResultCount: 10, languageCode: 'ja' })
-                        });
-                        const json = await res.json();
-                        const places = (json.places || []).map(p => ({
-                            name: p.displayName?.text || '充電スポット',
-                            lat: p.location.latitude, lng: p.location.longitude,
-                            powerKw: getEvKwFromOptions(p.evChargeOptions) || 50,
-                            type: 'emp'
-                        })).filter(p => {
-                            const d = haversine(p.lat, p.lng, destLat, destLng);
-                            return d >= 2 && d <= 40
-                                && !userWaypoints.some(w => haversine(w.lat, w.lng, p.lat, p.lng) < 1)
-                                && !userIgnoredChargers.includes(`${p.lat.toFixed(4)},${p.lng.toFixed(4)}`);
-                        }).sort((a, b) => parseInt(b.powerKw) - parseInt(a.powerKw));
-                        if (places.length > 0) pick = places[0];
-                    } catch(e) { /* fallthrough */ }
+                    // ① Google Places API（新API→旧APIフォールバック）
+                    const rawPlaces = await searchNearbyEVChargers(destLat, destLng, 30000, 10);
+                    const filteredPlaces = rawPlaces.filter(p => {
+                        const d = haversine(p.lat, p.lng, destLat, destLng);
+                        return d >= 2 && d <= 40
+                            && !userWaypoints.some(w => haversine(w.lat, w.lng, p.lat, p.lng) < 1)
+                            && !userIgnoredChargers.includes(`${p.lat.toFixed(4)},${p.lng.toFixed(4)}`);
+                    }).sort((a, b) => parseInt(b.powerKw) - parseInt(a.powerKw));
+                    if (filteredPlaces.length > 0) pick = filteredPlaces[0];
 
                     // ② fallback: chargerDB の一般道のみ（SA/PA除外）
                     if (!pick) {
@@ -1278,6 +1266,38 @@ function updateMapDrawing() {
     googleMap.fitBounds(bounds);
 }
 
+// 共通: 指定座標周辺のEV充電スポットをPlaces APIで検索（新API→旧APIフォールバック）
+async function searchNearbyEVChargers(lat, lng, radiusM = 30000, maxResults = 10) {
+    let places = [];
+    try {
+        const res = await fetch('https://places.googleapis.com/v1/places:searchText', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': activeApiKey, 'X-Goog-FieldMask': 'places.displayName,places.location,places.evChargeOptions' },
+            body: JSON.stringify({ textQuery: 'EV急速充電', locationBias: { circle: { center: { latitude: lat, longitude: lng }, radius: radiusM } }, maxResultCount: maxResults, languageCode: 'ja' })
+        });
+        const json = await res.json();
+        places = (json.places || []).map(p => ({
+            name: p.displayName?.text || '充電スポット',
+            lat: p.location.latitude, lng: p.location.longitude,
+            powerKw: getEvKwFromOptions(p.evChargeOptions) || 50, type: 'emp'
+        }));
+    } catch(e) { console.warn('Places API (New) failed', e); }
+
+    if (places.length === 0) {
+        await new Promise(resolve => {
+            placesService.textSearch({ query: 'EV充電スタンド', location: new google.maps.LatLng(lat, lng), radius: Math.min(radiusM, 50000) }, (results, status) => {
+                if (status === 'OK') {
+                    places = (results || []).slice(0, maxResults).map(r => ({
+                        name: r.name, lat: r.geometry.location.lat(), lng: r.geometry.location.lng(), powerKw: 50, type: 'emp'
+                    }));
+                }
+                resolve();
+            });
+        });
+    }
+    return places;
+}
+
 function getEvKwFromOptions(evChargeOptions) {
     if (!evChargeOptions || !evChargeOptions.connectorAggregation) return null;
     const agg = evChargeOptions.connectorAggregation;
@@ -1412,25 +1432,12 @@ window.showDestAreaChargers = async function() {
     // 一般道: DBから取得
     const dbOff = pool.filter(c => c.type !== 'sa_pa').sort(byKwDist);
 
-    // 一般道: Google Places APIからも取得して合算
-    let placesOff = [];
-    try {
-        const res = await fetch('https://places.googleapis.com/v1/places:searchText', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': activeApiKey, 'X-Goog-FieldMask': 'places.displayName,places.location,places.evChargeOptions' },
-            body: JSON.stringify({ textQuery: 'EV急速充電', locationBias: { circle: { center: { latitude: destLat, longitude: destLng }, radius: 30000 } }, maxResultCount: 10, languageCode: 'ja' })
-        });
-        const json = await res.json();
-        placesOff = (json.places || []).map(p => ({
-            name: p.displayName?.text || '充電スポット',
-            lat: p.location.latitude, lng: p.location.longitude,
-            powerKw: getEvKwFromOptions(p.evChargeOptions) || 50,
-            type: 'emp', _fromPlaces: true
-        })).filter(p => {
-            const d = haversine(p.lat, p.lng, destLat, destLng);
-            return d >= 2 && d <= 60;
-        });
-    } catch(e) { /* Places API失敗時はDBのみ */ }
+    // 一般道: Google Places APIからも取得して合算（新API→旧APIフォールバック）
+    const rawPlaces = await searchNearbyEVChargers(destLat, destLng, 30000, 10);
+    const placesOff = rawPlaces.filter(p => {
+        const d = haversine(p.lat, p.lng, destLat, destLng);
+        return d >= 2 && d <= 60;
+    });
 
     // Places結果とDB結果を合算（500m以内の重複を除去）
     const merged = [...dbOff];
@@ -2062,6 +2069,12 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.0.6</span><span class="cl-date">2026-05-01</span>
+        <ul class="cl-items">
+          <li>目的地周辺充電スポット検索を共通関数に統合：新Places API失敗時に旧Places API（placesService.textSearch）へフォールバック、手動ボタン・自動調整の両方で適用</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.0.5</span><span class="cl-date">2026-05-01</span>
         <ul class="cl-items">
