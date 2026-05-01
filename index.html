@@ -1171,7 +1171,7 @@ function renderUI() {
             
             <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
                 <select id="chgsel-${safeId}" onchange="onChgSelChange('${chgKey}','${safeId}',this.value)" style="width:auto; padding:5px; font-size:11px;">
-                    ${chgPresets.map(m => `<option value="${m}" ${!isCustomDur && st.duration==m?'selected':''}">⏱ ${m}分</option>`).join('')}
+                    ${chgPresets.map(m => `<option value="${m}" ${!isCustomDur && st.duration==m?'selected':''}>⏱ ${m}分</option>`).join('')}
                     <option value="custom" ${isCustomDur?'selected':''}>✏ 手入力</option>
                 </select>
                 <input id="chginp-${safeId}" type="number" min="1" max="180" value="${st.duration}" style="display:${isCustomDur?'inline-block':'none'}; width:52px; padding:4px 6px; font-size:11px;" onchange="updateChgTime('${chgKey}', this.value)">
