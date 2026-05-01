@@ -7225,5 +7225,196 @@ const CHARGER_DATA = [
     "lng": 139.9260781,
     "powerKw": 50,
     "direction": "down"
+  },
+  {
+    "name": "箱根ターンパイクスカイラウンジ",
+    "address": "神奈川県足柄下郡湯河原町鍛冶屋955-17",
+    "type": "flash",
+    "powers": [
+      240
+    ],
+    "lat": 35.1843551,
+    "lng": 139.0488578,
+    "powerKw": 240
+  },
+  {
+    "name": "高山市役所上宝支所",
+    "address": "岐阜県高山市上宝町本郷540",
+    "type": "flash",
+    "powers": [
+      240
+    ],
+    "lat": 36.2864109,
+    "lng": 137.3634494,
+    "powerKw": 240
+  },
+  {
+    "name": "常磐自動車道　守谷ＳＡ下り",
+    "address": "茨城県守谷市野木崎９７－３",
+    "type": "sa_pa",
+    "powers": [
+      90
+    ],
+    "lat": 35.9400481,
+    "lng": 139.9676284,
+    "powerKw": 90,
+    "direction": "down"
+  },
+  {
+    "name": "関越自動車道　高坂ＳＡ上り",
+    "address": "埼玉県東松山市大字田木字立野４－５",
+    "type": "sa_pa",
+    "powers": [
+      40
+    ],
+    "lat": 35.9854412,
+    "lng": 139.3835031,
+    "powerKw": 40,
+    "direction": "up"
+  },
+  {
+    "name": "東北自動車道　羽生ＰＡ下り",
+    "address": "埼玉県羽生市弥勒字三新田８２４",
+    "type": "sa_pa",
+    "powers": [
+      150
+    ],
+    "lat": 36.1806084,
+    "lng": 139.5853126,
+    "powerKw": 150,
+    "direction": "down"
+  },
+  {
+    "name": "関越自動車道　三芳ＰＡ上り",
+    "address": "埼玉県入間郡三芳町上富大字上富２２０４",
+    "type": "sa_pa",
+    "powers": [
+      90
+    ],
+    "lat": 35.8422931,
+    "lng": 139.5044141,
+    "powerKw": 90,
+    "direction": "up"
+  },
+  {
+    "name": "東名高速道路　海老名ＳＡ上り",
+    "address": "神奈川県海老名市大谷南５－１－１",
+    "type": "sa_pa",
+    "powers": [
+      50
+    ],
+    "lat": 35.4320762,
+    "lng": 139.3986583,
+    "powerKw": 50,
+    "direction": "up"
+  },
+  {
+    "name": "中央自動車道　双葉ＳＡ上り",
+    "address": "山梨県甲斐市龍地２３９５",
+    "type": "sa_pa",
+    "powers": [
+      90
+    ],
+    "lat": 35.6796562,
+    "lng": 138.5118692,
+    "powerKw": 90,
+    "direction": "up"
+  },
+  {
+    "name": "中央自動車道　談合坂ＳＡ下り",
+    "address": "山梨県上野原市野田尻字天郷７１１－１、７１７－１",
+    "type": "sa_pa",
+    "powers": [
+      90
+    ],
+    "lat": 35.6324165,
+    "lng": 139.0638238,
+    "powerKw": 90,
+    "direction": "down"
+  },
+  {
+    "name": "中央自動車道　駒ヶ岳ＳＡ下り",
+    "address": "長野県駒ヶ根市赤穂南割１５－２０４",
+    "type": "sa_pa",
+    "powers": [
+      90
+    ],
+    "lat": 35.7123092,
+    "lng": 137.9086686,
+    "powerKw": 90,
+    "direction": "down"
+  },
+  {
+    "name": "東名高速道路　浜名湖ＳＡ上り",
+    "address": "静岡県浜松市北区三ヶ日町佐久米４７ー１",
+    "type": "sa_pa",
+    "powers": [
+      90,
+      50
+    ],
+    "lat": 34.782381,
+    "lng": 137.6078149,
+    "powerKw": 90,
+    "direction": "up"
+  },
+  {
+    "name": "新東名高速道路　岡崎ＳＡ上り",
+    "address": "愛知県岡崎市宮石町六ツ田１０－４",
+    "type": "sa_pa",
+    "powers": [
+      90
+    ],
+    "lat": 35.035105,
+    "lng": 137.2221134,
+    "powerKw": 90,
+    "direction": "up"
+  },
+  {
+    "name": "新東名高速道路　長篠設楽原ＰＡ下り",
+    "address": "愛知県新城市富永字住居田３３－３",
+    "type": "sa_pa",
+    "powers": [
+      90
+    ],
+    "lat": 34.9254682,
+    "lng": 137.5121227,
+    "powerKw": 90,
+    "direction": "down"
+  },
+  {
+    "name": "名神高速道路　草津ＰＡ上り（第２ＰＡ）",
+    "address": "滋賀県大津市月輪５－８－９",
+    "type": "sa_pa",
+    "powers": [
+      90
+    ],
+    "lat": 34.9781065,
+    "lng": 135.9483209,
+    "powerKw": 90,
+    "direction": "up"
+  },
+  {
+    "name": "新名神高速道路　土山ＳＡ上り",
+    "address": "滋賀県甲賀市土山町南土山１１２２－２０",
+    "type": "sa_pa",
+    "powers": [
+      90
+    ],
+    "lat": 34.914449,
+    "lng": 136.2939801,
+    "powerKw": 90,
+    "direction": "up"
+  },
+  {
+    "name": "名神高速道路　多賀ＳＡ下り",
+    "address": "滋賀県犬上郡多賀町大字敏満寺",
+    "type": "sa_pa",
+    "powers": [
+      50
+    ],
+    "lat": 35.2197564,
+    "lng": 136.2846531,
+    "powerKw": 50,
+    "direction": "down"
   }
 ];
