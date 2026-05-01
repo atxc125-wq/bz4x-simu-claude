@@ -928,7 +928,10 @@ async function onCalculate() {
         showLoading(`🔄 経由地${rerouteNum}: ${chgShortName}`, 'ルートを再計算中...');
     }
 
-    const combinedWps = [...userWaypoints, ...autoChargers].map(w => ({
+    // 目的地エリア充電器（isDestArea）は必ず最後（目的地直前）に配置
+    const regularWps   = userWaypoints.filter(w => !w.isDestArea);
+    const destAreaWps  = userWaypoints.filter(w =>  w.isDestArea);
+    const combinedWps = [...regularWps, ...autoChargers, ...destAreaWps].map(w => ({
         location: new google.maps.LatLng(w.lat, w.lng), stopover: true
     }));
     if (waypointVal) {
@@ -1455,8 +1458,7 @@ window.showDestAreaChargers = async function() {
 
 window.addDestCharger = function(lat, lng, name, powerKw, type) {
     const key = `${lat.toFixed(4)},${lng.toFixed(4)}`;
-    const targetSoc = parseFloat(document.getElementById('target-arrival-soc').value) || 5;
-    userWaypoints.push({ lat, lng, name, powerKw: String(powerKw), type, isSOS: false, key });
+    userWaypoints.push({ lat, lng, name, powerKw: String(powerKw), type, isSOS: false, key, isDestArea: true });
     emergencyMarkers.forEach(m => m.setMap(null)); emergencyMarkers = [];
     const listEl = document.getElementById('dest-charger-list');
     if (listEl) listEl.style.display = 'none';
