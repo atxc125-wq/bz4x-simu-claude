@@ -23,20 +23,36 @@ jobs:
       - name: 依存パッケージインストール
         run: pip install requests beautifulsoup4
 
-      - name: 充電器データをビルド
+      - name: 充電器データをビルド (旧API & スクレイピング)
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: python3 build_chargers.py
+
+      # 🌟 ここを追加！新APIを使って150kW機を引っこ抜くスクリプト
+      - name: 超高出力充電器データをビルド (新API)
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: python3 build_chargers_v2.py
 
       - name: 変更があればコミット＆プッシュ
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # 2つのjsファイルを両方ともステージング
           git add chargers_data.js
+          git add chargers_v2_data.js
+          
           if git diff --cached --quiet; then
             echo "変更なし、スキップします"
           else
-            COUNT=$(node -e "const fs=require('fs');const src=fs.readFileSync('chargers_data.js','utf8');const m=src.match(/const CHARGER_DATA\s*=\s*(\[[\s\S]*?\]);/);console.log(JSON.parse(m[1]).length)")
-            git commit -m "data: 充電器データ自動更新 (${COUNT}件)"
+            # 既存の件数カウント
+            COUNT1=$(node -e "const fs=require('fs');const src=fs.readFileSync('chargers_data.js','utf8');const m=src.match(/const CHARGER_DATA\s*=\s*(\[[\s\S]*?\]);/);console.log(JSON.parse(m[1]).length)")
+            
+            # 🌟 新APIの件数カウント（ファイルがない場合のエラー回避付き）
+            COUNT2=$(node -e "const fs=require('fs');if(fs.existsSync('chargers_v2_data.js')){const src=fs.readFileSync('chargers_v2_data.js','utf8');const m=src.match(/const CHARGER_V2_DATA\s*=\s*(\[[\s\S]*?\]);/);console.log(JSON.parse(m[1]).length)}else{console.log(0)}")
+            
+            # コミットメッセージに両方の件数を記載
+            git commit -m "data: 充電器データ自動更新 (基本:${COUNT1}件 / 超高出力:${COUNT2}件)"
             git push origin claude/fix-simulation-button-MIf4L
           fi
