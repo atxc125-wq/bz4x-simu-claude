@@ -129,7 +129,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.0.2 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.0.3 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-26</span>
         </div>
@@ -154,7 +154,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
         <div class="stat-grid" style="grid-template-columns: 1fr 1fr;">
             <div class="field"><label>出発SOC (%)</label><input type="number" id="start-soc" value="100"></div>
             <div class="field"><label>充電閾値 (%)</label><input type="number" id="threshold-soc" value="20"></div>
-            <div class="field"><label>目標到着SOC (%)</label><input type="number" id="target-arrival-soc" value="5" min="0" max="80"></div>
+            <div class="field"><label style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="target-arrival-soc-enabled" style="margin:0;width:14px;height:14px;">目標到着SOC (%)</label><input type="number" id="target-arrival-soc" value="5" min="0" max="80" style="opacity:0.4;pointer-events:none;" disabled></div>
         </div>
         <div class="field" style="margin-top:8px;">
             <label>マップ表示モード</label>
@@ -425,6 +425,13 @@ function initApp() {
 
     document.getElementById('expert-mode').addEventListener('change', function() {
         document.getElementById('expert-panel').style.display = this.checked ? 'block' : 'none';
+    });
+
+    document.getElementById('target-arrival-soc-enabled').addEventListener('change', function() {
+        const inp = document.getElementById('target-arrival-soc');
+        inp.disabled = !this.checked;
+        inp.style.opacity = this.checked ? '1' : '0.4';
+        inp.style.pointerEvents = this.checked ? 'auto' : 'none';
     });
 
     document.getElementById('calc-btn').addEventListener('click', () => {
@@ -1016,9 +1023,10 @@ async function onCalculate() {
 
             currentSim = result;
 
-            // ① 到着SOC自動調整（1回のみ）
+            // ① 到着SOC自動調整（チェック時・1回のみ）
             const targetArrivalSoc = parseFloat(document.getElementById('target-arrival-soc').value) || 5;
-            if (!_socAdjusted && !result.isDead) {
+            const socAdjEnabled = document.getElementById('target-arrival-soc-enabled').checked;
+            if (socAdjEnabled && !_socAdjusted && !result.isDead) {
                 const diff = result.arrivalSoc - targetArrivalSoc;
                 if (diff >= 5 && currentSim.stops.length > 0) {
                     // 過充電 → 最後の停車の充電時間を二分探索で短縮
@@ -1078,10 +1086,11 @@ async function onCalculate() {
 function renderUI() {
     document.getElementById('results').style.display = 'block';
     const u = s => `<span class="unit">${s}</span>`;
-    { const targetSoc = parseFloat(document.getElementById('target-arrival-soc').value) || 5;
+    { const socAdjOn = document.getElementById('target-arrival-soc-enabled').checked;
+      const targetSoc = socAdjOn ? (parseFloat(document.getElementById('target-arrival-soc').value) || 5) : null;
       const arr = currentSim.isDead ? 0 : currentSim.arrivalSoc;
-      const diff = arr - targetSoc;
-      const color = currentSim.isDead ? '#ef4444' : Math.abs(diff) <= 5 ? '#10b981' : diff > 5 ? '#f97316' : '#ef4444';
+      const diff = targetSoc !== null ? arr - targetSoc : null;
+      const color = currentSim.isDead ? '#ef4444' : diff === null ? '#e2e8f0' : Math.abs(diff) <= 5 ? '#10b981' : diff > 5 ? '#f97316' : '#ef4444';
       document.getElementById('r-soc').style.color = color;
       document.getElementById('r-soc').innerHTML = currentSim.isDead ? `0${u('%')}` : arr.toFixed(0) + u('%'); }
     document.getElementById('r-eta').innerHTML = Math.floor(currentSim.eta/60) + u('h') + ' ' + Math.round(currentSim.eta%60) + u('m');
@@ -1894,6 +1903,12 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.0.3</span><span class="cl-date">2026-05-01</span>
+        <ul class="cl-items">
+          <li>目標到着SOCにチェックボックスを追加：デフォルトOFF、チェック時のみ自動調整と色分け表示が有効になる</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.0.2</span><span class="cl-date">2026-05-01</span>
         <ul class="cl-items">
