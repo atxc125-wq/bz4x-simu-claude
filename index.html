@@ -154,7 +154,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
         <div class="stat-grid" style="grid-template-columns: 1fr 1fr;">
             <div class="field"><label>出発SOC (%)</label><input type="number" id="start-soc" value="100"></div>
             <div class="field"><label>充電閾値 (%)</label><input type="number" id="threshold-soc" value="20"></div>
-            <div class="field"><label>目標到着SOC (%)</label><input type="number" id="target-arrival-soc" value="15" min="0" max="80"></div>
+            <div class="field"><label>目標到着SOC (%)</label><input type="number" id="target-arrival-soc" value="5" min="0" max="80"></div>
         </div>
         <div class="field" style="margin-top:8px;">
             <label>マップ表示モード</label>
@@ -1017,7 +1017,7 @@ async function onCalculate() {
             currentSim = result;
 
             // ① 到着SOC自動調整（1回のみ）
-            const targetArrivalSoc = parseFloat(document.getElementById('target-arrival-soc').value) || 15;
+            const targetArrivalSoc = parseFloat(document.getElementById('target-arrival-soc').value) || 5;
             if (!_socAdjusted && !result.isDead) {
                 const diff = result.arrivalSoc - targetArrivalSoc;
                 if (diff >= 5 && currentSim.stops.length > 0) {
@@ -1070,7 +1070,7 @@ async function onCalculate() {
 function renderUI() {
     document.getElementById('results').style.display = 'block';
     const u = s => `<span class="unit">${s}</span>`;
-    { const targetSoc = parseFloat(document.getElementById('target-arrival-soc').value) || 15;
+    { const targetSoc = parseFloat(document.getElementById('target-arrival-soc').value) || 5;
       const arr = currentSim.isDead ? 0 : currentSim.arrivalSoc;
       const diff = arr - targetSoc;
       const color = currentSim.isDead ? '#ef4444' : Math.abs(diff) <= 5 ? '#10b981' : diff > 5 ? '#f97316' : '#ef4444';
