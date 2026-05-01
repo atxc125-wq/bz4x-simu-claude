@@ -1,7 +1,7 @@
 """
 BZ4X Range Predictor - New Places API Charger Fetcher
-Google Mapsの「New Places API」を使用して、出力kW数（evChargeOptions）を取得し、
-90kW以上の高出力充電器（特に150kW機）を抽出する特化型スクリプトです。
+Google Mapsの「New Places API」を使用して、90kW以上の高出力充電器を抽出します。
+※ V1データ(chargers_data.js)と照合し、重複するものはV1（FLASH等）を優先して破棄します。
 """
 
 import requests
@@ -9,6 +9,7 @@ import json
 import os
 import time
 import logging
+import math
 
 # ログ設定
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -24,14 +25,8 @@ def get_api_key():
 API_KEY = get_api_key()
 NEW_PLACES_API_URL = "https://places.googleapis.com/v1/places:searchText"
 
-# 検索したいキーワードや地域のリスト
-# 日本全国を網羅するため、都道府県名や主要都市名を入れると効果的です
+# --- 検索クエリ（先ほど作成した完全版リスト） ---
 SEARCH_QUERIES = [
-    "宮城県 仙台市 EV急速充電器",
-    "東京都 EV急速充電器",
-    "愛知県 名古屋市 EV急速充電器",
-    "大阪府 EV急速充電器",
-    # --- 重点カバーエリア（生活圏・レジャー・遠征先） ---
     "東京都 東大和市 EV急速充電器",
     "東京都 武蔵村山市 EV急速充電器",
     "東京都 立川市 EV急速充電器",
@@ -40,7 +35,6 @@ SEARCH_QUERIES = [
     "北海道 千歳市 EV急速充電器",
     "北海道 旭川市 EV急速充電器",
     "北海道 北広島市 EV急速充電器",
-    # --- 日本の人口トップ30都市（広域絨毯爆撃） ---
     "東京都 23区 EV急速充電器",
     "神奈川県 横浜市 EV急速充電器",
     "大阪府 大阪市 EV急速充電器",
@@ -71,22 +65,42 @@ SEARCH_QUERIES = [
     "愛媛県 松山市 EV急速充電器",
     "大阪府 東大阪市 EV急速充電器",
     "兵庫県 西宮市 EV急速充電器",
-
-    # --- 国産ディーラー系 ---
     "トヨタ EV急速充電",
     "レクサス EV急速充電",
     "日産 EV急速充電",
     "ホンダ EV急速充電",
-    "三菱自動車 EV急速充電", # 「三菱」だけだと電機メーカー等が混ざるため
-
-    # --- 商業施設・その他 ---
+    "三菱自動車 EV急速充電",
     "スーパーオートバックス EV急速充電",
     "道の駅 EV急速充電器",
     "イオンモール EV急速充電器",
     "ファミリーマート EV急速充電"
-    "セブンイレブン　EV急速充電"# 一部で100kW機導入が進んでいるため念のため
 ]
 
+# --- 距離計算関数 (緯度経度から距離を求める) ---
+def haversine_km(lat1, lon1, lat2, lon2):
+    R = 6371.0
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = math.sin(dlat/2)**2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon/2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    return R * c
+
+# --- V1（絶対的正義）データの読み込み ---
+def load_v1_data():
+    v1_file = "chargers_data.js"
+    if not os.path.exists(v1_file):
+        return []
+    try:
+        with open(v1_file, "r", encoding="utf-8") as f:
+            content = f.read()
+        # "const CHARGER_DATA = " を取り除いてJSONとしてパース
+        json_str = content.replace("const CHARGER_DATA = ", "").strip()
+        if json_str.endswith(";"):
+            json_str = json_str[:-1]
+        return json.loads(json_str)
+    except Exception as e:
+        log.error(f"V1データの読み込みエラー: {e}")
+        return []
 
 def fetch_high_power_chargers(query):
     log.info(f"検索開始: {query}")
@@ -95,10 +109,8 @@ def fetch_high_power_chargers(query):
     headers = {
         "Content-Type": "application/json",
         "X-Goog-Api-Key": API_KEY,
-        # ★ここが新APIのキモ！欲しいデータだけを指定する
         "X-Goog-FieldMask": "places.displayName,places.formattedAddress,places.location,places.evChargeOptions"
     }
-    
     payload = {
         "textQuery": query,
         "languageCode": "ja"
@@ -119,52 +131,72 @@ def fetch_high_power_chargers(query):
                 if kw > max_kw:
                     max_kw = kw
 
-            # 90kW以上の充電器のみを抽出（150kWを狙い撃ち！）
             if max_kw >= 90:
                 name = place.get("displayName", {}).get("text", "Unknown")
                 address = place.get("formattedAddress", "")
                 lat = place.get("location", {}).get("latitude")
                 lng = place.get("location", {}).get("longitude")
                 
-                # シミュレーターの形式に変換
+                # 💡 V2で見つけるものは、どんなに高出力でもすべて「通常(normal/熱ダレあり)」とする
                 charger = {
                     "name": f"{name} ({int(max_kw)}kW)",
                     "address": address,
-                    "type": "flash" if max_kw >= 150 else "normal", # 150kW以上は水冷(flash)扱い
+                    "type": "normal",
                     "powers": [int(max_kw)],
                     "lat": lat,
                     "lng": lng,
                     "powerKw": int(max_kw),
-                    "direction": "none" # 基本下道扱い
+                    "direction": "none"
                 }
                 high_power_chargers.append(charger)
-                log.info(f"発見！: {charger['name']} at {address}")
 
     except Exception as e:
         log.error(f"APIリクエストエラー ({query}): {e}")
 
-    time.sleep(1) # API制限を回避するためのウェイト
+    time.sleep(1)
     return high_power_chargers
 
 def main():
+    # 1. V1データを読み込む（これが正解データ）
+    v1_chargers = load_v1_data()
+    log.info(f"V1データ（FLASH/SAPA）を {len(v1_chargers)} 件読み込みました。重複チェックに使用します。")
+
     all_high_power_chargers = []
     
     for query in SEARCH_QUERIES:
         chargers = fetch_high_power_chargers(query)
-        all_high_power_chargers.extend(chargers)
         
-    # 重複の排除（緯度経度がほぼ同じものを消す処理などがあればベターです）
-    # ここでは簡易的に名前と住所で重複排除
-    unique_chargers = { (c['lat'], c['lng']): c for c in all_high_power_chargers }.values()
+        for c in chargers:
+            is_duplicate = False
+            
+            # 💡 V1データとの重複チェック（半径150m以内にV1のピンがあれば捨てる！）
+            for v1_c in v1_chargers:
+                v1_lat = v1_c.get("lat", 0)
+                v1_lng = v1_c.get("lng", 0)
+                if haversine_km(c["lat"], c["lng"], v1_lat, v1_lng) < 0.15: # 150m以内
+                    is_duplicate = True
+                    log.info(f"V1データと重複するため破棄: {c['name']}")
+                    break
+            
+            # V2同士の重複チェック（同じ場所が複数回検索された場合）
+            if not is_duplicate:
+                for existing in all_high_power_chargers:
+                    if haversine_km(c["lat"], c["lng"], existing["lat"], existing["lng"]) < 0.15:
+                        is_duplicate = True
+                        break
+                    
+            # 完全に新規の「normal」高出力機だけを追加
+            if not is_duplicate:
+                all_high_power_chargers.append(c)
+                log.info(f"新規追加: {c['name']}")
 
-    output_list = list(unique_chargers)
-    log.info(f"合計 {len(output_list)} 件の超高出力充電器を取得しました。")
+    log.info(f"最終的に {len(all_high_power_chargers)} 件の新規充電器をV2として保存します。")
 
-    # 別ファイルとして保存（HTML側で両方読み込ませる）
+    # ファイル書き出し
     output_filename = "chargers_v2_data.js"
     with open(output_filename, "w", encoding="utf-8") as f:
         f.write("const CHARGER_V2_DATA = ")
-        json.dump(output_list, f, ensure_ascii=False, indent=2)
+        json.dump(all_high_power_chargers, f, ensure_ascii=False, indent=2)
         f.write(";\n")
     
     log.info(f"{output_filename} を生成しました！")
