@@ -129,7 +129,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.0.9 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.1.0 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-26</span>
         </div>
@@ -1272,7 +1272,7 @@ async function searchNearbyEVChargers(lat, lng, radiusM = 30000, maxResults = 10
     try {
         const res = await fetch('https://places.googleapis.com/v1/places:searchText', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': activeApiKey, 'X-Goog-FieldMask': 'places.id,places.displayName,places.location,places.evChargeOptions,places.formattedAddress' },
+            headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': activeApiKey, 'X-Goog-FieldMask': 'places.name,places.displayName,places.location,places.evChargeOptions,places.formattedAddress' },
             body: JSON.stringify({ textQuery: 'EV急速充電', locationBias: { circle: { center: { latitude: lat, longitude: lng }, radius: radiusM } }, maxResultCount: maxResults, languageCode: 'ja' })
         });
         const json = await res.json();
@@ -1281,7 +1281,7 @@ async function searchNearbyEVChargers(lat, lng, radiusM = 30000, maxResults = 10
             vicinity: p.formattedAddress || '',
             lat: p.location.latitude, lng: p.location.longitude,
             powerKw: getEvKwFromOptions(p.evChargeOptions) || null,
-            placeId: p.id || null, type: 'emp'
+            placeId: p.name ? p.name.replace('places/', '') : null, type: 'emp'
         }));
     } catch(e) { console.warn('Places API (New) failed', e); }
 
@@ -1344,8 +1344,8 @@ async function searchEmergencyChargers(lat, lng) {
     el.innerHTML = places.map((p, i) => {
         const kwClass = `chip-kw-${p.powerKw >= 150 ? 'red' : p.powerKw >= 70 ? 'orange' : p.powerKw >= 30 ? 'yellow' : 'gray'}`;
         const kwColor = getKwColor(p.powerKw || 50);
-        const kwLabel = p.powerKw ? `⚡${p.powerKw}kW` : `⚡?kW`;
-        const mapsUrl = p.placeId ? `https://maps.google.com/maps/place/?q=place_id:${p.placeId}` : `https://maps.google.com/?q=${p.lat},${p.lng}`;
+        const kwLabel = p.powerKw ? `${'⚡'.repeat(p.powerKw >= 90 ? 3 : p.powerKw >= 44 ? 2 : 1)}${p.powerKw}kW` : `⚡?kW`;
+        const mapsUrl = p.placeId ? `https://www.google.com/maps/search/?api=1&query_place_id=${p.placeId}` : `https://maps.google.com/?q=${p.lat},${p.lng}`;
         return `
         <div class="alt-opt" onclick="addEmergencyWaypoint(${p.lat}, ${p.lng}, '${p.name.replace(/'/g,"\\'")}', ${p.powerKw || 50})" style="border-left: 3px solid #ef4444; background:rgba(239, 68, 68, 0.1); display:flex; align-items:center; gap:8px;">
             <span style="background:#ef4444; color:#fff; border-radius:50%; min-width:22px; height:22px; display:inline-block; text-align:center; line-height:22px; font-size:12px; font-weight:bold;">${i+1}</span>
