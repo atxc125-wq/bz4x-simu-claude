@@ -7416,5 +7416,17 @@ const CHARGER_DATA = [
     "lng": 136.2846531,
     "powerKw": 50,
     "direction": "down"
+  },
+  {
+    "name": "新東名高速道路　岡崎ＳＡ下り",
+    "address": "愛知県岡崎市宮石町六ツ田１０－４",
+    "type": "sa_pa",
+    "powers": [
+      90
+    ],
+    "lat": 35.035105,
+    "lng": 137.2221134,
+    "powerKw": 90,
+    "direction": "down"
   }
 ];

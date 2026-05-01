@@ -298,5 +298,3077 @@ const CHARGER_V2_DATA = [
     "lng": 135.53887609999998,
     "powerKw": 90,
     "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (150kW)",
+    "address": "日本、〒207-0004 東京都東大和市清水４丁目1−１１２５",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.7486853,
+    "lng": 139.4479374,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒207-0022 東京都東大和市桜が丘４丁目２９１−１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.7388607,
+    "lng": 139.4151004,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "新電元 充電スタンド (150kW)",
+    "address": "日本、〒207-0005 東京都東大和市高木３丁目３７８−３",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.747286300000006,
+    "lng": 139.43401839999999,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "BMW 充電スタンド (150kW)",
+    "address": "日本、〒207-0004 東京都東大和市清水４丁目１１２５",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.748685699999996,
+    "lng": 139.447924,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット 充電スタンド (240kW)",
+    "address": "日本、〒208-0004 東京都武蔵村山市本町１丁目１−５",
+    "type": "flash",
+    "powers": [
+      240
+    ],
+    "lat": 35.754289199999995,
+    "lng": 139.3869876,
+    "powerKw": 240,
+    "direction": "none"
+  },
+  {
+    "name": "日産充電スタンド (90kW)",
+    "address": "日本、〒208-0022 東京都武蔵村山市榎１丁目",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.7456854,
+    "lng": 139.38921209999998,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "Nissan 充電スタンド (90kW)",
+    "address": "日本、〒208-0022 東京都武蔵村山市榎１丁目1−８",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.7456788,
+    "lng": 139.3892137,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (150kW)",
+    "address": "日本、〒190-0011 東京都立川市高松町２丁目３９−２０",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.7075701,
+    "lng": 139.42180829999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット 充電スタンド (150kW)",
+    "address": "日本、〒190-0013 東京都立川市富士見町７丁目３７−２５",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.6911056,
+    "lng": 139.39603359999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (100kW)",
+    "address": "日本、〒279-0013 千葉県浦安市日の出５丁目７−５",
+    "type": "normal",
+    "powers": [
+      100
+    ],
+    "lat": 35.6415429,
+    "lng": 139.9310808,
+    "powerKw": 100,
+    "direction": "none"
+  },
+  {
+    "name": "Toyota 充電スタンド (150kW)",
+    "address": "日本、〒279-0002 千葉県浦安市北栄４丁目２−１１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.659357,
+    "lng": 139.90376369999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "ニチコン 充電スタンド (90kW)",
+    "address": "日本、〒279-0002 千葉県浦安市北栄４丁目９−１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.6626889,
+    "lng": 139.90633499999998,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "ABB 充電スタンド (150kW)",
+    "address": "日本、〒279-0043 千葉県浦安市富士見４丁目２−２８",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.6493432,
+    "lng": 139.8902508,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "日本、〒279-0042 千葉県浦安市東野１丁目３−１",
+    "type": "flash",
+    "powers": [
+      250
+    ],
+    "lat": 35.652792999999996,
+    "lng": 139.898528,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (150kW)",
+    "address": "日本、〒066-0045 北海道千歳市真々地３丁目１−３０",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 42.8121826,
+    "lng": 141.64180489999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (100kW)",
+    "address": "日本、〒066-0077 北海道千歳市上長都９６３−２",
+    "type": "normal",
+    "powers": [
+      100
+    ],
+    "lat": 42.8442308,
+    "lng": 141.61786859999998,
+    "powerKw": 100,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (150kW)",
+    "address": "日本、〒078-8324 北海道旭川市神楽岡１４条９丁目１−１０",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 43.7304474,
+    "lng": 142.3648536,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒070-8014 北海道旭川市神居４条１丁目１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 43.769075199999996,
+    "lng": 142.3275595,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (150kW)",
+    "address": "日本、〒070-0010 北海道旭川市大雪通４丁目４９０−１１１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 43.7786511,
+    "lng": 142.3853637,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒070-0010 北海道旭川市大雪通５丁目４９５−１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 43.779002999999996,
+    "lng": 142.3853275,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒070-0871 北海道旭川市春光１条７丁目１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 43.796551,
+    "lng": 142.3758523,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒079-8412 北海道旭川市永山２条１０丁目２−１３",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 43.7988931,
+    "lng": 142.415069,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (150kW)",
+    "address": "日本、〒071-8111 北海道旭川市東鷹栖東１条２丁目２６９−２２４",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 43.8232058,
+    "lng": 142.41465399999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (100kW)",
+    "address": "日本、〒070-8014 北海道旭川市神居４条１丁目１−３０",
+    "type": "normal",
+    "powers": [
+      100
+    ],
+    "lat": 43.768536,
+    "lng": 142.3265458,
+    "powerKw": 100,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (90kW)",
+    "address": "日本、〒070-0901 北海道旭川市花咲町６丁目２２７２−６２",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 43.795778299999995,
+    "lng": 142.3762087,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (90kW)",
+    "address": "日本、〒078-8235 北海道旭川市豊岡５条４丁目４−３０ 旭川市 北海道",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 43.760351799999995,
+    "lng": 142.4031793,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒061-1123 北海道北広島市朝日町３丁目1−３",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 42.987930299999995,
+    "lng": 141.56975749999998,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (90kW)",
+    "address": "日本、〒061-1278 北海道北広島市大曲幸町１丁目13−５",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 42.9725148,
+    "lng": 141.4715287,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "PowerX 充電スタンド (150kW)",
+    "address": "日本、〒231-0001 神奈川県横浜市中区新港２丁目３−３",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.4555461,
+    "lng": 139.6393315,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (150kW)",
+    "address": "日本、〒231-0001 神奈川県横浜市中区新港１丁目５−地先",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.452356699999996,
+    "lng": 139.6409007,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スタンド (90kW)",
+    "address": "日本、〒220-0061 神奈川県横浜市西区久保町９",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.452442999999995,
+    "lng": 139.6094918,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スタンド (90kW)",
+    "address": "日本、〒231-0035 神奈川県横浜市中区千歳町２−８",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.4372441,
+    "lng": 139.6343046,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "日産 充電スタンド (90kW)",
+    "address": "日本、〒220-0011 神奈川県横浜市西区高島１丁目１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.4629735,
+    "lng": 139.6258829,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット Charging Station (150kW)",
+    "address": "日本、〒220-0012 神奈川県横浜市西区みなとみらい３丁目５−１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.4582125,
+    "lng": 139.6318305,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (150kW)",
+    "address": "日本、〒220-0012 神奈川県横浜市西区みなとみらい４丁目２−１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.4579613,
+    "lng": 139.626197,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタ 充電スタンド (150kW)",
+    "address": "日本、〒231-0023 神奈川県横浜市中区山下町６５",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.4430897,
+    "lng": 139.6499699,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (180kW)",
+    "address": "日本、〒530-0005 大阪府大阪市北区中之島１丁目３−２０",
+    "type": "flash",
+    "powers": [
+      180
+    ],
+    "lat": 34.6935011,
+    "lng": 135.5013339,
+    "powerKw": 180,
+    "direction": "none"
+  },
+  {
+    "name": "PowerX 充電スタンド (150kW)",
+    "address": "日本、〒530-0011 大阪府大阪市北区大深町３−１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.7057745,
+    "lng": 135.49507649999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒550-0014 大阪府大阪市西区北堀江１丁目２１−１９",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.674445999999996,
+    "lng": 135.49359139999999,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (150kW)",
+    "address": "日本、〒530-0011 大阪府大阪市北区大深町１−１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.7041426,
+    "lng": 135.4963309,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "PowerX 充電スタンド (150kW)",
+    "address": "日本、〒553-0003 大阪府大阪市福島区福島４丁目２−７８ 駐車場",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.691966199999996,
+    "lng": 135.4819578,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "PowerX 充電スタンド (150kW)",
+    "address": "日本、〒553-0003 大阪府大阪市福島区福島７丁目２０ 大阪府大阪市福島区福島7-20-1 KM西梅田ビルB2 大阪市福島区 JP",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.7002005,
+    "lng": 135.4860654,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒553-0001 大阪府大阪市福島区海老江１丁目５−４５",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.6980023,
+    "lng": 135.4750282,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "PowerX 充電スタンド (150kW)",
+    "address": "日本、〒530-0011 大阪府大阪市北区大深町４−２０",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.7038793,
+    "lng": 135.4953772,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット Charging Station (100kW)",
+    "address": "日本、〒550-0012 大阪府大阪市西区立売堀３丁目１−１",
+    "type": "normal",
+    "powers": [
+      100
+    ],
+    "lat": 34.680697099999996,
+    "lng": 135.490462,
+    "powerKw": 100,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "日本、〒530-0053 大阪府大阪市北区末広町２−２",
+    "type": "flash",
+    "powers": [
+      250
+    ],
+    "lat": 34.7016826,
+    "lng": 135.51024719999998,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (90kW)",
+    "address": "日本、〒550-0004 大阪府大阪市西区靱本町２丁目３ 大阪府大阪市西区靭本町2-3-10 大阪市西区 JP",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.683400299999995,
+    "lng": 135.49208570000002,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒060-0032 北海道札幌市中央区北２条東１４丁目４−１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 43.067397199999995,
+    "lng": 141.3786146,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒063-0801 北海道札幌市西区二十四軒１条７丁目２−１８ 北海道札幌市西区二十四軒1条7-2-18 札幌市西区 JP",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 43.0662115,
+    "lng": 141.3122871,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒063-0801 北海道札幌市西区二十四軒１条７丁目２−１０ ＭＩＮＩ宮の森 北海道札幌市西区二十四軒1条7-2-10 札幌市西区 JP",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 43.065951999999996,
+    "lng": 141.3126395,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "Nissan 充電スタンド (90kW)",
+    "address": "日本、〒064-0808 北海道札幌市中央区南８条西１１丁目２",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 43.0494146,
+    "lng": 141.3420252,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (150kW)",
+    "address": "日本、〒812-0007 福岡県福岡市博多区東比恵１丁目３−１７",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 33.5901676,
+    "lng": 130.4290447,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (150kW)",
+    "address": "日本、〒812-0018 福岡県福岡市博多区住吉１丁目２−２５",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 33.5908993,
+    "lng": 130.4103987,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Panasonic 充電スタンド (150kW)",
+    "address": "日本、〒810-0064 福岡県福岡市中央区地行１丁目８−１０",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 33.5886888,
+    "lng": 130.36616469999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "ABB 充電スタンド (150kW)",
+    "address": "日本、〒815-0031 福岡県福岡市南区清水１丁目２４−２８",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 33.5691573,
+    "lng": 130.418142,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (90kW)",
+    "address": "日本、〒810-0014 福岡県福岡市中央区平尾３丁目３−１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 33.5771805,
+    "lng": 130.400045,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スタンド (90kW)",
+    "address": "日本、〒810-0022 福岡県福岡市中央区薬院３丁目１４−１６",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 33.58042350000001,
+    "lng": 130.3978891,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "SHINDENGEN 充電スタンド (150kW)",
+    "address": "日本、〒810-0001 福岡県福岡市中央区天神１丁目１１−１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 33.590472999999996,
+    "lng": 130.39973200000003,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (90kW)",
+    "address": "日本、〒810-0004 福岡県福岡市中央区渡辺通４丁目１−３６",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 33.585018100000006,
+    "lng": 130.4022086,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒812-0042 福岡県福岡市博多区豊２丁目３−４０",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 33.597573499999996,
+    "lng": 130.4351848,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "日産 充電スタンド (90kW)",
+    "address": "日本、〒812-8632 福岡県福岡市博多区千代１丁目２１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 33.602193899999996,
+    "lng": 130.417733,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "日産 充電スタンド (90kW)",
+    "address": "日本、〒210-0003 神奈川県川崎市川崎区堀之内町１０−１２",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.5326732,
+    "lng": 139.70632659999998,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "Nissan 充電スタンド (90kW)",
+    "address": "日本、〒210-0003 神奈川県川崎市川崎区堀之内町10 12",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.5326538,
+    "lng": 139.7063719,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (150kW)",
+    "address": "日本、〒651-0073 兵庫県神戸市中央区脇浜海岸通２丁目２−１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.700011599999996,
+    "lng": 135.21646149999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒652-0882 兵庫県神戸市兵庫区芦原通１丁目２−３６",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.663393899999996,
+    "lng": 135.17066699999998,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (150kW)",
+    "address": "日本、〒651-0076 兵庫県神戸市中央区吾妻通３丁目１−８",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.6985889,
+    "lng": 135.2057824,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット Charging Station (150kW)",
+    "address": "日本、〒650-0045 兵庫県神戸市中央区港島８丁目１１−２",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.6629797,
+    "lng": 135.22128849999999,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット Charging Station (90kW)",
+    "address": "日本、〒657-0034 兵庫県神戸市灘区記田町２丁目３−２８ Ｖｏｌｋｓｗａｇｅｎ神戸東",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.714841799999995,
+    "lng": 135.24812699999998,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "PowerX 充電スタンド (150kW)",
+    "address": "日本、〒650-0004 兵庫県神戸市中央区中山手通３丁目１７−１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.6956442,
+    "lng": 135.1866177,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スタンド (90kW)",
+    "address": "日本、〒657-0042 兵庫県神戸市灘区烏帽子町３丁目３",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.710073699999995,
+    "lng": 135.2351821,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット Charging Station (150kW)",
+    "address": "日本、〒650-0041 兵庫県神戸市中央区新港町１１−１ ジーライオンアワーズビル 1F",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.683976,
+    "lng": 135.19489959999999,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla充電スタンド (250kW)",
+    "address": "日本、〒658-0054 兵庫県神戸市東灘区御影中町３丁目２−１",
+    "type": "flash",
+    "powers": [
+      250
+    ],
+    "lat": 34.715298,
+    "lng": 135.254975,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スポット (90kW)",
+    "address": "日本、〒658-0044 兵庫県神戸市東灘区御影塚町２丁目１３",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.7122124,
+    "lng": 135.248918,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット 充電スタンド (150kW)",
+    "address": "日本、〒601-8357 京都府京都市南区吉祥院石原堂ノ後西町５",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.9678074,
+    "lng": 135.7268977,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (150kW)",
+    "address": "日本、〒601-8205 京都府京都市南区久世殿城町４５３−２",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.95672580000001,
+    "lng": 135.71752189999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (150kW)",
+    "address": "日本、〒615-0072 京都府京都市右京区山ノ内池尻町８−２",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.0040932,
+    "lng": 135.7198435,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒615-0882 京都府京都市右京区西京極葛野町６−１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.9982294,
+    "lng": 135.7194471,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒601-8204 京都府京都市南区久世東土川町",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.9430246,
+    "lng": 135.7216843,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "Nissan 充電スタンド (90kW)",
+    "address": "日本、〒601-8357 京都府京都市南区吉祥院石原堂ノ後西町",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.966790599999996,
+    "lng": 135.727056,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "Porsche Japan 充電スタンド (90kW)",
+    "address": "日本、〒601-8319 京都府京都市南区吉祥院三ノ宮町１００",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.9761792,
+    "lng": 135.72876779999999,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (150kW)",
+    "address": "日本、〒330-0835 埼玉県さいたま市大宮区北袋町２丁目１９３−１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.893535199999995,
+    "lng": 139.6430675,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "ABB 充電スタンド (150kW)",
+    "address": "日本、〒330-0061 埼玉県さいたま市浦和区常盤１０丁目１９−３８",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.8709912,
+    "lng": 139.6403137,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (90kW)",
+    "address": "日本、〒338-0014 埼玉県さいたま市中央区上峰３丁目１ 埼玉県さいたま市中央区上峰3-1-4 さいたま市桜区 JP",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.8704077,
+    "lng": 139.6204726,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スタンド (90kW)",
+    "address": "日本、〒338-0002 埼玉県さいたま市中央区下落合４丁目２４",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.8884393,
+    "lng": 139.6296018,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒330-0074 埼玉県さいたま市浦和区北浦和５丁目６−１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.8735256,
+    "lng": 139.6405289,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒336-0932 埼玉県さいたま市緑区中尾１３１４",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.877372699999995,
+    "lng": 139.68556089999998,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (150kW)",
+    "address": "日本、〒734-0014 広島県広島市南区宇品西３丁目４−２３",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.361340999999996,
+    "lng": 132.45944749999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット 充電スタンド (150kW)",
+    "address": "日本、〒733-0036 広島県広島市西区観音新町２丁目７−４２",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.3796422,
+    "lng": 132.4234684,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (150kW)",
+    "address": "日本、〒733-0031 広島県広島市西区観音町１５−２０",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.394411999999996,
+    "lng": 132.4379516,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スタンド (150kW)",
+    "address": "日本、〒730-0811 広島県広島市中区中島町２−２４",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.3906262,
+    "lng": 132.4500712,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "PowerX 充電スタンド (150kW)",
+    "address": "日本、〒733-0036 広島県広島市西区観音新町４丁目８−５２",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.3730155,
+    "lng": 132.4218869,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒730-0005 広島県広島市中区西白島町１７−９ Ｖｏｌｋｓｗａｇｅｎ広島",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.4058729,
+    "lng": 132.46230749999998,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スタンド (180kW)",
+    "address": "日本、〒730-0053 広島県広島市中区東千田町１丁目１−１８",
+    "type": "flash",
+    "powers": [
+      180
+    ],
+    "lat": 34.382697799999995,
+    "lng": 132.4591792,
+    "powerKw": 180,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒733-0003 広島県広島市西区三篠町１丁目３−２６",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.4118836,
+    "lng": 132.4537672,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒733-0034 広島県広島市西区南観音町９",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.3871641,
+    "lng": 132.43233759999998,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒733-0035 広島県広島市西区南観音５丁目１５",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.380038299999995,
+    "lng": 132.4245279,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒734-0023 広島県広島市南区東雲本町１丁目１５−１８",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.3797876,
+    "lng": 132.4856438,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スタンド (90kW)",
+    "address": "日本、〒732-0816 広島県広島市南区比治山本町１７−１２",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.3814749,
+    "lng": 132.46734899999998,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (150kW)",
+    "address": "日本、〒260-0843 千葉県千葉市中央区末広５丁目１０−７",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.5866859,
+    "lng": 140.130294,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (150kW)",
+    "address": "日本、〒260-0822 千葉県千葉市中央区蘇我１丁目１６−１６",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.5739886,
+    "lng": 140.12912459999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "電気自動車充電スタンド (150kW)",
+    "address": "日本、〒260-0045 千葉県千葉市中央区弁天３丁目１−１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.6213797,
+    "lng": 140.1163459,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒261-0001 千葉県千葉市美浜区幸町２丁目２１−１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.6244004,
+    "lng": 140.0915039,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタ 充電スタンド (150kW)",
+    "address": "日本、〒260-0028 千葉県千葉市中央区新町 千葉県千葉市中央区新町10 千葉市中央区 JP",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.609922999999995,
+    "lng": 140.1150585,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility 充電スタンド (150kW)",
+    "address": "日本、〒261-0002 千葉県千葉市美浜区新港７０−１ ネッツトヨタ千葉ネッツタウン新港",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.6151586,
+    "lng": 140.0876227,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒261-0005 千葉県千葉市美浜区稲毛海岸５丁目１−２４",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.6386537,
+    "lng": 140.076188,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "PowerX 充電スタンド (150kW)",
+    "address": "日本、〒263-0051 千葉県千葉市稲毛区園生町３７７−１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.6522049,
+    "lng": 140.11821,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スポット (90kW)",
+    "address": "日本、〒260-0001 千葉県千葉市中央区都町３丁目２",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.609347299999996,
+    "lng": 140.1372465,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "ENECHANGE EV 充電スタンド (150kW)",
+    "address": "日本、〒803-0813 福岡県北九州市小倉北区城内１−１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 33.8829012,
+    "lng": 130.87439659999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (150kW)",
+    "address": "日本、〒802-0021 福岡県北九州市小倉北区高浜１丁目１−２５ Ａｕｄｉ北九州",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 33.8840759,
+    "lng": 130.8944608,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (150kW)",
+    "address": "日本、〒803-0801 福岡県北九州市小倉北区西港町３０−１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 33.8996597,
+    "lng": 130.8530386,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (150kW)",
+    "address": "日本、〒802-0011 福岡県北九州市小倉北区重住３丁目１０−７",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 33.8565769,
+    "lng": 130.88996319999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (100kW)",
+    "address": "日本、〒803-0811 福岡県北九州市小倉北区大門２丁目６−１",
+    "type": "normal",
+    "powers": [
+      100
+    ],
+    "lat": 33.8874535,
+    "lng": 130.8695734,
+    "powerKw": 100,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (150kW)",
+    "address": "日本、〒802-0073 福岡県北九州市小倉北区貴船町２−２",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 33.871418,
+    "lng": 130.8730741,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スポット (90kW)",
+    "address": "日本、〒803-0834 福岡県北九州市小倉北区都２丁目１３",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 33.8785963,
+    "lng": 130.84625119999998,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (90kW)",
+    "address": "日本、〒803-0845 福岡県北九州市小倉北区上到津４丁目１２−３",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 33.871190299999995,
+    "lng": 130.8454296,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒590-0003 大阪府堺市堺区高須町２丁１−１８",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.5893441,
+    "lng": 135.4882538,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (150kW)",
+    "address": "日本、〒599-8272 大阪府堺市中区深井中町３２４２",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.5361055,
+    "lng": 135.4935911,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒593-8304 大阪府堺市西区家原寺町１丁１７−１１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.536741899999996,
+    "lng": 135.4704289,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒599-8271 大阪府堺市中区深井北町３４０１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.5402181,
+    "lng": 135.4912861,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (150kW)",
+    "address": "日本、〒591-8033 大阪府堺市北区北区百舌鳥西之町２丁５４６",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.54785450000001,
+    "lng": 135.49391079999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒591-8024 大阪府堺市北区黒土町２３５０−１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.566162999999996,
+    "lng": 135.4993034,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (90kW)",
+    "address": "日本、〒592-8347 大阪府堺市西区浜寺諏訪森町西１丁",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.5529089,
+    "lng": 135.4485308,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (150kW)",
+    "address": "日本、〒950-0962 新潟県新潟市中央区出来島２丁目１４−１９",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 37.8981445,
+    "lng": 139.0236876,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (150kW)",
+    "address": "日本、〒950-0954 新潟県新潟市中央区美咲町１丁目７−３",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 37.894449699999996,
+    "lng": 139.0158325,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スタンド (90kW)",
+    "address": "日本、〒950-0908 新潟県新潟市中央区幸西３丁目４−１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 37.9107094,
+    "lng": 139.045089,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒950-0854 新潟県新潟市東区南紫竹２丁目３−１８",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 37.898691899999996,
+    "lng": 139.0792797,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スタンド (90kW)",
+    "address": "日本、〒950-0965 新潟県新潟市中央区新光町１−７",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 37.9033288,
+    "lng": 139.026291,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (150kW)",
+    "address": "日本、〒435-0043 静岡県浜松市中央区宮竹町６６７ Ａｕｄｉ浜松",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.7194408,
+    "lng": 137.7617961,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (100kW)",
+    "address": "日本、〒435-0016 静岡県浜松市中央区和田町６４２−１",
+    "type": "normal",
+    "powers": [
+      100
+    ],
+    "lat": 34.722766199999995,
+    "lng": 137.7742581,
+    "powerKw": 100,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒432-8061 静岡県浜松市中央区入野町 静岡県浜松市西区入野町933-1 浜松市中区 JP",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.6989677,
+    "lng": 137.69500779999998,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒435-0043 静岡県浜松市中央区宮竹町 静岡県浜松市東区宮竹町506-2 半田市 JP",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.7199208,
+    "lng": 137.7613517,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スタンド (90kW)",
+    "address": "日本、〒435-0016 静岡県浜松市中央区和田町",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.722318099999995,
+    "lng": 137.7708632,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スポット (90kW)",
+    "address": "日本、〒432-8048 静岡県浜松市中央区森田町",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.695661799999996,
+    "lng": 137.7202494,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒430-0907 静岡県浜松市中央区高林５丁目７−２８",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.734012299999996,
+    "lng": 137.7357605,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒860-0827 熊本県熊本市中央区世安１丁目１−１３",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 32.785547699999995,
+    "lng": 130.6993996,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (150kW)",
+    "address": "日本、〒861-4101 熊本県熊本市南区近見６丁目２２−７０",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 32.7626085,
+    "lng": 130.6924229,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒860-0824 熊本県熊本市中央区十禅寺４丁目１−１８３",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 32.7808572,
+    "lng": 130.69771369999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "ABB 充電スタンド (150kW)",
+    "address": "日本、〒862-0963 熊本県熊本市南区出仲間８丁目９−５",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 32.768586,
+    "lng": 130.7232232,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スポット (90kW)",
+    "address": "日本、〒860-0072 熊本県熊本市西区花園１丁目６ 熊本県熊本市西区花園1-6-13 熊本市西区 JP",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 32.8106685,
+    "lng": 130.6967922,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "電気自動車充電スタンド (90kW)",
+    "address": "日本、〒862-0963 熊本県熊本市南区出仲間９丁目５−２５",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 32.771714599999996,
+    "lng": 130.7211566,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スタンド (90kW)",
+    "address": "日本、〒861-8029 熊本県熊本市東区西原１丁目２−１５",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 32.8130398,
+    "lng": 130.7501763,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "電気自動車充電スタンド (90kW)",
+    "address": "日本、〒860-0827 熊本県熊本市中央区世安３丁目１３−１９",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 32.7804906,
+    "lng": 130.6970134,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (150kW)",
+    "address": "日本、〒252-0236 神奈川県相模原市中央区富士見１丁目６−１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.5710274,
+    "lng": 139.3768934,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (150kW)",
+    "address": "日本、〒252-0234 神奈川県相模原市中央区共和３丁目１１−１５",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.560508399999996,
+    "lng": 139.4011438,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (240kW)",
+    "address": "日本、〒252-0242 神奈川県相模原市中央区横山１丁目１−１",
+    "type": "flash",
+    "powers": [
+      240
+    ],
+    "lat": 35.5704975,
+    "lng": 139.3636166,
+    "powerKw": 240,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒252-0132 神奈川県相模原市緑区橋本台１丁目１９−７",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.5821024,
+    "lng": 139.3458255,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒252-0331 神奈川県相模原市南区大野台１丁目２−６",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.5585467,
+    "lng": 139.4045079,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (100kW)",
+    "address": "日本、〒252-0253 神奈川県相模原市中央区南橋本４丁目２−５",
+    "type": "normal",
+    "powers": [
+      100
+    ],
+    "lat": 35.5758927,
+    "lng": 139.34895029999998,
+    "powerKw": 100,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒700-0975 岡山県岡山市北区今１丁目１−２５",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.6521846,
+    "lng": 133.8955112,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒700-0913 岡山県岡山市北区大供３丁目２−１２",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.6565778,
+    "lng": 133.9172773,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スタンド (90kW)",
+    "address": "日本、〒700-0964 岡山県岡山市北区中仙道１丁目１２",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.649047599999996,
+    "lng": 133.8876329,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "ABB 充電スポット (150kW)",
+    "address": "日本、〒700-0941 岡山県岡山市南区青江６丁目３−１３",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.6285355,
+    "lng": 133.92123139999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スタンド (90kW)",
+    "address": "日本、〒700-0965 岡山県岡山市北区西長瀬",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.648568499999996,
+    "lng": 133.8801483,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スポット (90kW)",
+    "address": "日本、〒703-8275 岡山県岡山市中区門田屋敷５丁目１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.6565267,
+    "lng": 133.9378812,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スポット (90kW)",
+    "address": "日本、〒700-0942 岡山県岡山市南区豊成３丁目１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.6277577,
+    "lng": 133.9253949,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット 充電スタンド (90kW)",
+    "address": "日本、〒700-0011 岡山県岡山市北区学南町１丁目６−６",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.6786453,
+    "lng": 133.92141329999998,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒700-0953 岡山県岡山市南区西市５５０ レクサス岡山",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.6305493,
+    "lng": 133.89602639999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スポット (90kW)",
+    "address": "日本、〒700-0973 岡山県岡山市南区下中野",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.6378902,
+    "lng": 133.9068424,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒422-8042 静岡県静岡市駿河区石田１丁目２−２４",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.9615727,
+    "lng": 138.3988255,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (150kW)",
+    "address": "日本、〒422-8054 静岡県静岡市駿河区南安倍３丁目６−３０",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.9604585,
+    "lng": 138.3779135,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒422-8037 静岡県静岡市駿河区下島４２８−２",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.9461197,
+    "lng": 138.41199699999999,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (90kW)",
+    "address": "日本、〒420-0846 静岡県静岡市葵区城東町５９−１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.9865149,
+    "lng": 138.39137979999998,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "日本、〒422-8065 静岡県静岡市駿河区宮本町１−２",
+    "type": "flash",
+    "powers": [
+      250
+    ],
+    "lat": 34.967369,
+    "lng": 138.381729,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スポット (90kW)",
+    "address": "日本、〒422-8005 静岡県静岡市駿河区池田",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.9836136,
+    "lng": 138.4174443,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スタンド (90kW)",
+    "address": "日本、〒422-8047 静岡県静岡市駿河区中村町",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.953162899999995,
+    "lng": 138.3936175,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "電気自動車充電スタンド (150kW)",
+    "address": "日本、〒273-0022 千葉県船橋市海神町３丁目１２４−１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.6994168,
+    "lng": 139.975628,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒273-0001 千葉県船橋市市場５丁目１−１５",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.7045461,
+    "lng": 139.99952629999999,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒273-0047 千葉県船橋市藤原４丁目４−１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.744895299999996,
+    "lng": 139.976398,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒273-0001 千葉県船橋市市場４丁目１９−８",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.7037283,
+    "lng": 140.0011706,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (90kW)",
+    "address": "日本、〒273-0022 千葉県船橋市海神町３丁目１２４−３",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.6994742,
+    "lng": 139.9753599,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "E-Mobility Power 充電スタンド (90kW)",
+    "address": "日本、〒273-0003 千葉県船橋市宮本９丁目５−１５",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.6888848,
+    "lng": 139.9993172,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "Nissan 充電スタンド (150kW)",
+    "address": "日本、〒273-0001 千葉県船橋市市場２丁目１０−５",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.7051722,
+    "lng": 139.9975416,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (90kW)",
+    "address": "日本、〒273-0045 千葉県船橋市山手１丁目２−７",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.7157586,
+    "lng": 139.9784199,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "パナソニック 充電スタンド (200kW)",
+    "address": "日本、〒273-0012 千葉県船橋市浜町２丁目１−１",
+    "type": "flash",
+    "powers": [
+      200
+    ],
+    "lat": 35.6878783,
+    "lng": 139.98969739999998,
+    "powerKw": 200,
+    "direction": "none"
+  },
+  {
+    "name": "Higashiko Takadake 充電スタンド (150kW)",
+    "address": "日本、〒273-0001 千葉県船橋市市場２丁目９−１９",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.7052603,
+    "lng": 139.9966695,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット Charging Station (90kW)",
+    "address": "日本、〒273-0016 千葉県船橋市潮見町１９−２",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.6760917,
+    "lng": 139.9703941,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒332-0016 埼玉県川口市幸町１丁目４−１５",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.805628299999995,
+    "lng": 139.71692990000003,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒332-0001 埼玉県川口市朝日３丁目４−５",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.8115658,
+    "lng": 139.7350156,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スポット (90kW)",
+    "address": "日本、〒332-0017 埼玉県川口市栄町１丁目６",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.803677199999996,
+    "lng": 139.72819719999998,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒332-0017 埼玉県川口市栄町１丁目１６−１２",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.8030768,
+    "lng": 139.7308531,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (100kW)",
+    "address": "日本、〒332-0031 埼玉県川口市青木１丁目４−２０",
+    "type": "normal",
+    "powers": [
+      100
+    ],
+    "lat": 35.807151,
+    "lng": 139.7254084,
+    "powerKw": 100,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒333-0866 埼玉県川口市芝１丁目３８−１ 1階",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.8314497,
+    "lng": 139.7047714,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Nissan 充電スタンド (90kW)",
+    "address": "日本、〒332-0017 埼玉県川口市栄町１丁目６−１１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.8036679,
+    "lng": 139.7281894,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "Shindengen 充電スタンド (150kW)",
+    "address": "日本、〒333-0866 埼玉県川口市芝４４３４",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.842936,
+    "lng": 139.6935179,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (150kW)",
+    "address": "日本、〒890-0073 鹿児島県鹿児島市宇宿２丁目１８−２５",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 31.541428999999997,
+    "lng": 130.5393245,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (150kW)",
+    "address": "日本、〒892-0847 鹿児島県鹿児島市西千石町２−２１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 31.5878834,
+    "lng": 130.5473978,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒892-0847 鹿児島県鹿児島市西千石町７",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 31.588826799999996,
+    "lng": 130.5472258,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒892-0823 鹿児島県鹿児島市住吉町１−５",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 31.5921966,
+    "lng": 130.5608098,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒890-0073 鹿児島県鹿児島市宇宿３丁目４０−６",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 31.5417625,
+    "lng": 130.5378301,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒890-0022 鹿児島県鹿児島市小野町２３９２−５",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 31.598935200000003,
+    "lng": 130.5109426,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒890-0062 鹿児島県鹿児島市与次郎１丁目１１−１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 31.570736699999998,
+    "lng": 130.5641258,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (150kW)",
+    "address": "日本、〒890-0062 鹿児島県鹿児島市与次郎１丁目６−１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 31.571017400000002,
+    "lng": 130.5609996,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (90kW)",
+    "address": "日本、〒890-0041 鹿児島県鹿児島市城西２丁目１−５",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 31.597093800000003,
+    "lng": 130.54017059999998,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (90kW)",
+    "address": "日本、〒890-0073 鹿児島県鹿児島市宇宿２丁目１９−３",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 31.541195799999997,
+    "lng": 130.5386288,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒892-0835 鹿児島県鹿児島市城南町８−１９",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 31.5836477,
+    "lng": 130.563713,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (150kW)",
+    "address": "日本、〒192-0012 東京都八王子市左入町７８７",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.6793912,
+    "lng": 139.33522539999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒192-0045 東京都八王子市大和田町２丁目２２−１６",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.6659104,
+    "lng": 139.35821230000002,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (150kW)",
+    "address": "日本、〒192-0032 東京都八王子市石川町",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 35.6770236,
+    "lng": 139.37074429999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "ENEOS EV充電スタンド (90kW)",
+    "address": "日本、〒193-0934 東京都八王子市小比企町３５００−２",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.6336325,
+    "lng": 139.3215512,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "日産 充電スタンド (90kW)",
+    "address": "日本、〒192-0917 東京都八王子市西片倉３丁目２０−４",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.6350023,
+    "lng": 139.3263158,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (150kW)",
+    "address": "日本、〒672-8048 兵庫県姫路市飾磨区三宅１丁目１３９",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.8126585,
+    "lng": 134.68254199999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (150kW)",
+    "address": "日本、〒670-0944 兵庫県姫路市阿保甲30−３",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.8231894,
+    "lng": 134.7048088,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒670-0058 兵庫県姫路市車崎１丁目３−１２",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.8366294,
+    "lng": 134.6752579,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "PowerX 充電スタンド (150kW)",
+    "address": "日本、〒670-0975 兵庫県姫路市中地南町６６",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.8159,
+    "lng": 134.6659832,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (180kW)",
+    "address": "日本、〒670-0996 兵庫県姫路市土山７丁目６−１５",
+    "type": "flash",
+    "powers": [
+      180
+    ],
+    "lat": 34.8359352,
+    "lng": 134.6679976,
+    "powerKw": 180,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒670-0893 兵庫県姫路市北平野２丁目９−８",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.860907999999995,
+    "lng": 134.69448889999998,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スポット (90kW)",
+    "address": "日本、〒670-0061 兵庫県姫路市西今宿３丁目１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.839926600000005,
+    "lng": 134.6631827,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒671-0253 兵庫県姫路市花田町一本松３−２",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.822914499999996,
+    "lng": 134.7282413,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (90kW)",
+    "address": "日本、〒672-8090 兵庫県姫路市飾磨区今在家北１丁目４１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.810764,
+    "lng": 134.6571203,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒321-0967 栃木県宇都宮市錦３丁目１２−５",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 36.574739799999996,
+    "lng": 139.89318409999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒321-0933 栃木県宇都宮市簗瀬町１５９４−１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 36.5430516,
+    "lng": 139.8909833,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒321-0962 栃木県宇都宮市今泉町２９９６−１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 36.57211300000001,
+    "lng": 139.9162753,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スタンド (150kW)",
+    "address": "日本、〒320-0833 栃木県宇都宮市不動前４丁目２−４８",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 36.5427563,
+    "lng": 139.8806246,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (150kW)",
+    "address": "日本、〒320-0833 栃木県宇都宮市不動前４丁目２−５６",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 36.5436445,
+    "lng": 139.8806808,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒321-0984 栃木県宇都宮市御幸町８４",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 36.5780075,
+    "lng": 139.91847769999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Panasonic 充電スタンド (90kW)",
+    "address": "日本、〒320-0833 栃木県宇都宮市不動前５丁目１−１８ Ｖｏｌｋｓｗａｇｅｎサザン宇都宮",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 36.5431187,
+    "lng": 139.8801176,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "E-mobility Power 充電スタンド (90kW)",
+    "address": "日本、〒320-0821 栃木県宇都宮市一条１丁目４−５",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 36.5530528,
+    "lng": 139.88019549999999,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (150kW)",
+    "address": "日本、〒791-8016 愛媛県松山市久万ノ台１２５−１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 33.8567269,
+    "lng": 132.7481876,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (150kW)",
+    "address": "日本、〒791-8015 愛媛県松山市中央１丁目１６−５",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 33.854959199999996,
+    "lng": 132.7501925,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒791-8025 愛媛県松山市衣山１丁目１−２７",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 33.851570800000005,
+    "lng": 132.74663170000002,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒791-8015 愛媛県松山市中央１丁目１７−６０",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 33.8542755,
+    "lng": 132.7513904,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒790-0921 愛媛県松山市福音寺町２６１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 33.8216113,
+    "lng": 132.7937077,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "Zerova 充電スタンド (150kW)",
+    "address": "Imon, ２丁目-１９-19-13 北井門 松山市 愛媛県 791-1105 日本",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 33.8037133,
+    "lng": 132.7824741,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (150kW)",
+    "address": "日本、〒791-1114 愛媛県松山市井門町３８５−２",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 33.7994006,
+    "lng": 132.78506190000002,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット Charging Station (150kW)",
+    "address": "日本、〒791-1114 愛媛県松山市井門町３８８−１",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 33.7990116,
+    "lng": 132.7843417,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (150kW)",
+    "address": "日本、〒556-0016 大阪府東大阪市元町２丁目２−５０ 東大阪市 JP",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.697362999999996,
+    "lng": 135.6367689,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒577-0013 大阪府東大阪市長田中２丁目５−２３",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.6797836,
+    "lng": 135.59072799999998,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒579-8004 大阪府東大阪市布市町３丁目１１−３９",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.6956001,
+    "lng": 135.637586,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒577-0004 大阪府東大阪市稲田新町３丁目２−６５",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.689388799999996,
+    "lng": 135.5930181,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (150kW)",
+    "address": "日本、〒663-8113 兵庫県西宮市甲子園口６丁目１３−２２",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.73540330000001,
+    "lng": 135.3638825,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒663-8242 兵庫県西宮市津門飯田町３−３８",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.7361083,
+    "lng": 135.3597871,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スタンド (90kW)",
+    "address": "日本、〒663-8226 兵庫県西宮市今津港町１−２６",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.7241749,
+    "lng": 135.3505577,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット (150kW)",
+    "address": "日本、〒663-8241 兵庫県西宮市津門大塚町１１−４５",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.7367507,
+    "lng": 135.358191,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スポット (90kW)",
+    "address": "日本、〒662-0977 兵庫県西宮市神楽町１２−３",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.7387265,
+    "lng": 135.3325827,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (150kW)",
+    "address": "日本、〒662-0932 兵庫県西宮市泉町１−１−５",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.7265629,
+    "lng": 135.3352052,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "PowerX 充電スタンド (150kW)",
+    "address": "日本、〒663-8243 兵庫県西宮市津門大箇町４−３",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 34.7358884,
+    "lng": 135.3559439,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "電気自動車充電スタンド (90kW)",
+    "address": "日本、〒662-0977 兵庫県西宮市神楽町１２−１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 34.738761499999995,
+    "lng": 135.33307589999998,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EVgo Charging Station (350kW)",
+    "address": "1530 Hamilton Ave, San Jose, CA 95125 アメリカ合衆国",
+    "type": "flash",
+    "powers": [
+      350
+    ],
+    "lat": 37.2935577,
+    "lng": -121.91034270000002,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "1300 W San Carlos St, San Jose, CA 95126 アメリカ合衆国",
+    "type": "flash",
+    "powers": [
+      350
+    ],
+    "lat": 37.3226237,
+    "lng": -121.91358099999998,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "EvGateway Charging Station (120kW)",
+    "address": "2460 Fontaine Rd, San Jose, CA 95121 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      120
+    ],
+    "lat": 37.317972999999995,
+    "lng": -121.82939940000001,
+    "powerKw": 120,
+    "direction": "none"
+  },
+  {
+    "name": "EV Connect Charging Station (120kW)",
+    "address": "1790 S 10th St, San Jose, CA 95112 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      120
+    ],
+    "lat": 37.3140864,
+    "lng": -121.8601304,
+    "powerKw": 120,
+    "direction": "none"
+  },
+  {
+    "name": "EVgo Charging Station (350kW)",
+    "address": "385 N Capitol Ave, San Jose, CA 95133 アメリカ合衆国",
+    "type": "flash",
+    "powers": [
+      350
+    ],
+    "lat": 37.3720346,
+    "lng": -121.8452987,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "760 Newhall Dr, San Jose, CA 95110 アメリカ合衆国",
+    "type": "flash",
+    "powers": [
+      350
+    ],
+    "lat": 37.3505062,
+    "lng": -121.92285389999999,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "2300 Alum Rock Ave, San Jose, CA 95116 アメリカ合衆国",
+    "type": "flash",
+    "powers": [
+      350
+    ],
+    "lat": 37.3580882,
+    "lng": -121.8425895,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "2558 Berryessa Rd, San Jose, CA 95132 アメリカ合衆国",
+    "type": "flash",
+    "powers": [
+      350
+    ],
+    "lat": 37.3881371,
+    "lng": -121.85852580000001,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "EVgo Charging Station (350kW)",
+    "address": "3046 Story Rd, San Jose, CA 95127 アメリカ合衆国",
+    "type": "flash",
+    "powers": [
+      350
+    ],
+    "lat": 37.3551023,
+    "lng": -121.8187511,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "2855 Stevens Creek Blvd, Santa Clara, CA 95050 アメリカ合衆国",
+    "type": "flash",
+    "powers": [
+      350
+    ],
+    "lat": 37.32660320000001,
+    "lng": -121.94360079999998,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (325kW)",
+    "address": "55 Race St, San Jose, CA 95126 アメリカ合衆国",
+    "type": "flash",
+    "powers": [
+      325
+    ],
+    "lat": 37.3296328,
+    "lng": -121.9122091,
+    "powerKw": 325,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (325kW)",
+    "address": "909 Story Rd, San Jose, CA 95122 アメリカ合衆国",
+    "type": "flash",
+    "powers": [
+      325
+    ],
+    "lat": 37.331382,
+    "lng": -121.859045,
+    "powerKw": 325,
+    "direction": "none"
+  },
+  {
+    "name": "bp pulse Charging Station (180kW)",
+    "address": "1143 N Capitol Ave Arco, San Jose, CA 95132 アメリカ合衆国",
+    "type": "flash",
+    "powers": [
+      180
+    ],
+    "lat": 37.386903,
+    "lng": -121.86140599999999,
+    "powerKw": 180,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (325kW)",
+    "address": "1275 Lincoln Ave, San Jose, CA 95125 アメリカ合衆国",
+    "type": "flash",
+    "powers": [
+      325
+    ],
+    "lat": 37.305054,
+    "lng": -121.89975399999999,
+    "powerKw": 325,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (325kW)",
+    "address": "S White Rd #1070, San Jose, CA 95127 アメリカ合衆国",
+    "type": "flash",
+    "powers": [
+      325
+    ],
+    "lat": 37.357046,
+    "lng": -121.81823700000001,
+    "powerKw": 325,
+    "direction": "none"
+  },
+  {
+    "name": "TurnOnGreen Charging Station (120kW)",
+    "address": "2030 Ringwood Ave, San Jose, CA 95131 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      120
+    ],
+    "lat": 37.3924571,
+    "lng": -121.89676609999998,
+    "powerKw": 120,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (150kW)",
+    "address": "533 Coleman Ave, San Jose, CA 95110 アメリカ合衆国",
+    "type": "flash",
+    "powers": [
+      150
+    ],
+    "lat": 37.339563,
+    "lng": -121.90365999999999,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (325kW)",
+    "address": "2105 N First St, San Jose, CA 95112 アメリカ合衆国",
+    "type": "flash",
+    "powers": [
+      325
+    ],
+    "lat": 37.3735772,
+    "lng": -121.9204182,
+    "powerKw": 325,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (325kW)",
+    "address": "2306 Almaden Rd, San Jose, CA 95125 アメリカ合衆国",
+    "type": "flash",
+    "powers": [
+      325
+    ],
+    "lat": 37.29226,
+    "lng": -121.87849600000001,
+    "powerKw": 325,
+    "direction": "none"
   }
 ];
