@@ -27,9 +27,6 @@ NEW_PLACES_API_URL = "https://places.googleapis.com/v1/places:searchText"
 
 # --- 検索クエリ（先ほど作成した完全版リスト） ---
 SEARCH_QUERIES = [
-    "東京都 東大和市 EV急速充電器",
-    "東京都 武蔵村山市 EV急速充電器",
-    "東京都 立川市 EV急速充電器",
     "千葉県 浦安市 EV急速充電器",
     "神奈川県 箱根町 EV急速充電器",
     "北海道 千歳市 EV急速充電器",
