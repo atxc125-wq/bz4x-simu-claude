@@ -6,6 +6,7 @@
 <title>BZ4X Trip Optimizer Pro</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="chargers_data.js"></script>
+  <script src="chargers_v2_data.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -286,6 +287,10 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
 </div>
 
 <script>
+// 🌟新API（V2）のデータが存在すれば、既存の充電器リストに直接ねじ込む（合体させる）
+if (typeof CHARGER_V2_DATA !== 'undefined') {
+  CHARGER_DATA.push(...CHARGER_V2_DATA);
+}
 let googleMap, directionsService, placesService, elevationService;
 let chargerDB = (typeof CHARGER_DATA !== 'undefined') ? CHARGER_DATA : [];
 let currentSim = null, currentDetailedPath = null;
