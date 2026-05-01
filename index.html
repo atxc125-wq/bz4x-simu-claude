@@ -129,7 +129,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.0.0 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.0.1 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-26</span>
         </div>
@@ -291,8 +291,9 @@ let chargerDB = (typeof CHARGER_DATA !== 'undefined') ? CHARGER_DATA : [];
 let currentSim = null, currentDetailedPath = null;
 let routePolylines = [], comboChart = null, mapMarkers = [], emergencyMarkers = [];
 let dbChargerMarkers = [], dbPinsOn = false;
-let userWaypoints = []; 
-let autoChargers = []; 
+let userWaypoints = [];
+let autoChargers = [];
+let _socAdjusted = false; // 到着SOC自動調整フラグ（1回のみ） 
 let userCustomDurations = {}; 
 let userIgnoredChargers = []; 
 let currentAxis = 'time';
@@ -431,6 +432,7 @@ function initApp() {
         userWaypoints = [];
         userCustomDurations = {};
         userIgnoredChargers = [];
+        _socAdjusted = false;
         onCalculate();
     });
     
@@ -1014,16 +1016,15 @@ async function onCalculate() {
 
             currentSim = result;
 
-            // ① 到着SOC自動調整
+            // ① 到着SOC自動調整（1回のみ）
             const targetArrivalSoc = parseFloat(document.getElementById('target-arrival-soc').value) || 15;
-            if (!result.isDead) {
+            if (!_socAdjusted && !result.isDead) {
                 const diff = result.arrivalSoc - targetArrivalSoc;
-                if (diff > 5 && currentSim.stops.length > 0) {
+                if (diff >= 5 && currentSim.stops.length > 0) {
                     // 過充電 → 最後の停車の充電時間を二分探索で短縮
                     const lastStop = currentSim.stops[currentSim.stops.length - 1];
                     const lastKey = `${lastStop.charger.lat.toFixed(4)},${lastStop.charger.lng.toFixed(4)}`;
-                    const segEnergy = (result.arrivalSoc - lastStop.socAfter) / 100 * 71.4; // 最後停車→目的地の消費kWh（負）
-                    const neededExitSoc = targetArrivalSoc - (result.arrivalSoc - lastStop.socAfter); // 出発時に必要なSOC
+                    const neededExitSoc = targetArrivalSoc - (result.arrivalSoc - lastStop.socAfter);
                     let lo = 1, hi = lastStop.duration, bestMins = lastStop.duration;
                     for (let iter = 0; iter < 10; iter++) {
                         const mid = Math.round((lo + hi) / 2);
@@ -1032,9 +1033,10 @@ async function onCalculate() {
                     }
                     if (bestMins < lastStop.duration) {
                         userCustomDurations[lastKey] = bestMins;
-                        return onCalculate(); // 短縮時間で再計算
+                        _socAdjusted = true;
+                        return onCalculate();
                     }
-                } else if (diff < -3) {
+                } else if (diff < -8) {
                     // 不足 → 目的地手前のchargerDBから近傍充電器を探して追加
                     const dest = currentDetailedPath[currentDetailedPath.length - 1];
                     const destLat = dest.lat(), destLng = dest.lng();
@@ -1051,8 +1053,9 @@ async function onCalculate() {
                         const pick = nearDest[0];
                         const neededMins = Math.ceil(neededKwh / (parseInt(pick.powerKw) / 60));
                         const key = `${pick.lat.toFixed(4)},${pick.lng.toFixed(4)}`;
-                        userCustomDurations[key] = Math.max(5, Math.min(60, neededMins));
+                        userCustomDurations[key] = Math.max(15, Math.min(60, neededMins));
                         userWaypoints.push({ lat: pick.lat, lng: pick.lng, name: pick.name, powerKw: pick.powerKw, type: pick.type, isSOS: false, key });
+                        _socAdjusted = true;
                         return onCalculate();
                     }
                 }
@@ -1883,6 +1886,12 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.0.1</span><span class="cl-date">2026-05-01</span>
+        <ul class="cl-items">
+          <li>到着SOC自動調整のループバグを修正：_socAdjustedフラグで1回のみ実行に制限、閾値を過充電+5%・不足-8%に調整、追加停車の最小時間を15分に変更</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.0.0</span><span class="cl-date">2026-04-28</span>
         <ul class="cl-items">
