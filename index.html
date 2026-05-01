@@ -129,7 +129,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.0.1 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.0.2 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-26</span>
         </div>
@@ -1024,17 +1024,25 @@ async function onCalculate() {
                     // 過充電 → 最後の停車の充電時間を二分探索で短縮
                     const lastStop = currentSim.stops[currentSim.stops.length - 1];
                     const lastKey = `${lastStop.charger.lat.toFixed(4)},${lastStop.charger.lng.toFixed(4)}`;
-                    const neededExitSoc = targetArrivalSoc - (result.arrivalSoc - lastStop.socAfter);
-                    let lo = 1, hi = lastStop.duration, bestMins = lastStop.duration;
-                    for (let iter = 0; iter < 10; iter++) {
-                        const mid = Math.round((lo + hi) / 2);
-                        const soc = calculateCharging(lastStop.socBefore, mid, lastStop.charger);
-                        if (soc >= neededExitSoc) { bestMins = mid; hi = mid - 1; } else { lo = mid + 1; }
-                    }
-                    if (bestMins < lastStop.duration) {
-                        userCustomDurations[lastKey] = bestMins;
-                        _socAdjusted = true;
-                        return onCalculate();
+                    const consumption = lastStop.socAfter - result.arrivalSoc; // 最後停車→目的地の消費%
+                    const neededExitSoc = targetArrivalSoc + consumption;
+                    // 短縮後に新停車が発生しないよう、exit SOC の下限をチェック
+                    const triggerThreshold = parseFloat(document.getElementById('threshold-soc').value) + 10;
+                    const minSafeExitSoc = triggerThreshold + consumption;
+                    if (neededExitSoc < minSafeExitSoc) {
+                        // この停車を短縮すると途中でSOCが閾値を割り込み新停車が生まれる → 調整不可
+                    } else {
+                        let lo = 1, hi = lastStop.duration, bestMins = lastStop.duration;
+                        for (let iter = 0; iter < 10; iter++) {
+                            const mid = Math.round((lo + hi) / 2);
+                            const soc = calculateCharging(lastStop.socBefore, mid, lastStop.charger);
+                            if (soc >= neededExitSoc) { bestMins = mid; hi = mid - 1; } else { lo = mid + 1; }
+                        }
+                        if (bestMins < lastStop.duration) {
+                            userCustomDurations[lastKey] = bestMins;
+                            _socAdjusted = true;
+                            return onCalculate();
+                        }
                     }
                 } else if (diff < -8) {
                     // 不足 → 目的地手前のchargerDBから近傍充電器を探して追加
@@ -1886,6 +1894,12 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.0.2</span><span class="cl-date">2026-05-01</span>
+        <ul class="cl-items">
+          <li>到着SOC自動調整のカスケードバグを根本修正：最後の停車を短縮すると途中で充電閾値を下回り新停車が発生するケースを検知してスキップ（例：長島6分+土山1分の謎連鎖を防止）</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.0.1</span><span class="cl-date">2026-05-01</span>
         <ul class="cl-items">
