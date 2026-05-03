@@ -130,9 +130,9 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.1.1 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.2.0 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
-            <span style="color:var(--muted); font-size:10px;">更新: 2026-04-26</span>
+            <span style="color:var(--muted); font-size:10px;">更新: 2026-05-03</span>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
     </div>
@@ -1532,10 +1532,9 @@ window.retryWithLowerKw = function(newMinKw) {
 };
 
 window.forceChg = function(lat, lng, idx, name, type) {
-    // 名前優先で検索（同一座標に上り/下りが混在する場合の誤選択を防ぐ）
-    const found = name
-        ? (chargerDB.find(c => c.name === name) || chargerDB.find(c => c.lat === lat && c.lng === lng))
-        : chargerDB.find(c => c.lat === lat && c.lng === lng);
+    // 座標優先で検索（非ユニークな名前による誤マッチ防止: 例 "Toyota充電スタンド(150kW)"が全国に複数存在）
+    const found = chargerDB.find(c => haversine(c.lat, c.lng, lat, lng) < 0.2)
+        || (name ? chargerDB.find(c => c.name === name) : null);
     if (!found) return;
 
     // SA/PAはDBの座標が上り/下り逆になっている場合があるため、
@@ -1553,6 +1552,9 @@ window.forceChg = function(lat, lng, idx, name, type) {
 
     const oldChg = currentSim.stops[idx].charger;
     userIgnoredChargers.push(`${oldChg.lat.toFixed(4)},${oldChg.lng.toFixed(4)}`);
+    // 旧autoChargersをリセット: 古いSA/PAがwaypoint順序で新チャージャーより後ろに並ぶと
+    // Google Mapsが北海道方面へ迂回するルートを生成するバグを防ぐ
+    autoChargers = [];
     userWaypoints.push({ lat: wpLat, lng: wpLng, name: found.name, powerKw: found.powerKw, type: found.type, isSOS: false });
     onCalculate();
 }
@@ -2046,6 +2048,20 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.2.0</span><span class="cl-date">2026-05-03</span>
+        <ul class="cl-items">
+          <li>【バグ修正】充電器変更後に北海道方面への迂回ルートが生成される問題を修正：旧SA/PAウェイポイントが順序逆転していた</li>
+          <li>【バグ修正】充電器変更後に休憩モードの充電時間が30分になっていた問題を修正</li>
+          <li>【内部改善】充電器選択時の座標優先マッチングで同名の充電器（全国に複数存在）の誤選択を防止</li>
+        </ul>
+      </div>
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.1.1</span><span class="cl-date">2026-05-02</span>
+        <ul class="cl-items">
+          <li>【バグ修正】休憩モードの充電停止時間を常に15分に修正（SOC条件に関わらず）</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.0.8</span><span class="cl-date">2026-05-01</span>
         <ul class="cl-items">
