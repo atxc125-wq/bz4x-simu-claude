@@ -130,7 +130,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.0 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.1 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-03</span>
         </div>
@@ -665,16 +665,23 @@ function buildRouteChargerList(segments, chargerDB, minKw, isUpboundLegs, waypoi
 }
 
 // 次の充電地点まで届く最短充電時間を算出
-function calcMinQuickChgDuration(socBefore, km, totalKm, routeChargerList,
-                                  thresholdSocPct, batteryKwh,
-                                  totalDrivingKwh, totalDrivingKm, chargerInfo) {
+function calcQuickChgDuration(socBefore, km, totalKm, routeChargerList,
+                               thresholdSocPct, batteryKwh,
+                               totalDrivingKwh, totalDrivingKm, chargerInfo) {
+    // 次の150kW機（ルートリスト）まで必要なSOCを推算
     const nextC = routeChargerList.find(c => c.km > km + 5);
     const distToNext = nextC ? nextC.km - km : Math.max(60, totalKm - km);
     const rateKwhPerKm = totalDrivingKm > 10
         ? totalDrivingKwh / totalDrivingKm
-        : batteryKwh / (6.5 * 100); // デフォルト 6.5km/kWh
+        : batteryKwh / (6.5 * 100);
     const consumptionPct = (distToNext * rateKwhPerKm / batteryKwh) * 100;
-    const target = Math.min(80, thresholdSocPct + 10 + consumptionPct + 5);
+    const minToReach = thresholdSocPct + 10 + consumptionPct + 5;
+
+    const is150kW = parseInt(chargerInfo.powerKw) >= 150;
+    // 150kW機: max(minToReach, 70%) ← 車両受入90kW(=一般急速充電機MAX)になる点
+    // 90kW機: minToReachのみ（最小限）
+    const target = Math.min(80, is150kW ? Math.max(70, minToReach) : minToReach);
+
     if (target <= socBefore) return 5;
     let t = 1;
     while (t < 90 && calculateCharging(socBefore, t, chargerInfo) < target) t++;
@@ -741,7 +748,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                 const socBefore0 = (socKwh / batteryKwh) * 100;
                 const chargerInfo0 = { name: hit.name, lat: hit.lat, lng: hit.lng, powerKw: hit.powerKw, type: hit.type || 'emp' };
                 const quickDur = (strategyQuickChg && routeChargerList)
-                    ? calcMinQuickChgDuration(socBefore0, km, totalKm, routeChargerList, thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm, chargerInfo0)
+                    ? calcQuickChgDuration(socBefore0, km, totalKm, routeChargerList, thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm, chargerInfo0)
                     : defaultDur;
                 const duration = userCustomDurations[chgKey] || Math.min(defaultDur, quickDur);
                 const socBefore = (socKwh / batteryKwh) * 100;
@@ -840,16 +847,17 @@ async function runSimulation(segments, elevations, params, onProgress) {
                 });
             }
 
-            const saPa = chargerDB.find(c => {
+            const _saPaMatch = c => {
                 if (c.type !== 'sa_pa') return false;
-                if (minKw > 0 && parseInt(c.powerKw) < minKw) return false;
                 const dist = haversine(c.lat, c.lng, s.lat, s.lng);
-                const key = `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
                 return dist < 3.0
-                    && !userIgnoredChargers.includes(key)
+                    && !userIgnoredChargers.includes(`${c.lat.toFixed(4)},${c.lng.toFixed(4)}`)
                     && isValidDirection(c.name, currentTripIsUpbound)
-                    && roadMatchesCharger(currentRoadName, c.name);  // ★ 走行中の高速名と一致するSA/PAのみ
-            });
+                    && roadMatchesCharger(currentRoadName, c.name);
+            };
+            // 最短充電モードON: まず150kW機を優先。なければminKwフィルタで通常選択
+            const saPa = (strategyQuickChg && chargerDB.find(c => parseInt(c.powerKw) >= 150 && _saPaMatch(c)))
+                || chargerDB.find(c => (minKw === 0 || parseInt(c.powerKw) >= minKw) && _saPaMatch(c));
 
             if (saPa) {
                 const chgKey = `${saPa.lat.toFixed(4)},${saPa.lng.toFixed(4)}`;
@@ -872,7 +880,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                     const socBefore = (socKwh / batteryKwh) * 100;
                     const chargerInfo = { name: saPa.name, lat: saPa.lat, lng: saPa.lng, powerKw: saPa.powerKw, type: 'sa_pa' };
                     if (strategyQuickChg && routeChargerList && !userCustomDurations[chgKey]) {
-                        const quickDur = calcMinQuickChgDuration(socBefore, km, totalKm, routeChargerList,
+                        const quickDur = calcQuickChgDuration(socBefore, km, totalKm, routeChargerList,
                             thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm, chargerInfo);
                         duration = Math.min(duration, quickDur);
                     }
@@ -937,7 +945,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                         const socBefore = (socKwh / batteryKwh) * 100;
                         const chargerInfo = { name: emergencySaPa.name, lat: emergencySaPa.lat, lng: emergencySaPa.lng, powerKw: emergencySaPa.powerKw, type: 'sa_pa' };
                         if (strategyQuickChg && routeChargerList && !userCustomDurations[chgKey]) {
-                            const quickDur = calcMinQuickChgDuration(socBefore, km, totalKm, routeChargerList,
+                            const quickDur = calcQuickChgDuration(socBefore, km, totalKm, routeChargerList,
                                 thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm, chargerInfo);
                             duration = Math.min(duration, quickDur);
                         }
@@ -1097,9 +1105,7 @@ async function onCalculate() {
                 restIntervalMin: parseInt(document.getElementById('rest-interval').value) || 90,
                 strategyQuickChg: document.getElementById('strategy-quickchg').checked,
                 routeChargerList: document.getElementById('strategy-quickchg').checked
-                    ? buildRouteChargerList(segments, chargerDB,
-                        Math.max(90, parseInt(document.querySelector('input[name="strategy-minkw"]:checked')?.value || '0')),
-                        isUpboundLegs, waypointIndexes)
+                    ? buildRouteChargerList(segments, chargerDB, 150, isUpboundLegs, waypointIndexes)
                     : null
             };
 
@@ -2126,6 +2132,14 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.3.1</span><span class="cl-date">2026-05-03</span>
+        <ul class="cl-items">
+          <li>⚡ 最短充電モード改善：150kW機を優先選択、90kW機は間に合わない区間のみ使用</li>
+          <li>150kW機での目標exit SOCを70%に設定（車両受入が90kW=一般急速充電機MAXになる点）</li>
+          <li>停車数を削減：150kW機で70%まで充電するため次の停車まで長く走れる</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.3.0</span><span class="cl-date">2026-05-03</span>
         <ul class="cl-items">
