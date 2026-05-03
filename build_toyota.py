@@ -72,7 +72,20 @@ def fetch_toyota_csvs():
     
     # URLのキャッシュ回避用パラメータ（YYYYMM形式など適当な値でOK）
     cache_buster = datetime.now().strftime("%Y%m")
+    
+ # 🌟 ここに偽装ヘッダーを追記！
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Referer": "https://toyota.jp/info/e-toyota/teemo/shop_list/"
+    }
 
+    for pref in PREFECTURES:
+        url = f"https://toyota.jp/info/e-toyota/teemo/members/csv/{pref}.csv?{cache_buster}"
+        try:
+            # 🌟 ここに「headers=headers」を足す！
+            res = requests.get(url, headers=headers)
+            if res.status_code != 200:
+                continue
     for pref in PREFECTURES:
         url = f"https://toyota.jp/info/e-toyota/teemo/members/csv/{pref}.csv?{cache_buster}"
         try:
