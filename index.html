@@ -130,7 +130,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.2.1 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.0 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-03</span>
         </div>
@@ -228,6 +228,11 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
                         <input type="number" id="rest-interval" min="30" max="180" step="15" value="90" style="width:56px; padding:4px 6px; font-size:12px;">
                         <span style="font-size:10px; color:var(--muted);">分おきに15分充電</span>
                     </div>
+                    <label style="display:flex; align-items:center; gap:5px; font-size:11px; color:var(--text); text-transform:none; letter-spacing:0; margin-top:6px; margin-bottom:0; font-weight:400; cursor:pointer;">
+                        <input type="checkbox" id="strategy-quickchg" style="width:auto; margin:0;">
+                        ⚡ 最短充電モード
+                        <span style="font-size:10px; color:var(--muted);">次の充電地点まで最小限</span>
+                    </label>
                 </div>
             </div>
         </div>
@@ -626,9 +631,59 @@ async function findNearbyPOIs(lat, lng) {
   return results;
 }
 
+// ルート上の高出力充電器をkm順でリスト化（最短充電ストラテジー用）
+function buildRouteChargerList(segments, chargerDB, minKw, isUpboundLegs, waypointIndexes) {
+    const cumKm = [], legAt = new Array(segments.length).fill(0);
+    let km = 0, leg = 0;
+    for (let i = 0; i < segments.length; i++) {
+        if (waypointIndexes.includes(i)) leg++;
+        legAt[i] = leg;
+        cumKm.push(km);
+        km += segments[i].distKm;
+    }
+    const found = [];
+    for (const c of chargerDB) {
+        if (parseInt(c.powerKw) < minKw) continue;
+        if (!isNearRoute(c.lat, c.lng, c.type === 'sa_pa' ? 5 : 8)) continue;
+        // 粗スキャン(5刻み)→ 周辺精査
+        let minD = Infinity, bestIdx = 0;
+        for (let i = 0; i < segments.length; i += 5) {
+            const d = haversine(c.lat, c.lng, segments[i].lat, segments[i].lng);
+            if (d < minD) { minD = d; bestIdx = i; }
+        }
+        for (let i = Math.max(0, bestIdx - 10); i < Math.min(segments.length, bestIdx + 10); i++) {
+            const d = haversine(c.lat, c.lng, segments[i].lat, segments[i].lng);
+            if (d < minD) { minD = d; bestIdx = i; }
+        }
+        if (minD > (c.type === 'sa_pa' ? 3 : 7)) continue;
+        const isUpbound = isUpboundLegs[legAt[bestIdx]] ?? false;
+        if (!isValidDirection(c.name, isUpbound)) continue;
+        if (found.some(f => haversine(f.lat, f.lng, c.lat, c.lng) < 0.5)) continue;
+        found.push({ ...c, km: cumKm[bestIdx] });
+    }
+    return found.sort((a, b) => a.km - b.km);
+}
+
+// 次の充電地点まで届く最短充電時間を算出
+function calcMinQuickChgDuration(socBefore, km, totalKm, routeChargerList,
+                                  thresholdSocPct, batteryKwh,
+                                  totalDrivingKwh, totalDrivingKm, chargerInfo) {
+    const nextC = routeChargerList.find(c => c.km > km + 5);
+    const distToNext = nextC ? nextC.km - km : Math.max(60, totalKm - km);
+    const rateKwhPerKm = totalDrivingKm > 10
+        ? totalDrivingKwh / totalDrivingKm
+        : batteryKwh / (6.5 * 100); // デフォルト 6.5km/kWh
+    const consumptionPct = (distToNext * rateKwhPerKm / batteryKwh) * 100;
+    const target = Math.min(80, thresholdSocPct + 10 + consumptionPct + 5);
+    if (target <= socBefore) return 5;
+    let t = 1;
+    while (t < 90 && calculateCharging(socBefore, t, chargerInfo) < target) t++;
+    return Math.max(5, t);
+}
+
 // ★ 引数を1つのparamsオブジェクトに集約（エラー防止）
 async function runSimulation(segments, elevations, params, onProgress) {
-    const { batteryKwh, startSocPct, thresholdSocPct, tripDate, startHour, waypointIndexes, isUpboundLegs, allChargerWps, expertMode, cityEff, hwyEff, manualTemp, altCorrection, preconTempThreshold = 15, preconDest = false, strategyMinKw = 0, strategyBoost15 = false, strategyRest = false, restIntervalMin = 90 } = params;
+    const { batteryKwh, startSocPct, thresholdSocPct, tripDate, startHour, waypointIndexes, isUpboundLegs, allChargerWps, expertMode, cityEff, hwyEff, manualTemp, altCorrection, preconTempThreshold = 15, preconDest = false, strategyMinKw = 0, strategyBoost15 = false, strategyRest = false, restIntervalMin = 90, strategyQuickChg = false, routeChargerList = null } = params;
     const minKw = strategyMinKw;
     let socKwh = (startSocPct / 100) * batteryKwh, km = 0, time = 0;
     const profile = [], stops = [];
@@ -637,6 +692,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
     let startElev = null; // 出発地標高（玄人モード標高補正の基準）
     let isDead = false, deadLocation = null, warningLocation = null, warningKm = 0;
     let lastChargeTime = 0;
+    let totalDrivingKwh = 0, totalDrivingKm = 0; // 最短充電モード用: 実走行消費レート
     let tempSum = 0, tempCount = 0;
     const totalKm = segments.reduce((sum, s) => sum + s.distKm, 0);
     const hwyKm   = segments.reduce((sum, s) => s.roadName ? sum + s.distKm : sum, 0);
@@ -682,7 +738,12 @@ async function runSimulation(segments, elevations, params, onProgress) {
             if (hit && (km - lastChargeKm) > 5) {
                 const chgKey = hit.key || `${hit.lat.toFixed(4)},${hit.lng.toFixed(4)}`;
                 const defaultDur = (strategyBoost15 && parseInt(hit.powerKw) >= 150) ? 15 : 30;
-                const duration = userCustomDurations[chgKey] || defaultDur;
+                const socBefore0 = (socKwh / batteryKwh) * 100;
+                const chargerInfo0 = { name: hit.name, lat: hit.lat, lng: hit.lng, powerKw: hit.powerKw, type: hit.type || 'emp' };
+                const quickDur = (strategyQuickChg && routeChargerList)
+                    ? calcMinQuickChgDuration(socBefore0, km, totalKm, routeChargerList, thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm, chargerInfo0)
+                    : defaultDur;
+                const duration = userCustomDurations[chgKey] || Math.min(defaultDur, quickDur);
                 const socBefore = (socKwh / batteryKwh) * 100;
                 
                 const chargerInfo = { name: (hit.isSOS ? `🆘 ` : '') + hit.name, lat: hit.lat, lng: hit.lng, powerKw: hit.powerKw, type: hit.type || 'emp' };
@@ -796,7 +857,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                     if (onProgress) onProgress(`🔌 ${saPa.name.replace(/^.*?　/, '')} を発見 (${Math.round(km)}km地点)`);
                     const isRestStop = needRestStop;
                     const defaultDur = isRestStop ? 15 : (strategyBoost15 && parseInt(saPa.powerKw) >= 150) ? 15 : 30;
-                    const duration = userCustomDurations[chgKey] || defaultDur;
+                    let duration = userCustomDurations[chgKey] || defaultDur;
                     // プレコン: 閾値以下 + 90kW以上 → 到着30分前から3kWh追加消費（常時有効）
                     if (localTemp <= preconTempThreshold && parseInt(saPa.powerKw) >= 90) {
                         socKwh = Math.max(0.1, socKwh - 3);
@@ -810,6 +871,11 @@ async function runSimulation(segments, elevations, params, onProgress) {
                     }
                     const socBefore = (socKwh / batteryKwh) * 100;
                     const chargerInfo = { name: saPa.name, lat: saPa.lat, lng: saPa.lng, powerKw: saPa.powerKw, type: 'sa_pa' };
+                    if (strategyQuickChg && routeChargerList && !userCustomDurations[chgKey]) {
+                        const quickDur = calcMinQuickChgDuration(socBefore, km, totalKm, routeChargerList,
+                            thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm, chargerInfo);
+                        duration = Math.min(duration, quickDur);
+                    }
                     const socAfter = calculateCharging(socBefore, duration, chargerInfo);
                     for (let t = 1; t <= duration; t++) {
                         const tempSoc = calculateCharging(socBefore, t, chargerInfo);
@@ -857,7 +923,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                         const chgKey = eKey(emergencySaPa);
                         if (onProgress) onProgress(`🔌 ${emergencySaPa.name.replace(/^.*?　/, '')} (緊急 ${emergencySaPa.powerKw}kW) を使用 (${Math.round(km)}km地点)`);
                         const defaultDur = (strategyBoost15 && parseInt(emergencySaPa.powerKw) >= 150) ? 15 : 30;
-                        const duration = userCustomDurations[chgKey] || defaultDur;
+                        let duration = userCustomDurations[chgKey] || defaultDur;
                         // プレコン（常時有効）
                         if (localTemp <= preconTempThreshold && parseInt(emergencySaPa.powerKw) >= 90) {
                             socKwh = Math.max(0.1, socKwh - 3);
@@ -870,6 +936,11 @@ async function runSimulation(segments, elevations, params, onProgress) {
                         }
                         const socBefore = (socKwh / batteryKwh) * 100;
                         const chargerInfo = { name: emergencySaPa.name, lat: emergencySaPa.lat, lng: emergencySaPa.lng, powerKw: emergencySaPa.powerKw, type: 'sa_pa' };
+                        if (strategyQuickChg && routeChargerList && !userCustomDurations[chgKey]) {
+                            const quickDur = calcMinQuickChgDuration(socBefore, km, totalKm, routeChargerList,
+                                thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm, chargerInfo);
+                            duration = Math.min(duration, quickDur);
+                        }
                         const socAfter = calculateCharging(socBefore, duration, chargerInfo);
                         for (let t = 1; t <= duration; t++) {
                             const tempSoc = calculateCharging(socBefore, t, chargerInfo);
@@ -886,6 +957,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
         }
 
         socKwh -= energy;
+        totalDrivingKwh += energy; totalDrivingKm += s.distKm;
         km += s.distKm; time += (s.distKm/s.speed)*60;
         profile.push({ km, time, soc: (socKwh/batteryKwh)*100, speed: s.speed, elev: currentElev });
     }
@@ -1022,7 +1094,13 @@ async function onCalculate() {
                 strategyMinKw: parseInt(document.querySelector('input[name="strategy-minkw"]:checked')?.value || '0'),
                 strategyBoost15: document.getElementById('strategy-boost15').checked,
                 strategyRest: document.getElementById('strategy-rest').checked,
-                restIntervalMin: parseInt(document.getElementById('rest-interval').value) || 90
+                restIntervalMin: parseInt(document.getElementById('rest-interval').value) || 90,
+                strategyQuickChg: document.getElementById('strategy-quickchg').checked,
+                routeChargerList: document.getElementById('strategy-quickchg').checked
+                    ? buildRouteChargerList(segments, chargerDB,
+                        Math.max(90, parseInt(document.querySelector('input[name="strategy-minkw"]:checked')?.value || '0')),
+                        isUpboundLegs, waypointIndexes)
+                    : null
             };
 
             const result = await runSimulation(segments, elevations, params, onProgress);
@@ -2048,6 +2126,14 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.3.0</span><span class="cl-date">2026-05-03</span>
+        <ul class="cl-items">
+          <li>⚡ 最短充電モード追加：次の充電地点まで届く最小限だけ充電し合計充電時間を短縮</li>
+          <li>ルート上の高出力充電器を事前スキャンして「次の停車まで何分必要か」を逆算</li>
+          <li>実走行の消費レート（気温・地形・速度込み）をリアルタイムで推算に使用</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.2.1</span><span class="cl-date">2026-05-03</span>
         <ul class="cl-items">
