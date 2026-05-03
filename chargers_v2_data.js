@@ -420,18 +420,6 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "トヨタEV充電スポット Charging Station (100kW)",
-    "address": "日本、〒550-0012 大阪府大阪市西区立売堀３丁目１−１",
-    "type": "normal",
-    "powers": [
-      100
-    ],
-    "lat": 34.680697099999996,
-    "lng": 135.490462,
-    "powerKw": 100,
-    "direction": "none"
-  },
-  {
     "name": "Tesla Supercharger (250kW)",
     "address": "日本、〒530-0053 大阪府大阪市北区末広町２−２",
     "type": "normal",
@@ -441,6 +429,18 @@ const CHARGER_V2_DATA = [
     "lat": 34.7016826,
     "lng": 135.51024719999998,
     "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタEV充電スポット Charging Station (100kW)",
+    "address": "日本、〒550-0012 大阪府大阪市西区立売堀３丁目１−１",
+    "type": "normal",
+    "powers": [
+      100
+    ],
+    "lat": 34.680697099999996,
+    "lng": 135.490462,
+    "powerKw": 100,
     "direction": "none"
   },
   {
@@ -828,14 +828,14 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "EV充電スポット 充電スタンド (150kW)",
-    "address": "日本、〒601-8357 京都府京都市南区吉祥院石原堂ノ後西町５",
+    "name": "EV充電スタンド (150kW)",
+    "address": "日本、〒601-8205 京都府京都市南区久世殿城町４５３−２",
     "type": "normal",
     "powers": [
       150
     ],
-    "lat": 34.9678074,
-    "lng": 135.7268977,
+    "lat": 34.95672580000001,
+    "lng": 135.71752189999998,
     "powerKw": 150,
     "direction": "none"
   },
@@ -864,27 +864,15 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "Porsche Japan 充電スタンド (90kW)",
-    "address": "日本、〒601-8319 京都府京都市南区吉祥院三ノ宮町１００",
+    "name": "Nissan 充電スタンド (90kW)",
+    "address": "日本、〒601-8357 京都府京都市南区吉祥院石原堂ノ後西町",
     "type": "normal",
     "powers": [
       90
     ],
-    "lat": 34.9761792,
-    "lng": 135.72876779999999,
+    "lat": 34.966790599999996,
+    "lng": 135.727056,
     "powerKw": 90,
-    "direction": "none"
-  },
-  {
-    "name": "Higashiko Takadake 充電スタンド (150kW)",
-    "address": "日本、〒615-0042 京都府京都市右京区西院東中水町１７",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 34.9944576,
-    "lng": 135.73338959999998,
-    "powerKw": 150,
     "direction": "none"
   },
   {
@@ -1872,18 +1860,6 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "Tesla Supercharger (250kW)",
-    "address": "日本、〒422-8065 静岡県静岡市駿河区宮本町１−２",
-    "type": "normal",
-    "powers": [
-      250
-    ],
-    "lat": 34.967369,
-    "lng": 138.381729,
-    "powerKw": 250,
-    "direction": "none"
-  },
-  {
     "name": "日産EV充電スポット (90kW)",
     "address": "日本、〒422-8005 静岡県静岡市駿河区池田",
     "type": "normal",
@@ -1893,6 +1869,18 @@ const CHARGER_V2_DATA = [
     "lat": 34.9836136,
     "lng": 138.4174443,
     "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "日本、〒422-8065 静岡県静岡市駿河区宮本町１−２",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 34.967369,
+    "lng": 138.381729,
+    "powerKw": 250,
     "direction": "none"
   },
   {
@@ -2652,159 +2640,51 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "Shell Recharge Charging Station (150kW)",
-    "address": "2930 SE 14th St, Des Moines, IA 50320 アメリカ合衆国",
+    "name": "Rivian Adventure Network (300kW)",
+    "address": "1400 Dell Range Blvd, Cheyenne, WY 82009 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      300
+    ],
+    "lat": 41.1611596,
+    "lng": -104.8066289,
+    "powerKw": 300,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (150kW)",
+    "address": "Target, 1708 Dell Range Blvd, Cheyenne, WY 82009 アメリカ合衆国",
     "type": "normal",
     "powers": [
       150
     ],
-    "lat": 41.558149199999995,
-    "lng": -93.5977168,
+    "lat": 41.161394,
+    "lng": -104.8009019,
     "powerKw": 150,
     "direction": "none"
   },
   {
-    "name": "Shell Recharge Charging Station (150kW)",
-    "address": "4605 Fleur Dr, Des Moines, IA 50321 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 41.541267999999995,
-    "lng": -93.64437579999999,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
-    "name": "Electrify America Charging Station (350kW)",
-    "address": "4365 Merle Hay Rd, Des Moines, IA 50310 アメリカ合衆国",
+    "name": "Pilot Flying J Charging Station (350kW)",
+    "address": "2250 Etchepare Dr, Cheyenne, WY 82007 アメリカ合衆国",
     "type": "normal",
     "powers": [
       350
     ],
-    "lat": 41.639465799999996,
-    "lng": -93.6972394,
+    "lat": 41.0990386,
+    "lng": -104.8531292,
     "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "Electrify America Charging Station (350kW)",
-    "address": "10151 University Ave, Clive, IA 50325 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      350
-    ],
-    "lat": 41.6035705,
-    "lng": -93.7563632,
-    "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "ChargeLab Charging Station (150kW)",
-    "address": "4815 Maple Dr, Pleasant Hill, IA 50327 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 41.5972326,
-    "lng": -93.5183394,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
-    "name": "Red E Charging Station (180kW)",
-    "address": "1101 SE Oralabor Rd, Ankeny, IA 50021 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      180
-    ],
-    "lat": 41.7019971,
-    "lng": -93.58056069999999,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
-    "name": "MidAmerican Energy Charging Station (150kW)",
-    "address": "2540 E Euclid Ave, Des Moines, IA 50317 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 41.6278899,
-    "lng": -93.5691212,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
-    "name": "Shell Recharge Charging Station (150kW)",
-    "address": "5750 Merle Hay Rd #9, Johnston, IA 50131 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 41.665039,
-    "lng": -93.6995706,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (250kW)",
-    "address": "5050 NW 2nd St, Des Moines, IA 50313 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      250
-    ],
-    "lat": 41.6524265,
-    "lng": -93.62106969999999,
-    "powerKw": 250,
     "direction": "none"
   },
   {
     "name": "ChargePoint Charging Station (120kW)",
-    "address": "5138 Merle Hay Rd, Johnston, IA 50131 アメリカ合衆国",
+    "address": "2200 Westland Rd, Cheyenne, WY 82001 アメリカ合衆国",
     "type": "normal",
     "powers": [
       120
     ],
-    "lat": 41.653907,
-    "lng": -93.698409,
+    "lat": 41.131375,
+    "lng": -104.83979400000001,
     "powerKw": 120,
-    "direction": "none"
-  },
-  {
-    "name": "Shell Recharge Charging Station (150kW)",
-    "address": "11989 Hickman Rd, Urbandale, IA 50323 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 41.6158364,
-    "lng": -93.781967,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
-    "name": "Shell Recharge Charging Station (150kW)",
-    "address": "555 S 51st St, West Des Moines, IA 50265 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 41.5598683,
-    "lng": -93.7743211,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
-    "name": "Shell Recharge Charging Station (180kW)",
-    "address": "1701 SE 37th St, Grimes, IA 50111 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      180
-    ],
-    "lat": 41.659325599999995,
-    "lng": -93.7765302,
-    "powerKw": 180,
     "direction": "none"
   }
 ];
