@@ -130,7 +130,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.1.0 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.1.1 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-04-26</span>
         </div>
@@ -794,7 +794,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                 const chgKey = `${saPa.lat.toFixed(4)},${saPa.lng.toFixed(4)}`;
                 if (!stops.some(st => `${st.charger.lat.toFixed(4)},${st.charger.lng.toFixed(4)}` === chgKey)) {
                     if (onProgress) onProgress(`🔌 ${saPa.name.replace(/^.*?　/, '')} を発見 (${Math.round(km)}km地点)`);
-                    const isRestStop = needRestStop && currentSoc >= thresholdSocPct;
+                    const isRestStop = needRestStop;
                     const defaultDur = isRestStop ? 15 : (strategyBoost15 && parseInt(saPa.powerKw) >= 150) ? 15 : 30;
                     const duration = userCustomDurations[chgKey] || defaultDur;
                     // プレコン: 閾値以下 + 90kW以上 → 到着30分前から3kWh追加消費（常時有効）
