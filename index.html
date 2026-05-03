@@ -154,8 +154,9 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
         
         <div class="stat-grid" style="grid-template-columns: 1fr 1fr;">
             <div class="field"><label>出発SOC (%)</label><input type="number" id="start-soc" value="100"></div>
-            <div class="field"><label>充電閾値 (%)</label><input type="number" id="threshold-soc" value="20"></div>
+            <div class="field"><label>充電閾値 (%)</label><input type="number" id="threshold-soc" value="10"></div>
             <div class="field"><label style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="target-arrival-soc-enabled" style="margin:0;width:14px;height:14px;">目標到着SOC (%)</label><input type="number" id="target-arrival-soc" value="5" min="0" max="80" style="opacity:0.4;pointer-events:none;" disabled></div>
+            <div class="field"><label style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="strategy-rest" style="margin:0;width:14px;height:14px;" onchange="const i=document.getElementById('rest-interval');i.disabled=!this.checked;i.style.opacity=this.checked?'1':'0.4';i.style.pointerEvents=this.checked?'auto':'none';">X分おき休憩</label><input type="number" id="rest-interval" min="30" max="180" step="15" value="90" disabled style="opacity:0.4;pointer-events:none;"></div>
         </div>
         <div class="field" style="margin-top:8px;">
             <label>マップ表示モード</label>
@@ -220,15 +221,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
                         <input type="checkbox" id="strategy-boost15" style="width:auto; margin:0;">
                         150kW機は15分で切り上げ
                     </label>
-                    <label style="display:flex; align-items:center; gap:5px; font-size:11px; color:var(--text); text-transform:none; letter-spacing:0; margin-bottom:0; font-weight:400; cursor:pointer;">
-                        <input type="checkbox" id="strategy-rest" style="width:auto; margin:0;" onchange="document.getElementById('rest-interval-row').style.display=this.checked?'flex':'none'">
-                        X分おき休憩モード
-                    </label>
-                    <div id="rest-interval-row" style="display:none; align-items:center; gap:6px; margin-top:5px; padding-left:18px;">
-                        <input type="number" id="rest-interval" min="30" max="180" step="15" value="90" style="width:56px; padding:4px 6px; font-size:12px;">
-                        <span style="font-size:10px; color:var(--muted);">分おきに15分充電</span>
-                    </div>
-                    <label style="display:flex; align-items:center; gap:5px; font-size:11px; color:var(--text); text-transform:none; letter-spacing:0; margin-top:6px; margin-bottom:0; font-weight:400; cursor:pointer;">
+                    <label style="display:flex; align-items:center; gap:5px; font-size:11px; color:var(--text); text-transform:none; letter-spacing:0; margin-top:0; margin-bottom:0; font-weight:400; cursor:pointer;">
                         <input type="checkbox" id="strategy-quickchg" style="width:auto; margin:0;">
                         ⚡ 最短充電モード
                         <span style="font-size:10px; color:var(--muted);">次の充電地点まで最小限</span>
