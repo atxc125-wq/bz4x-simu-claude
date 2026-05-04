@@ -828,18 +828,6 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "EV充電スタンド (150kW)",
-    "address": "日本、〒601-8205 京都府京都市南区久世殿城町４５３−２",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 34.95672580000001,
-    "lng": 135.71752189999998,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
     "name": "e-Mobility Power 充電スタンド (150kW)",
     "address": "日本、〒615-0072 京都府京都市右京区山ノ内池尻町８−２",
     "type": "normal",
@@ -2641,49 +2629,325 @@ const CHARGER_V2_DATA = [
   },
   {
     "name": "Rivian Adventure Network (300kW)",
-    "address": "1400 Dell Range Blvd, Cheyenne, WY 82009 アメリカ合衆国",
+    "address": "10 Riverton Commons Dr, Front Royal, VA 22630 アメリカ合衆国",
     "type": "normal",
     "powers": [
       300
     ],
-    "lat": 41.1611596,
-    "lng": -104.8066289,
+    "lat": 38.9636177,
+    "lng": -78.1893874,
     "powerKw": 300,
     "direction": "none"
   },
   {
-    "name": "Electrify America Charging Station (150kW)",
-    "address": "Target, 1708 Dell Range Blvd, Cheyenne, WY 82009 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 41.161394,
-    "lng": -104.8009019,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
-    "name": "Pilot Flying J Charging Station (350kW)",
-    "address": "2250 Etchepare Dr, Cheyenne, WY 82007 アメリカ合衆国",
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "461 W Reservoir Rd, Woodstock, VA 22664 アメリカ合衆国",
     "type": "normal",
     "powers": [
       350
     ],
-    "lat": 41.0990386,
-    "lng": -104.8531292,
+    "lat": 38.8695644,
+    "lng": -78.5296451,
     "powerKw": 350,
     "direction": "none"
   },
   {
-    "name": "ChargePoint Charging Station (120kW)",
-    "address": "2200 Westland Rd, Cheyenne, WY 82001 アメリカ合衆国",
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "6530 Trading Sq, Haymarket, VA 20169 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 38.8188015,
+    "lng": -77.64618469999999,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Pilot Flying J Charging Station (350kW)",
+    "address": "1014 Mt Olive Rd, Toms Brook, VA 22660 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 38.9670181,
+    "lng": -78.4386507,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "10101 James Madison Hwy, Bealeton, VA 22712 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 38.619554799999996,
+    "lng": -77.7992048,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "747 Fairfax St, Stephens City, VA 22655 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 39.081984399999996,
+    "lng": -78.21675660000001,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "Sheetz, 111 W Reservoir Rd, Woodstock, VA 22664 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 38.866743,
+    "lng": -78.519179,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "EVgo Charging Station (200kW)",
+    "address": "13850 McLearen Rd, Herndon, VA 20171 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      200
+    ],
+    "lat": 38.9299301,
+    "lng": -77.42473009999999,
+    "powerKw": 200,
+    "direction": "none"
+  },
+  {
+    "name": "Blink Charging Station (120kW)",
+    "address": "6443 Lee Hwy, Warrenton, VA 20187 アメリカ合衆国",
     "type": "normal",
     "powers": [
       120
     ],
-    "lat": 41.131375,
-    "lng": -104.83979400000001,
+    "lat": 38.734345999999995,
+    "lng": -77.769306,
+    "powerKw": 120,
+    "direction": "none"
+  },
+  {
+    "name": "EVgo Charging Station (200kW)",
+    "address": "25224 Poland Rd, Chantilly, VA 20152 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      200
+    ],
+    "lat": 38.9193655,
+    "lng": -77.4962225,
+    "powerKw": 200,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "24635 Dulles Landing Dr, Dulles, VA 20166 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 38.9350526,
+    "lng": -77.522341,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "235 Fort Evans Rd NE, Leesburg, VA 20176 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 39.1090368,
+    "lng": -77.538377,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Ionna Charging Station (400kW)",
+    "address": "7201 New Stable Wy, Gainesville, VA 20155 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      400
+    ],
+    "lat": 38.8018387,
+    "lng": -77.58818459999999,
+    "powerKw": 400,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (150kW)",
+    "address": "15315 Washington St, Haymarket, VA 20169 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 38.8150736,
+    "lng": -77.6425433,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (150kW)",
+    "address": "119 Hite Ln, Strasburg, VA 22657 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 39.0049719,
+    "lng": -78.33786909999999,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "10691 Davidson Pl, Manassas, VA 20109 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 38.793316399999995,
+    "lng": -77.5154964,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (150kW)",
+    "address": "227 Conicville Rd, Mt Jackson, VA 22842 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 38.7601599,
+    "lng": -78.6311808,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "ChargePoint Charging Station (205kW)",
+    "address": "14101 Whitney Rd, Gainesville, VA 20155 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      205
+    ],
+    "lat": 38.79324,
+    "lng": -77.61124,
+    "powerKw": 205,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "1683 Berryville Pike, Winchester, VA 22602 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 39.188228599999995,
+    "lng": -78.1258112,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "Flying J EV Charging Station (350kW)",
+    "address": "1530 Rest Church Rd, Clear Brook, VA 22624 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 39.290385,
+    "lng": -78.0868603,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "4368 Chantilly Shopping Center, Chantilly, VA 20151 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 38.888098899999996,
+    "lng": -77.4439806,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "Compass Creek, 565 Compass Pt Plz, Leesburg, VA 20175 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 39.082659799999995,
+    "lng": -77.5629891,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "43300 Southern Walk Plz, Ashburn, VA 20148 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 39.008411,
+    "lng": -77.501811,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (325kW)",
+    "address": "Van Metre Dr #43101, Ashburn, VA 20148 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      325
+    ],
+    "lat": 39.028527,
+    "lng": -77.511164,
+    "powerKw": 325,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (325kW)",
+    "address": "Sudley Rd, Manassas, VA 20110 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      325
+    ],
+    "lat": 38.767063,
+    "lng": -77.4850189,
+    "powerKw": 325,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "25451 Lizzio Center Dr, South Riding, VA 20152 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 38.913663299999996,
+    "lng": -77.4867919,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "Blink Charging Station (120kW)",
+    "address": "1911 Valley Ave, Winchester, VA 22601 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      120
+    ],
+    "lat": 39.167197699999996,
+    "lng": -78.1809641,
     "powerKw": 120,
     "direction": "none"
   }
