@@ -287,9 +287,13 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
 </div>
 
 <script>
-// 🌟新API（V2）のデータが存在すれば、既存の充電器リストに直接ねじ込む（合体させる）
+// V2データをV1+TEEMOと重複チェックしながらマージ（150m以内は既存優先でスキップ）
 if (typeof CHARGER_V2_DATA !== 'undefined') {
-  CHARGER_DATA.push(...CHARGER_V2_DATA);
+  const _hav = (a,b,c,d) => { const R=6371,dL=(c-a)*Math.PI/180,dG=(d-b)*Math.PI/180,x=Math.sin(dL/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dG/2)**2; return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x)); };
+  for (const v2 of CHARGER_V2_DATA) {
+    if (!CHARGER_DATA.some(c => _hav(c.lat, c.lng, v2.lat, v2.lng) < 0.15))
+      CHARGER_DATA.push(v2);
+  }
 }
 let googleMap, directionsService, placesService, elevationService;
 let chargerDB = (typeof CHARGER_DATA !== 'undefined') ? CHARGER_DATA : [];
