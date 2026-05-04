@@ -898,9 +898,10 @@ async function runSimulation(segments, elevations, params, onProgress) {
                     lastChargeKm = km;
                 }
             } else {
-                // Step2: 下道の90kW以上急速充電器にリルート
+                // Step2: 下道の90kW以上急速充電器にリルート（高速走行中はTEEMO除外）
                 const offRoute = chargerDB.find(c => {
                     if (c.type === 'sa_pa') return false;
+                    if (c.type === 'teemo' && currentRoadName) return false; // 高速上ではTEEMOを選ばない
                     const dist = haversine(c.lat, c.lng, s.lat, s.lng);
                     const key = `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
                     return dist < 7.0
