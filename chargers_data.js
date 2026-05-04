@@ -7433,3731 +7433,3731 @@ const CHARGER_DATA = [
     "name": "旭川トヨタ　タムザ神居店　No.1 (100kW)",
     "address": "旭川市神居４条１丁目１番３０号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 43.7684617,
     "lng": 142.3268447,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "札幌トヨタ　室蘭支店　No.1 (100kW)",
     "address": "北海道室蘭市東町３丁目１７番１号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 42.341453,
     "lng": 141.0289462,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "札幌トヨタ　倶知安店　No.1 (100kW)",
     "address": "北海道虻田郡倶知安町比羅夫１番地１５",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 42.8732698,
     "lng": 140.7497064,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "釧路トヨタ　中標津店 (150kW)",
     "address": "北海道標津郡中標津町東16条北1丁目1番",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 43.5566052,
     "lng": 144.9881939,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "釧路トヨタ　音更店 (150kW)",
     "address": "北海道河東郡音更町木野大通東14丁目2-18",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 42.9637926,
     "lng": 143.2076124,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "釧路トヨタ　クレイン鳥取大通店　No.1 (100kW)",
     "address": "北海道釧路市鳥取大通６丁目４番３号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 43.01594559999999,
     "lng": 144.3432643,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ＡＧＨトヨタ札幌　アンビシャス月寒 (150kW)",
     "address": "北海道札幌市豊平区月寒１条１４丁目１－１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 43.0213949,
     "lng": 141.4047542,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ＡＧＨトヨタ札幌　アンビシャス千歳　No.1 (100kW)",
     "address": "北海道千歳市上長都９６３－２",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 42.8440707,
     "lng": 141.6177343,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ札幌　小樽店　No.1 (100kW)",
     "address": "北海道小樽市オタモイ3丁目4番3号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 43.2201595,
     "lng": 140.9490705,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ青森　青森中央店 (150kW)",
     "address": "青森県青森市大字浜田字玉川２４６番１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 40.7954836,
     "lng": 140.7611648,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ青森　神田店 (150kW)",
     "address": "青森県弘前市神田３丁目３−１３",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 40.624558,
     "lng": 140.485697,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ青森　柏店 (150kW)",
     "address": "青森県つがる市柏鷺坂清留４−１４",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 40.8085965,
     "lng": 140.427797,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "岩手トヨペット　レクサス盛岡 (150kW)",
     "address": "岩手県盛岡市東仙北2丁目15番25号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 39.6755222,
     "lng": 141.1560476,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "宮城トヨタ　MTG日の出町 (150kW)",
     "address": "宮城県仙台市宮城野区日の出町2-3-7",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 38.2686129,
     "lng": 140.9355412,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ仙台　日の出店　No.1 (180kW)",
     "address": "宮城県仙台市宮城野区日の出町２丁目１‐１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 38.2689818,
     "lng": 140.9307422,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ仙台　日の出店　No.2 (180kW)",
     "address": "宮城県仙台市宮城野区日の出町２丁目１‐１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 38.2689818,
     "lng": 140.9307422,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ仙台　泉バイパス店　No.1 (180kW)",
     "address": "宮城県仙台市泉区市名坂字寺下３４－１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 38.3236491,
     "lng": 140.8949235,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ仙台　泉バイパス店　No.2 (180kW)",
     "address": "宮城県仙台市泉区市名坂字寺下３４－１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 38.3236491,
     "lng": 140.8949235,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "秋田トヨタ　大館店 (150kW)",
     "address": "秋田県大館市清水五丁目２－４１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 40.2833882,
     "lng": 140.5469656,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "秋田トヨタ　大曲店 (150kW)",
     "address": "秋田県大仙市飯田字堰東２１９",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 39.44013340000001,
     "lng": 140.4826511,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "秋田トヨタ　泉新国道店 (150kW)",
     "address": "秋田県秋田市泉中央二丁目１－３",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 39.7320218,
     "lng": 140.1022771,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "秋田トヨタ　臨海店 (150kW)",
     "address": "秋田県秋田市川尻町字大川反２２３－２４５",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 39.71647,
     "lng": 140.0854465,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "山形トヨタ　山形店 (150kW)",
     "address": "山形県山形市南一番町１１－１６",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 38.2320797,
     "lng": 140.3289196,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "福島トヨタ　福島店 (150kW)",
     "address": "福島県福島市太平寺字沖高２６",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 37.7291342,
     "lng": 140.4592182,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "福島トヨタ　郡山安積店 (150kW)",
     "address": "福島県郡山市安積２丁目７０",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 37.36104660000001,
     "lng": 140.3670359,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "福島トヨタ　いわき平店 (150kW)",
     "address": "福島県いわき市内郷御厩町２丁目１６５",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 37.0469725,
     "lng": 140.8718388,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "福島トヨペット　いわき内郷店 (150kW)",
     "address": "福島県いわき市内郷御厩町3-154",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 37.048148,
     "lng": 140.8733246,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "福島トヨペット　こおりやま喜久田店 (90kW)",
     "address": "福島県郡山市喜久田町字松ケ作１６−１７",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       90
     ],
     "lat": 37.440627,
     "lng": 140.337891,
     "powerKw": 90,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "レンタリース新福島　新白河駅新幹線口店 (150kW)",
     "address": "福島県西白河郡西郷村字前山東14",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 37.121167,
     "lng": 140.188094,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ福島　福島南バイパス店 (150kW)",
     "address": "福島県福島市鳥谷野字扇田５２ー２",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 37.73162,
     "lng": 140.466158,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ福島　福島丸子店　No.1 (180kW)",
     "address": "福島県福島市丸子字中ノ町12",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 37.7884373,
     "lng": 140.486983,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ福島　福島丸子店　No.2 (180kW)",
     "address": "福島県福島市丸子字中ノ町12",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 37.7884373,
     "lng": 140.486983,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ福島　オンリー鎌田 (150kW)",
     "address": "福島県福島市鎌田字下田１８ー２",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 37.7978996,
     "lng": 140.4892563,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "茨城トヨタ　水戸千波店 (150kW)",
     "address": "茨城県水戸市千波町１８８７",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.3529122,
     "lng": 140.446728,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "茨城トヨペット　日立田尻店 (150kW)",
     "address": "茨城県日立市田尻町４丁目３６−１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.6226031,
     "lng": 140.679192,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "茨城トヨペット　ひたち野うしく店 (150kW)",
     "address": "茨城県牛久市ひたち野東１−２４−４",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.0096046,
     "lng": 140.1630282,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ南茨城　阿見荒川沖店　No.1 (180kW)",
     "address": "茨城県稲敷郡阿見町本郷1-20",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 36.0237195,
     "lng": 140.1771931,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ南茨城　阿見荒川沖店　No.2 (180kW)",
     "address": "茨城県稲敷郡阿見町本郷1-20",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 36.0237195,
     "lng": 140.1771931,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ茨城　マイネ平須 (150kW)",
     "address": "茨城県水戸市平須町1828-35",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.3347479,
     "lng": 140.4411527,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ茨城　マイネつくばみどりの (150kW)",
     "address": "茨城県つくば市谷田部2360",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.04173840000001,
     "lng": 140.0617269,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ水戸　内原バイパス店　No.1 (180kW)",
     "address": "茨城県水戸市内原１－１５１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 36.3734365,
     "lng": 140.352178,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ水戸　内原バイパス店　No.2 (180kW)",
     "address": "茨城県水戸市内原１－１５１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 36.3734365,
     "lng": 140.352178,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタつくば　荒川沖店 (150kW)",
     "address": "茨城県土浦市右籾２８３１−１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.0447219,
     "lng": 140.1832114,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "茨城トヨタ　レクサスCPO水戸 (150kW)",
     "address": "茨城県東茨城郡茨城町前田１７０３－１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.3156847,
     "lng": 140.4385999,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "栃木トヨタ　不動前店 (150kW)",
     "address": "栃木県宇都宮市不動前４丁目２番５６号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.5435124,
     "lng": 139.8806867,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "栃木トヨタ　足利店　No.1 (120kW)",
     "address": "栃木県足利市山川町７５９－１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       120
     ],
     "lat": 36.3272809,
     "lng": 139.4779837,
     "powerKw": 120,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "栃木トヨタ　足利店　No.2 (120kW)",
     "address": "栃木県足利市山川町７５９－１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       120
     ],
     "lat": 36.3272809,
     "lng": 139.4779837,
     "powerKw": 120,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "栃木トヨペット　宇都宮今泉店 (150kW)",
     "address": "栃木県宇都宮市今泉町２９９６－２",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.5721533,
     "lng": 139.9169235,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ栃木　宇都宮錦店 (150kW)",
     "address": "栃木県宇都宮市錦３丁目１２番５号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.574797,
     "lng": 139.892786,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ栃木　宇都宮細谷店 (150kW)",
     "address": "栃木県宇都宮市宝木町２丁目２５７３−１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.5843822,
     "lng": 139.8498494,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ栃木　足利朝倉店 (150kW)",
     "address": "栃木県足利市朝倉町２６１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.3223838,
     "lng": 139.4469909,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "群馬トヨペット　前橋天川大島店 (150kW)",
     "address": "群馬県前橋市天川大島町１-14-３",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.382216,
     "lng": 139.095367,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ高崎　問屋町店 (150kW)",
     "address": "群馬県高崎市問屋町西１丁目２－９",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.3484592,
     "lng": 139.0038214,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "埼玉トヨタ　川口店 (150kW)",
     "address": "埼玉県川口市栄町1-16-12",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.803225,
     "lng": 139.731115,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "埼玉トヨタ　志木富士見店 (150kW)",
     "address": "埼玉県富士見市水子4220-1",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.8338231,
     "lng": 139.5603425,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "埼玉トヨペット　川越支店 (150kW)",
     "address": "埼玉県川越市城下町４－１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.9280011,
     "lng": 139.491499,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "埼玉トヨペット　久喜支店 (150kW)",
     "address": "埼玉県久喜市江面1662-1",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.0563872,
     "lng": 139.6572181,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ埼玉　上尾本店 (150kW)",
     "address": "埼玉県上尾市日の出3-2-28",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.964832,
     "lng": 139.606125,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ埼玉　羽生BASE (150kW)",
     "address": "埼玉県羽生市下岩瀬550",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.1597964,
     "lng": 139.5308284,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ新埼玉　西川越店　No.1 (100kW)",
     "address": "埼玉県川越市小ヶ谷447-8",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 35.9191552,
     "lng": 139.4568089,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ東埼玉　マイネッツ川口 (150kW)",
     "address": "埼玉県川口市芝1-38-1",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.831828,
     "lng": 139.7050422,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ東埼玉　マイネッツ久喜 (150kW)",
     "address": "埼玉県久喜市久喜本868-14",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.0772823,
     "lng": 139.6666539,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ埼玉　大成店 (150kW)",
     "address": "埼玉県さいたま市大宮区大成町3-527",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.9193201,
     "lng": 139.6147654,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ埼玉　狭山店 (150kW)",
     "address": "埼玉県狭山市根岸２丁目１−３３",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.8562752,
     "lng": 139.3847312,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "千葉トヨタ　浦安やなぎ通り店 (150kW)",
     "address": "千葉県浦安市北栄４丁目2-11",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.659607,
     "lng": 139.903565,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "千葉トヨタ　幕張店 (150kW)",
     "address": "千葉県千葉市花見川区幕張町1丁目7685",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.6600027,
     "lng": 140.0466034,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "千葉トヨタ　千葉ニュータウン店 (150kW)",
     "address": "千葉県印西市西の原４丁目１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.80513,
     "lng": 140.15037,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "千葉トヨペット　稲毛海岸店 (150kW)",
     "address": "千葉県千葉市美浜区稲毛海岸4丁目５番地１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.6366517,
     "lng": 140.0789705,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "千葉トヨペット　松戸店 (150kW)",
     "address": "千葉県松戸市松戸2288番地1",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.7794583,
     "lng": 139.9086043,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ千葉　木更津店 (150kW)",
     "address": "千葉県木更津市幸町3丁目２－１６",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.3722049,
     "lng": 139.93195,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ千葉　勝田台店 (150kW)",
     "address": "千葉県八千代市村上１７３５−１３",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.7247149,
     "lng": 140.1280586,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ千葉　都賀店 (150kW)",
     "address": "千葉県千葉市若葉区貝塚２丁目９−７",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.63115500000001,
     "lng": 140.1498,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ千葉　鬼高店 (150kW)",
     "address": "千葉県市川市鬼高4丁目８－４",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.7105943,
     "lng": 139.932605,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ千葉　ネッツタウン新港 (150kW)",
     "address": "千葉県千葉市美浜区新港７０－１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.6150334,
     "lng": 140.0878626,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ東京　本社　No.1 (180kW)",
     "address": "東京都港区芝浦４丁目８−３ トヨタ芝浦ビル",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 35.6392732,
     "lng": 139.7455506,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ東京　本社　No.2 (180kW)",
     "address": "東京都港区芝浦４丁目８−３ トヨタ芝浦ビル",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 35.6392732,
     "lng": 139.7455506,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ東京　虎ノ門店　No.1 (180kW)",
     "address": "東京都港区虎ノ門１丁目２番１３号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 35.6691126,
     "lng": 139.7479787,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ東京　虎ノ門店　No.2 (180kW)",
     "address": "東京都港区虎ノ門１丁目２番１３号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 35.6691126,
     "lng": 139.7479787,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ東京　世田谷深沢店 (150kW)",
     "address": "東京都世田谷区深沢５－１２－２０",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.61939,
     "lng": 139.6524575,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ東京　板橋本町店 (150kW)",
     "address": "東京都板橋区清水町５－３",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.76279590000001,
     "lng": 139.7099824,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ東京　豊玉目白通り店 (150kW)",
     "address": "東京都練馬区豊玉北３－２８－３",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.7352873,
     "lng": 139.6609732,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ東京　足立北綾瀬店 (150kW)",
     "address": "東京都足立区谷中２－８－６",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.7771606,
     "lng": 139.8331146,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ東京　有明店/レクサス有明　No.1 (100kW)",
     "address": "東京都江東区有明１−４−２９",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 35.6358335,
     "lng": 139.7852412,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ東京　北小岩店 (150kW)",
     "address": "東京都江戸川区３－１４－１２",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.7368845,
     "lng": 139.892538,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ東京　調布八雲台店 (150kW)",
     "address": "東京都調布市八雲台２－９－６",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.6527034,
     "lng": 139.5599954,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ東京　小平BS前店 (150kW)",
     "address": "東京都小平市小川東町１－１８－１４",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.7367201,
     "lng": 139.4654986,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ東京　東村山青葉店 (150kW)",
     "address": "東京都東村山市青葉町２－４１－１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.7650352,
     "lng": 139.4924363,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ東京　南大沢店 (150kW)",
     "address": "東京都八王子市南大沢２－４",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.6155044,
     "lng": 139.3817696,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ東都　江東店 (150kW)",
     "address": "東京都江東区大島１－８－９",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.6889286,
     "lng": 139.8216268,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタS&D西東京　瑞穂店 (150kW)",
     "address": "東京都西多摩郡瑞穂町殿ヶ谷661",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.7614112,
     "lng": 139.3569116,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタS&D西東京　福生店 (150kW)",
     "address": "東京都福生市志茂215",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.7370302,
     "lng": 139.3285198,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタS&D西東京　小平学園店 (150kW)",
     "address": "東京都小平市学園東町2-3-15",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.7228526,
     "lng": 139.4877839,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタS&D西東京　日野バイパス店 (150kW)",
     "address": "東京都八王子高倉町46-7",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.66536809999999,
     "lng": 139.3680793,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ神奈川　茅ヶ崎西店　No.1 (100kW)",
     "address": "神奈川県茅ヶ崎市下町屋２丁目１−２５",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 35.3308727,
     "lng": 139.3893126,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ神奈川　戸塚下倉田店　No.1 (100kW)",
     "address": "神奈川県横浜市戸塚区下倉田町１４０",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 35.3848321,
     "lng": 139.5329377,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ神奈川　港北店　No.1 (100kW)",
     "address": "神奈川県横浜市港北区樽町３－７－３０",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 35.5297143,
     "lng": 139.6441726,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ神奈川　海老名店　No.1 (100kW)",
     "address": "神奈川県海老名市大谷北３丁目１−１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 35.4431793,
     "lng": 139.3951809,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ神奈川　酒匂パーク店　No.1 (100kW)",
     "address": "神奈川県小田原市西酒匂１丁目８−３２",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 35.2654455,
     "lng": 139.1837481,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ウエインズトヨタ神奈川　逗子マリン店 (150kW)",
     "address": "神奈川県逗子市久木1丁目1-3",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.2986454,
     "lng": 139.5738023,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ウエインズトヨタ神奈川　荏田西店　No.1 (100kW)",
     "address": "神奈川県横浜市青葉区荏田西５丁目６－７",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 35.5439066,
     "lng": 139.5493482,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ウエインズトヨタ神奈川　狩場インター店　No.1 (100kW)",
     "address": "神奈川県横浜市保土ヶ谷区狩場町65",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 35.4448043,
     "lng": 139.5823954,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ウエインズトヨタ神奈川　１２９橋本店　No.1 (100kW)",
     "address": "神奈川県相模原市中央区南橋本４－２－５",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 35.5761419,
     "lng": 139.3486346,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ウエインズトヨタ神奈川　茅ヶ崎中央店 (150kW)",
     "address": "神奈川県茅ヶ崎市矢畑1417",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.34102379999999,
     "lng": 139.3995476,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ウエインズトヨタ神奈川　伊勢原店　No.1 (100kW)",
     "address": "神奈川県伊勢原市板戸640",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 35.3984965,
     "lng": 139.2986434,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ富山　本町EVステーション (150kW)",
     "address": "富山県富山市本町６丁目18番地",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.6921152,
     "lng": 137.2161474,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ富山　双代町EVステーション　No.1 (100kW)",
     "address": "富山県 富山市 田中町4-15-13",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 36.6956685,
     "lng": 137.2367596,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ富山　中古車Garage富山南　No.1 (100kW)",
     "address": "富山県富山市黒崎１２０−１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 36.6462127,
     "lng": 137.2100136,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "石川トヨタ　金沢東店 (150kW)",
     "address": "石川県金沢市三池栄町７５番地",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.5970856,
     "lng": 136.6716226,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "石川トヨタ　金沢御影店 (90kW)",
     "address": "石川県金沢市御影町3番1号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       90
     ],
     "lat": 36.562389,
     "lng": 136.641406,
     "powerKw": 90,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "石川トヨペットカローラ　金沢本店　No.1 (100kW)",
     "address": "石川県金沢市浅野本町口104",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 36.5860343,
     "lng": 136.6582753,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "石川トヨペットカローラ　野々市本店　No.1 (100kW)",
     "address": "石川県野々市市堀内４丁目 ８７番地",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 36.5320208,
     "lng": 136.6009982,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ石川　鞍月店 (150kW)",
     "address": "石川県金沢市鞍月4丁目100番地",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.5986027,
     "lng": 136.6227552,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "福井トヨタ　本店　No.1 (100kW)",
     "address": "福井県福井市下荒井町19号50番地",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 36.0233198,
     "lng": 136.208454,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ福井　中央店 (150kW)",
     "address": "福井県福井市開発町７－１２－１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.085146,
     "lng": 136.2461509,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "山梨トヨペット　モビリティカフェフラスカ (150kW)",
     "address": "山梨県甲府市上今井町681-11",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.6256135,
     "lng": 138.571242,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ山梨　甲斐アルプス店　No.1 (180kW)",
     "address": "山梨県甲斐市下今井１０５５",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 35.6817048,
     "lng": 138.486544,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ山梨　甲斐アルプス店　No.2 (180kW)",
     "address": "山梨県甲斐市下今井１０５５",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 35.6817048,
     "lng": 138.486544,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "長野トヨタ　GRGarage松本 (150kW)",
     "address": "長野県松本市宮田5-3",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.20555179999999,
     "lng": 137.9629588,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "長野トヨタ　SUVVILLAGE川中島 (150kW)",
     "address": "長野県長野市川中島町原1406",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.5922043,
     "lng": 138.1562114,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "岐阜トヨタ　金園店　No.1 (100kW)",
     "address": "岐阜県岐阜市金園町１０丁目２３番地",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 35.4169465,
     "lng": 136.7769493,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "岐阜トヨペット　島店 (150kW)",
     "address": "岐阜県岐阜市西島町１７−８",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.427947,
     "lng": 136.73174,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "岐阜トヨペット　大垣店 (150kW)",
     "address": "岐阜県大垣市小野３丁目９６－１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.3691458,
     "lng": 136.6435698,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "岐阜トヨペット　美濃加茂店 (150kW)",
     "address": "岐阜県美濃加茂市新池町１丁目３番１３号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.4526731,
     "lng": 137.0225821,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラネッツ岐阜　岐阜店 (150kW)",
     "address": "岐阜県岐阜市六条大溝４丁目１－３",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.3917014,
     "lng": 136.7367806,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラネッツ岐阜　カローラ高山店 (150kW)",
     "address": "岐阜県高山市下岡本町２９６３番３",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 36.1545815,
     "lng": 137.2445158,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "静岡トヨタ　宮竹店 (150kW)",
     "address": "静岡県浜松市中央区宮竹町623",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.7209084,
     "lng": 137.764959,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "静岡トヨタ　長沼店 (150kW)",
     "address": "静岡県静岡市葵区長沼南7-10",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.9896929,
     "lng": 138.4171646,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "静岡トヨタ　富士店 (150kW)",
     "address": "静岡県富士市青島町273",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.1578349,
     "lng": 138.673972,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタユナイテッド静岡　長泉店 (150kW)",
     "address": "静岡県駿東郡長泉町本宿９７番地",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.1253555,
     "lng": 138.8900266,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタユナイテッド静岡　浜松和田店　No.1 (100kW)",
     "address": "静岡県浜松市中央区和田町670",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 34.7236719,
     "lng": 137.7732749,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタユナイテッド静岡　草薙店　No.1 (100kW)",
     "address": "静岡県静岡市駿河区弥生町２番７４号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 35.0021829,
     "lng": 138.4348957,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタユナイテッド静岡　浜松東若林店　No.1 (100kW)",
     "address": "静岡県浜松市中央区東若林町97-1",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 34.6902101,
     "lng": 137.7156533,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ静岡　沼津店 (150kW)",
     "address": "静岡県沼津市大岡1119",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.1050643,
     "lng": 138.8815155,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ静岡　大仁店 (150kW)",
     "address": "静岡県伊豆の国市神島193",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.006698,
     "lng": 138.9416372,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ静岡　U-TOWN三島 (150kW)",
     "address": "静岡県三島市富田町１０－１７",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.1099745,
     "lng": 138.919392,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ静浜　サンストリート浜北店 (150kW)",
     "address": "静岡県浜松市浜名区平口５８２１番地",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.79636410000001,
     "lng": 137.7601731,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ静浜　磐田今之浦店 (150kW)",
     "address": "静岡県磐田市中泉８８−１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.7171249,
     "lng": 137.8569804,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "愛知トヨタWEST　鳴海店 (150kW)",
     "address": "愛知県名古屋市緑区浦里３丁目１００番",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.0865465,
     "lng": 136.9477364,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "愛知トヨタWEST　高辻店 (150kW)",
     "address": "愛知県名古屋市昭和区高辻町５－７",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.1394463,
     "lng": 136.9177875,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "愛知トヨタWEST　北店 (150kW)",
     "address": "愛知県名古屋市北区若葉通４－１０",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.1957719,
     "lng": 136.9271372,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "愛知トヨタWEST　蟹江店 (150kW)",
     "address": "愛知県海部郡蟹江町錦３丁目１番地",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.1361223,
     "lng": 136.7807853,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "愛知トヨタWEST　瀬戸共栄店 (150kW)",
     "address": "愛知県瀬戸市共栄通３丁目２５",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.2204652,
     "lng": 137.0784233,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "愛知トヨタWEST　稲沢国府宮店 (150kW)",
     "address": "愛知県稲沢市小池２丁目１９－７",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.2494572,
     "lng": 136.8113635,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ中京　西尾店 (150kW)",
     "address": "愛知県西尾市道光寺１丁目４－９",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.8763401,
     "lng": 137.0617775,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ愛知　野並店　No.1 (180kW)",
     "address": "愛知県名古屋市天白区野並二丁目２４番地",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 35.1036814,
     "lng": 136.9531557,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ愛知　野並店　No.2 (180kW)",
     "address": "愛知県名古屋市天白区野並二丁目２４番地",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 35.1036814,
     "lng": 136.9531557,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ愛知　稲沢店　No.1 (100kW)",
     "address": "愛知県稲沢市小池三丁目１１番２２号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 35.2498397,
     "lng": 136.813589,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ名古屋　荒畑店 (150kW)",
     "address": "愛知県名古屋市昭和区御器所三丁目２番１号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.1493636,
     "lng": 136.9250171,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ名古屋　西大須店 (150kW)",
     "address": "愛知県名古屋市中区松原一丁目２番２号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.1588033,
     "lng": 136.8935598,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ名古屋　千種都通店　No.1 (100kW)",
     "address": "愛知県名古屋市千種区神田町１番１９号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 35.1769828,
     "lng": 136.9396499,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ名古屋　千種都通店　No.2 (100kW)",
     "address": "愛知県名古屋市千種区神田町１番１９号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 35.1769828,
     "lng": 136.9396499,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ名古屋　東浦店 (150kW)",
     "address": "愛知県知多郡東浦町大字緒川字旭１８番地の１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.9803539,
     "lng": 136.9761821,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ中部　プラザ一社 (150kW)",
     "address": "愛知県名古屋市名東区一社一丁目６８番地",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.167298,
     "lng": 136.993405,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ中部　プラザ豊田 (150kW)",
     "address": "愛知県豊田市細谷町七丁目１８番地",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.066434,
     "lng": 137.1362353,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "愛知トヨタEAST　岡崎インター店 (150kW)",
     "address": "愛知県岡崎市洞町鷹野７－１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.9476038,
     "lng": 137.1882649,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "愛知トヨタEAST　豊田下市場店 (150kW)",
     "address": "愛知県豊田市下市場町５－２５",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.0649818,
     "lng": 137.1599744,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "愛知トヨタEAST　碧南踏分店 (150kW)",
     "address": "愛知県碧南市踏分町一丁目３２－１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.8971344,
     "lng": 137.0027335,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "三重トヨペット　桑名大山田店 (150kW)",
     "address": "三重県桑名市藤が丘4丁目201",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.076359,
     "lng": 136.65307,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ三重　四日市本社店 (90kW)",
     "address": "三重県四日市市北浜田町１０番３号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       90
     ],
     "lat": 34.9600391,
     "lng": 136.6250615,
     "powerKw": 90,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ三重　四日市店　No.1 (100kW)",
     "address": "三重県四日市市富士町4-5",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 34.9886525,
     "lng": 136.6383335,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ三重　四日市店　No.2 (100kW)",
     "address": "三重県四日市市富士町4-5",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 34.9886525,
     "lng": 136.6383335,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ三重　四日市南店　No.1 (90kW)",
     "address": "三重県四日市市日永西５丁目２０－６",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       90
     ],
     "lat": 34.9426191,
     "lng": 136.5981282,
     "powerKw": 90,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ三重　四日市南店　No.2 (90kW)",
     "address": "三重県四日市市日永西５丁目２０－６",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       90
     ],
     "lat": 34.9426191,
     "lng": 136.5981282,
     "powerKw": 90,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "三重トヨタ　レクサス松阪　No.1 (120kW)",
     "address": "三重県松阪市高町２４８番地の１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       120
     ],
     "lat": 34.5812246,
     "lng": 136.5483322,
     "powerKw": 120,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "三重トヨタ　レクサス松阪　No.2 (120kW)",
     "address": "三重県松阪市高町２４８番地の１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       120
     ],
     "lat": 34.5812246,
     "lng": 136.5483322,
     "powerKw": 120,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "滋賀トヨタ　モビリティプラザ守山West (150kW)",
     "address": "滋賀県守山市播磨田町１０６６－４",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.0752619,
     "lng": 135.991339,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ滋賀　ウエルコム栗東 (150kW)",
     "address": "滋賀県栗東市大橋7-3-17",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.0295758,
     "lng": 136.0083141,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ滋賀　近江八幡店　No.1 (90kW)",
     "address": "滋賀県近江八幡市鷹飼町北３丁目１６番地２",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       90
     ],
     "lat": 35.1315344,
     "lng": 136.1030863,
     "powerKw": 90,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ滋賀　近江八幡店　No.2 (90kW)",
     "address": "滋賀県近江八幡市鷹飼町北３丁目１６番地２",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       90
     ],
     "lat": 35.1315344,
     "lng": 136.1030863,
     "powerKw": 90,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "京都トヨタ　中丹店 (150kW)",
     "address": "京都府綾部市高津町大橋１０−１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.3036413,
     "lng": 135.1992067,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ京都　山科店 (150kW)",
     "address": "京都府京都市山科区西野山階町３０－６",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.9815153,
     "lng": 135.8090055,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ京都　舞鶴店 (150kW)",
     "address": "京都府舞鶴市公文名大将軍222",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.4315247,
     "lng": 135.3279065,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ京都　五条カドノ店 (150kW)",
     "address": "京都府京都市右京区西院月双町108番地の1",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.9971953,
     "lng": 135.7201569,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタヤサカ　大久保店 (150kW)",
     "address": "京都府宇治市大久保町田原20-1",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.8740832,
     "lng": 135.7679941,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタヤサカ　松井山手店　No.1 (90kW)",
     "address": "京都府京田辺市山手中央4-3",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       90
     ],
     "lat": 34.8336639,
     "lng": 135.7249512,
     "powerKw": 90,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタヤサカ　松井山手店　No.2 (90kW)",
     "address": "京都府京田辺市山手中央4-3",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       90
     ],
     "lat": 34.8336639,
     "lng": 135.7249512,
     "powerKw": 90,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "京都トヨタ　レクサス北大路　No.1 (100kW)",
     "address": "京都府京都市北区紫野花ノ坊町15番地",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 35.0405256,
     "lng": 135.738059,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "京都トヨタ　レクサス北大路　No.2 (100kW)",
     "address": "京都府京都市北区紫野花ノ坊町15番地",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 35.0405256,
     "lng": 135.738059,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "大阪トヨペット　高槻店 (150kW)",
     "address": "大阪府高槻市辻子２丁目２－８",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.8309977,
     "lng": 135.6317341,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "大阪トヨペット　寝屋川中央店　No.1 (100kW)",
     "address": "大阪府寝屋川市高宮栄町１−４",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 34.7622111,
     "lng": 135.6291294,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "大阪トヨペット　中央店　No.1 (100kW)",
     "address": "大阪府大阪市西区立売堀3-1-1",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 34.6809941,
     "lng": 135.4902175,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "大阪トヨペット　八尾店　No.1 (100kW)",
     "address": "大阪府八尾市山賀町1-53",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 34.6435782,
     "lng": 135.6023054,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "大阪トヨペット　守口店 (150kW)",
     "address": "大阪府守口市大日町１丁目５−１８",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.7503932,
     "lng": 135.5765462,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "大阪トヨペット　泉北八田店　No.1 (100kW)",
     "address": "大阪府堺市中区八田西町1-1-24",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 34.5217254,
     "lng": 135.4744375,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "大阪トヨペット　堀江店 (150kW)",
     "address": "大阪府大阪市西区北堀江1-21-19",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.6746957,
     "lng": 135.4936824,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "大阪トヨタNorth　サンテラス茨木店 (150kW)",
     "address": "大阪府茨木市東太田１−６−４９",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.8366482,
     "lng": 135.5824802,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "大阪トヨタSouth　生野店 (150kW)",
     "address": "大阪府大阪市生野区巽中１丁目２５－２",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.652889,
     "lng": 135.554017,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ南海　金岡店 (150kW)",
     "address": "大阪府堺市東区石原町１ー３",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.5586397,
     "lng": 135.529908,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ新大阪　新大阪本店 (150kW)",
     "address": "大阪府大阪市淀川区東三国３－１１－２",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.7463027,
     "lng": 135.4983025,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ新大阪　名神茨木店 (150kW)",
     "address": "大阪府茨木市三咲町５−１７",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.8314674,
     "lng": 135.5703452,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタモビリティ新大阪　寝屋川店 (150kW)",
     "address": "大阪府寝屋川市池田北町１５番２０号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.7788084,
     "lng": 135.6166128,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ南海　住吉店 (90kW)",
     "address": "大阪府大阪市住吉区万代6丁目9番2号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       90
     ],
     "lat": 34.6137265,
     "lng": 135.5019603,
     "powerKw": 90,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ大阪　門真店 (150kW)",
     "address": "大阪府門真市速見町14-25",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.7343051,
     "lng": 135.5926141,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ大阪　寝屋川店 (150kW)",
     "address": "大阪府寝屋川市豊里町４３−３",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.7807908,
     "lng": 135.6186112,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタニューリー北大阪　豊中少路店 (150kW)",
     "address": "大阪府豊中市少路1丁目6-5",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.8035921,
     "lng": 135.4731003,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "兵庫トヨタ　三木店 (150kW)",
     "address": "兵庫県三木市大村５１４－１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.805924,
     "lng": 134.966992,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "神戸トヨペット　姫路店 (150kW)",
     "address": "兵庫県姫路市花田町一本松１４８",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.8250716,
     "lng": 134.7235711,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "神戸トヨペット　ＴＨＥＧＡＲＡＧＥ川西 (150kW)",
     "address": "兵庫県川西市多田桜木２丁目２－８",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.859393,
     "lng": 135.415794,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "神戸トヨペット　宝塚店 (150kW)",
     "address": "兵庫県宝塚市小浜２丁目２－１８",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.8037588,
     "lng": 135.364011,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ神戸　神戸北センター店 (150kW)",
     "address": "兵庫県神戸市北区有野中町１-１７-６",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.8223554,
     "lng": 135.2248604,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ神戸　三田店　No.1 (180kW)",
     "address": "兵庫県三田市福島３丁目１番地",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 34.9095782,
     "lng": 135.210262,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ神戸　三田店　No.2 (180kW)",
     "address": "兵庫県三田市福島３丁目１番地",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 34.9095782,
     "lng": 135.210262,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ神戸　ネッツテラス尼崎　No.1 (180kW)",
     "address": "兵庫県尼崎市名神町１丁目１８－２５",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 34.7428567,
     "lng": 135.4150006,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ神戸　ネッツテラス尼崎　No.2 (180kW)",
     "address": "兵庫県尼崎市名神町１丁目１８－２５",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 34.7428567,
     "lng": 135.4150006,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタウエスト兵庫　加古川店 (150kW)",
     "address": "兵庫県加古川市野口町字大塚813‐1",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.749817,
     "lng": 134.842484,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "神戸トヨペット　レクサス芦屋②　No.1 (100kW)",
     "address": "兵庫県芦屋市業平町６番１４号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 34.7323123,
     "lng": 135.3050877,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "神戸トヨペット　レクサス芦屋②　No.2 (100kW)",
     "address": "兵庫県芦屋市業平町６番１４号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 34.7323123,
     "lng": 135.3050877,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "神戸トヨペット　レクサス芦屋①　No.1 (100kW)",
     "address": "兵庫県芦屋市業平町６番１４号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 34.7323123,
     "lng": 135.3050877,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "神戸トヨペット　レクサス芦屋①　No.2 (100kW)",
     "address": "兵庫県芦屋市業平町６番１４号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 34.7323123,
     "lng": 135.3050877,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "奈良トヨタ　田原本店　No.1 (90kW)",
     "address": "奈良県磯城郡田原本町唐古296",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       90
     ],
     "lat": 34.5755268,
     "lng": 135.7976492,
     "powerKw": 90,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "奈良トヨタ　田原本店　No.2 (90kW)",
     "address": "奈良県磯城郡田原本町唐古296",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       90
     ],
     "lat": 34.5755268,
     "lng": 135.7976492,
     "powerKw": 90,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "奈良トヨタ　モビリティガーデン奈良本店 (150kW)",
     "address": "奈良県奈良市南京終町２丁目２６９番地",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.6694278,
     "lng": 135.8218942,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "和歌山トヨタ　美園店　No.1 (100kW)",
     "address": "和歌山県和歌山市美園町二丁目６５番地",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 34.2314215,
     "lng": 135.1860872,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "和歌山トヨペット　延時店 (150kW)",
     "address": "和歌山県和歌山市向206-1",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.2552189,
     "lng": 135.1444493,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "鳥取トヨタ　鳥取店 (150kW)",
     "address": "鳥取県鳥取市天神町3番地",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.4929438,
     "lng": 134.2225642,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "鳥取トヨタ　米子東店 (150kW)",
     "address": "鳥取県米子市二本木４９５－２",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.43239,
     "lng": 133.385297,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "鳥取トヨペット　米子店 (150kW)",
     "address": "鳥取県米子市東福原１丁目１－９",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.438098,
     "lng": 133.340862,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ鳥取　鳥取店 (150kW)",
     "address": "鳥取県鳥取市安長１９８",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.5131166,
     "lng": 134.2026361,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "島根トヨタ　出雲店 (150kW)",
     "address": "島根県出雲市大津新崎町７丁目４－１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.3678298,
     "lng": 132.7664886,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "島根トヨペット　松江店 (150kW)",
     "address": "島根県松江市西津田３−２−７",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.4593375,
     "lng": 133.079293,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ島根　松江店 (150kW)",
     "address": "島根県松江市西津田２丁目１４番１６号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 35.4601215,
     "lng": 133.0796084,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "岡山トヨタ　本社 (150kW)",
     "address": "岡山県岡山市北区大供3丁目2-12",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.656645,
     "lng": 133.916938,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "岡山トヨペット　HiTouch東岡山 (150kW)",
     "address": "岡山県岡山市中区乙多見８６－１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.6758295,
     "lng": 133.9764023,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ岡山　倉敷店 (150kW)",
     "address": "岡山県倉敷市中島2621-3",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.5716106,
     "lng": 133.7405267,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ岡山　ビッグステージ倉敷中島店 (150kW)",
     "address": "岡山県倉敷市中島２６４０−７",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.5694578,
     "lng": 133.7411511,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ山陽　岡南店 (150kW)",
     "address": "岡山県岡山市南区福浜町3-7",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.6198401,
     "lng": 133.9448044,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "広島トヨタ　本店 (150kW)",
     "address": "広島県広島市中区広瀬北町１番７号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.404469,
     "lng": 132.448976,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "広島トヨタ　広島北店 (150kW)",
     "address": "広島県広島市安佐南区緑井６丁目３０番１９号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.471453,
     "lng": 132.483734,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "広島トヨペット　廿日市店　No.1 (180kW)",
     "address": "広島県廿日市市串戸１丁目８－１８",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 34.3471832,
     "lng": 132.3283787,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "広島トヨペット　廿日市店　No.2 (180kW)",
     "address": "広島県廿日市市串戸１丁目８－１８",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 34.3471832,
     "lng": 132.3283787,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "広島トヨペット　CLiP HIROSHIMA　No.1 (180kW)",
     "address": "広島県広島市中区東千田町１丁目１－１８",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 34.3824844,
     "lng": 132.4591743,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "広島トヨペット　CLiP HIROSHIMA　No.2 (180kW)",
     "address": "広島県広島市中区東千田町１丁目１－１８",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 34.3824844,
     "lng": 132.4591743,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ広島　広島支店 (150kW)",
     "address": "広島県広島市中区中島町2-24",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.3907603,
     "lng": 132.4501463,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ広島　呉店 (150kW)",
     "address": "広島県呉市宝町３－３０",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.2430263,
     "lng": 132.5579256,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "山口トヨタ　徳山店 (150kW)",
     "address": "山口県周南市川崎３丁目１０−７",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.0701312,
     "lng": 131.7857738,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "山口トヨペット　山口本店 (150kW)",
     "address": "山口県山口市維新公園３丁目１２番２５号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.1531944,
     "lng": 131.4384827,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ山口　新南陽店 (150kW)",
     "address": "山口県周南市川崎３丁目１１番１７号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.0702717,
     "lng": 131.7851331,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "徳島トヨタ　徳島店　No.1 (100kW)",
     "address": "徳島県徳島市昭和町４丁目２５",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 34.06290660000001,
     "lng": 134.5613705,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "徳島トヨタ　オートモール徳島 (90kW)",
     "address": "徳島県徳島市中前川町５丁目1-300",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       90
     ],
     "lat": 34.08016870000001,
     "lng": 134.5477291,
     "powerKw": 90,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ徳島　国府店 (150kW)",
     "address": "徳島県徳島市国府町観音寺１３０番地１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.0711338,
     "lng": 134.4738583,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ香川　善通寺インター店 (150kW)",
     "address": "香川県善通寺市原田町1188-1",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.250096,
     "lng": 133.7875568,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ高松　もみの木店 (150kW)",
     "address": "香川県綾歌郡宇多津町大字東分1547-1",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 34.2935232,
     "lng": 133.8355585,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ愛媛　中央通店　No.1 (180kW)",
     "address": "愛媛県松山市中央１丁目１６−５",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 33.854963,
     "lng": 132.7501074,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ愛媛　中央通店　No.2 (180kW)",
     "address": "愛媛県松山市中央１丁目１６−５",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 33.854963,
     "lng": 132.7501074,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ愛媛　だんだんＰＡＲＫ　No.1 (120kW)",
     "address": "愛媛県松山市空港通２丁目６−３３",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       120
     ],
     "lat": 33.8279937,
     "lng": 132.7402221,
     "powerKw": 120,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ愛媛　だんだんＰＡＲＫ　No.2 (120kW)",
     "address": "愛媛県松山市空港通２丁目６−３３",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       120
     ],
     "lat": 33.8279937,
     "lng": 132.7402221,
     "powerKw": 120,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "福岡トヨタ　博多店 (150kW)",
     "address": "福岡県福岡市博多区半道橋２－７－６４",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 33.5814645,
     "lng": 130.4407075,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "福岡トヨタ　特選展示場プレミアム福岡東 (90kW)",
     "address": "福岡県福岡市東区千早５丁目３１−４",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       90
     ],
     "lat": 33.6529983,
     "lng": 130.4415507,
     "powerKw": 90,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "福岡トヨタ　北九州本店　No.1 (180kW)",
     "address": "福岡県北九州市小倉北区貴船町２−２",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 33.8715604,
     "lng": 130.8727115,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "福岡トヨタ　北九州本店　No.2 (180kW)",
     "address": "福岡県北九州市小倉北区貴船町２−２",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 33.8715604,
     "lng": 130.8727115,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "福岡トヨタ　久留米本店　No.1 (180kW)",
     "address": "福岡県久留米市天神町２−３８",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 33.3103602,
     "lng": 130.5231919,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "福岡トヨタ　久留米本店　No.2 (180kW)",
     "address": "福岡県久留米市天神町２−３８",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 33.3103602,
     "lng": 130.5231919,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "福岡トヨタ　特選展示場プレミアム福岡西 (90kW)",
     "address": "福岡県福岡市早良区小田部5-22-20",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       90
     ],
     "lat": 33.5686706,
     "lng": 130.3292909,
     "powerKw": 90,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "福岡トヨタ　長尾店 (150kW)",
     "address": "福岡県福岡市城南区樋井川３－２－４５",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 33.5529027,
     "lng": 130.3873787,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ博多　空港榎田店 (150kW)",
     "address": "福岡県福岡市博多区豊２丁目３－５０",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 33.5972889,
     "lng": 130.4349889,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ博多　城野店 (150kW)",
     "address": "福岡県北九州市小倉北区重住３丁目１０－７",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 33.8564181,
     "lng": 130.8895878,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ博多　行橋店 (150kW)",
     "address": "福岡県行橋市南大橋3丁目15-20",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 33.7214762,
     "lng": 130.9805186,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ博多　スカイタワー則松店 (150kW)",
     "address": "福岡県北九州市八幡西区則松５丁目１０－５",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 33.8595987,
     "lng": 130.7231422,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ福岡　古賀店 (150kW)",
     "address": "福岡県古賀市日吉３丁目１７－１５",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 33.7226248,
     "lng": 130.4565634,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ福岡　福重店　No.1 (90kW)",
     "address": "福岡県福岡市西区福重２丁目４－１６",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       90
     ],
     "lat": 33.5680043,
     "lng": 130.3192843,
     "powerKw": 90,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ福岡　福重店　No.2 (90kW)",
     "address": "福岡県福岡市西区福重２丁目４－１６",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       90
     ],
     "lat": 33.5680043,
     "lng": 130.3192843,
     "powerKw": 90,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ北九州　八幡本店　No.1 (100kW)",
     "address": "福岡県北九州市八幡西区皇后崎町１４番６",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 33.8644493,
     "lng": 130.7481487,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ西日本　ユーロード百年パーク店　No.1 (120kW)",
     "address": "福岡県久留米市百年公園２−６",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       120
     ],
     "lat": 33.3221274,
     "lng": 130.5315165,
     "powerKw": 120,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ西日本　ユーロード百年パーク店　No.2 (120kW)",
     "address": "福岡県久留米市百年公園２−６",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       120
     ],
     "lat": 33.3221274,
     "lng": 130.5315165,
     "powerKw": 120,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "佐賀トヨタ　本店 (150kW)",
     "address": "佐賀県佐賀市嘉瀬町扇町２４８０",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 33.2438788,
     "lng": 130.2642905,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "佐賀トヨタ　新栄店 (150kW)",
     "address": "佐賀県佐賀市新栄西２丁目6-７",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 33.254905,
     "lng": 130.2737789,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ佐賀　佐賀店 (150kW)",
     "address": "佐賀県佐賀市嘉瀬町大字荻野344-1",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 33.2434365,
     "lng": 130.2480066,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "福岡トヨタ　長崎トヨタ長崎本店　No.1 (100kW)",
     "address": "長崎県長崎市五島町４－１９",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 32.7493415,
     "lng": 129.8726786,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "カローラ長崎　佐世保大塔店 (150kW)",
     "address": "長崎県佐世保市田ノ浦町５番４０号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 33.1442896,
     "lng": 129.7854668,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "熊本トヨタ　くまもと中央店 (150kW)",
     "address": "熊本県熊本市東区保田窪本町１０番５５号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 32.8084339,
     "lng": 130.7481299,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "熊本トヨペット　本店 (150kW)",
     "address": "熊本県熊本市南区十禅寺２丁目２－１３",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 32.777597,
     "lng": 130.695696,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ユナイテッドトヨタ熊本　カローラ熊本本店 (150kW)",
     "address": "熊本県熊本市中央区十禅寺４丁目１番１号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 32.7809526,
     "lng": 130.6978773,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ熊本　アンビー合志店 (150kW)",
     "address": "熊本県合志市竹迫２２９８",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 32.8808098,
     "lng": 130.7832395,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "大分トヨタ　大分中央店 (150kW)",
     "address": "大分県大分市住吉町２丁目６−２４",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 33.2459687,
     "lng": 131.6027918,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "大分トヨペット　別府六勝園店 (150kW)",
     "address": "大分県別府市上人ヶ浜町２番５７号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 33.3129081,
     "lng": 131.5004882,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ大分　大分東店　No.1 (90kW)",
     "address": "大分県大分市乙津町１番１０号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       90
     ],
     "lat": 33.2415374,
     "lng": 131.6729218,
     "powerKw": 90,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ大分　大分東店　No.2 (90kW)",
     "address": "大分県大分市乙津町１番１０号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       90
     ],
     "lat": 33.2415374,
     "lng": 131.6729218,
     "powerKw": 90,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ大分　ネスタ本店 (150kW)",
     "address": "大分県大分市三佐一丁目２番２３号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 33.25382,
     "lng": 131.678069,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "宮崎トヨペット　大塚店 (150kW)",
     "address": "宮崎県宮崎市大塚町池ノ内1201番1",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 31.923107,
     "lng": 131.393324,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "鹿児島トヨタ　鹿児島店 (150kW)",
     "address": "鹿児島県鹿児島市西千石町1番28号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 31.5876471,
     "lng": 130.547283,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "鹿児島トヨペット　中山店 (150kW)",
     "address": "鹿児島県鹿児島市山田町694-5",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 31.5589976,
     "lng": 130.5042151,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "鹿児島トヨペット　指宿店　No.1 (100kW)",
     "address": "鹿児島県指宿市東方字田口田１０８３６－１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 31.2675417,
     "lng": 130.625537,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ鹿児島　中山店 (150kW)",
     "address": "鹿児島県鹿児島市山田町１７３－６",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 31.556806,
     "lng": 130.5033821,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ鹿児島　POLDER Terrace　No.1 (180kW)",
     "address": "鹿児島県鹿児島市東開町５－４０",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 31.5380115,
     "lng": 130.5372291,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "トヨタカローラ鹿児島　POLDER Terrace　No.2 (180kW)",
     "address": "鹿児島県鹿児島市東開町５－４０",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       180
     ],
     "lat": 31.5380115,
     "lng": 130.5372291,
     "powerKw": 180,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "ネッツトヨタ鹿児島　城南本店 (150kW)",
     "address": "鹿児島県鹿児島市城南町8番19号",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       150
     ],
     "lat": 31.5838606,
     "lng": 130.5640033,
     "powerKw": 150,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   },
   {
     "name": "沖縄トヨタ　トヨタウン美浜店　No.1 (100kW)",
     "address": "沖縄県中頭郡北谷町美浜１丁目３−１",
     "type": "teemo",
+    "network": "teemo",
     "powers": [
       100
     ],
     "lat": 26.310977,
     "lng": 127.7623518,
     "powerKw": 100,
-    "direction": "none",
-    "network": "teemo"
+    "direction": "none"
   }
 ];
