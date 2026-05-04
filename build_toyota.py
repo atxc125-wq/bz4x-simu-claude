@@ -148,15 +148,24 @@ def main():
             if content.endswith(";"): content = content[:-1]
             existing_data = json.loads(content)
 
-    final_chargers = list(existing_data)
-    for tc in toyota_chargers:
-        is_duplicate = False
-        for ec in existing_data:
-            if haversine_km(tc["lat"], tc["lng"], ec["lat"], ec["lng"]) < 0.15:
-                is_duplicate = True
+    # TEEMOで既存V1エントリを上書き（第2位=高精度なので重複はTEEMOが勝つ）
+    final_chargers = []
+    used_teemo = set()  # 使用済みTEEMOインデックス
+
+    for ec in existing_data:
+        replacement = None
+        for j, tc in enumerate(toyota_chargers):
+            if j not in used_teemo and haversine_km(tc["lat"], tc["lng"], ec["lat"], ec["lng"]) < 0.15:
+                replacement = tc
+                used_teemo.add(j)
                 break
-        
-        if not is_duplicate:
+        final_chargers.append(replacement if replacement else ec)
+        if replacement:
+            log.info(f"V1上書き: {ec['name']} → {replacement['name']}")
+
+    # V1に存在しない新規TEEMOを追加
+    for j, tc in enumerate(toyota_chargers):
+        if j not in used_teemo:
             final_chargers.append(tc)
 
     with open(v1_file, "w", encoding="utf-8") as f:
