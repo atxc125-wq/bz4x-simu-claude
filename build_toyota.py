@@ -65,7 +65,6 @@ def fetch_toyota_csvs():
     chargers = []
     
     cache_buster = datetime.now().strftime("%Y%m")
-    # 🌟 トヨタの門番をすり抜けるChrome偽装ヘッダー
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Referer": "https://toyota.jp/info/e-toyota/teemo/shop_list/"
@@ -78,8 +77,15 @@ def fetch_toyota_csvs():
             if res.status_code != 200:
                 continue
             
-            res.encoding = 'shift_jis'
-            csv_text = res.text
+            # 🌟 ここが最強のデコード処理！
+            # まずUTF-8を試し、ダメならWindows標準のcp932、それでもダメならエラー文字を無視してShift-JISで強制突破
+            try:
+                csv_text = res.content.decode('utf-8')
+            except UnicodeDecodeError:
+                try:
+                    csv_text = res.content.decode('cp932')
+                except UnicodeDecodeError:
+                    csv_text = res.content.decode('shift_jis', errors='ignore')
             
             reader = csv.reader(StringIO(csv_text))
             for row in reader:
@@ -105,7 +111,7 @@ def fetch_toyota_csvs():
                             charger = {
                                 "name": f"{full_name} ({kw}kW)",
                                 "address": address,
-                                "type": "normal", # トヨタの急速充電は熱ダレあり(normal)
+                                "type": "normal",
                                 "powers": [int(kw)],
                                 "lat": lat,
                                 "lng": lng,
@@ -119,6 +125,7 @@ def fetch_toyota_csvs():
             log.error(f"{pref}.csv の処理中にエラー: {e}")
             
     return chargers
+
 
 def main():
     toyota_chargers = fetch_toyota_csvs()
