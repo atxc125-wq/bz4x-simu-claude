@@ -132,7 +132,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.6 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.7 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-03</span>
         </div>
@@ -701,6 +701,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
     let isDead = false, deadLocation = null, warningLocation = null, warningKm = 0;
     let lastChargeTime = 0;
     let totalDrivingKwh = 0, totalDrivingKm = 0; // 最短充電モード用: 実走行消費レート
+    let lastHighwayKm = -999; // JCT通過中のgraceperiod用: 最後に高速名が確認されたkm
     let tempSum = 0, tempCount = 0;
     const totalKm = segments.reduce((sum, s) => sum + s.distKm, 0);
     const hwyKm   = segments.reduce((sum, s) => s.roadName ? sum + s.distKm : sum, 0);
@@ -834,6 +835,8 @@ async function runSimulation(segments, elevations, params, onProgress) {
         // Step1: 同方向の高速SA/PAをインライン充電（Google Maps waypoint追加なし → 謎のUターン回避）
         // Step2: SA/PAが無い場合のみFLASH/TEEMO等の下道充電器をwaypointとしてリルート
         const continuousDrivingMin = time - lastChargeTime;
+        if (currentRoadName) lastHighwayKm = km;
+        const onOrNearHighway = currentRoadName || (km - lastHighwayKm < 30); // JCT grace 30km
         // 目的地まで届くSOCがあれば充電も休憩も不要
         const kmToGoal = totalKm - km;
         const _rate = totalDrivingKm > 10 ? totalDrivingKwh / totalDrivingKm : batteryKwh / (6.5 * 100);
@@ -909,7 +912,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                 const _socTrigger = currentSoc < thresholdSocPct + 10;
                 const offRoute = chargerDB.find(c => {
                     if (c.type === 'sa_pa') return false;
-                    if (c.type === 'teemo' && currentRoadName && !_socTrigger) return false;
+                    if (c.type === 'teemo' && onOrNearHighway && !_socTrigger) return false;
                     const dist = haversine(c.lat, c.lng, s.lat, s.lng);
                     const key = `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
                     return dist < 7.0
@@ -2147,6 +2150,13 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.3.7</span><span class="cl-date">2026-05-04</span>
+        <ul class="cl-items">
+          <li>【バグ修正】JCT通過中のTEEMO誤選択を修正（東名阪→伊勢湾岸→名神等で高速名が一時nullになるケース）</li>
+          <li>lastHighwayKm追跡: 最後に高速名確認から30km以内は「高速上」とみなしTEEMO除外</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.3.6</span><span class="cl-date">2026-05-04</span>
         <ul class="cl-items">
