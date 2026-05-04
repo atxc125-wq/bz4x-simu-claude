@@ -132,7 +132,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.2 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.3 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-03</span>
         </div>
@@ -2137,11 +2137,12 @@ window.onload = () => {
     </div>
     <div id="cl-body">
       <div class="cl-ver">
-        <span class="cl-vtag">v2.3.2</span><span class="cl-date">2026-05-04</span>
+        <span class="cl-vtag">v2.3.3</span><span class="cl-date">2026-05-04</span>
         <ul class="cl-items">
+          <li>【バグ修正】高速走行中にTEEMO（一般道）へ降りて充電するケースを修正 → 高速上はSA/PA優先</li>
           <li>TEEMOロゴバッジ実装：充電カードのネットワーク表示がTEEMO公式ロゴ風に（最初のEがスカイブルー）</li>
           <li>TEEMOアイコン：マップマーカー・DBピンを緑色で表示</li>
-          <li>build_toyota.py：type/networkフィールドを "teemo" に修正</li>
+          <li>build_toyota.py：type/networkフィールドを "teemo" に修正・V1エントリを正しく上書き</li>
         </ul>
       </div>
       <div class="cl-ver">
