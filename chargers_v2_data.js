@@ -12,18 +12,6 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "Toyota 充電スタンド (150kW)",
-    "address": "日本、〒279-0002 千葉県浦安市北栄４丁目２−１１",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 35.659357,
-    "lng": 139.90376369999998,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
     "name": "ニチコン 充電スタンド (90kW)",
     "address": "日本、〒279-0002 千葉県浦安市北栄４丁目９−１",
     "type": "normal",
@@ -72,18 +60,6 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "トヨタEV充電スポット (100kW)",
-    "address": "日本、〒066-0077 北海道千歳市上長都９６３−２",
-    "type": "normal",
-    "powers": [
-      100
-    ],
-    "lat": 42.8442308,
-    "lng": 141.61786859999998,
-    "powerKw": 100,
-    "direction": "none"
-  },
-  {
     "name": "EV充電スタンド (150kW)",
     "address": "日本、〒078-8324 北海道旭川市神楽岡１４条９丁目１−１０",
     "type": "normal",
@@ -93,18 +69,6 @@ const CHARGER_V2_DATA = [
     "lat": 43.7304474,
     "lng": 142.3648536,
     "powerKw": 150,
-    "direction": "none"
-  },
-  {
-    "name": "EV充電スタンド (90kW)",
-    "address": "日本、〒070-8014 北海道旭川市神居４条１丁目１",
-    "type": "normal",
-    "powers": [
-      90
-    ],
-    "lat": 43.769075199999996,
-    "lng": 142.3275595,
-    "powerKw": 90,
     "direction": "none"
   },
   {
@@ -360,18 +324,6 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "トヨタEV充電スポット (150kW)",
-    "address": "日本、〒550-0014 大阪府大阪市西区北堀江１丁目２１−１９",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 34.674445999999996,
-    "lng": 135.49359139999999,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
     "name": "e-Mobility Power 充電スタンド (150kW)",
     "address": "日本、〒530-0011 大阪府大阪市北区大深町１−１",
     "type": "normal",
@@ -429,18 +381,6 @@ const CHARGER_V2_DATA = [
     "lat": 34.7016826,
     "lng": 135.51024719999998,
     "powerKw": 250,
-    "direction": "none"
-  },
-  {
-    "name": "トヨタEV充電スポット Charging Station (100kW)",
-    "address": "日本、〒550-0012 大阪府大阪市西区立売堀３丁目１−１",
-    "type": "normal",
-    "powers": [
-      100
-    ],
-    "lat": 34.680697099999996,
-    "lng": 135.490462,
-    "powerKw": 100,
     "direction": "none"
   },
   {
@@ -672,18 +612,6 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "トヨタEV充電スポット (150kW)",
-    "address": "日本、〒812-0042 福岡県福岡市博多区豊２丁目３−４０",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 33.597573499999996,
-    "lng": 130.4351848,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
     "name": "日産 充電スタンド (90kW)",
     "address": "日本、〒812-8632 福岡県福岡市博多区千代１丁目２１",
     "type": "normal",
@@ -840,18 +768,6 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "EV充電スポット (90kW)",
-    "address": "日本、〒615-0882 京都府京都市右京区西京極葛野町６−１",
-    "type": "normal",
-    "powers": [
-      90
-    ],
-    "lat": 34.9982294,
-    "lng": 135.7194471,
-    "powerKw": 90,
-    "direction": "none"
-  },
-  {
     "name": "Nissan 充電スタンド (90kW)",
     "address": "日本、〒601-8357 京都府京都市南区吉祥院石原堂ノ後西町",
     "type": "normal",
@@ -972,18 +888,6 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "トヨタEV充電スタンド (150kW)",
-    "address": "日本、〒730-0811 広島県広島市中区中島町２−２４",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 34.3906262,
-    "lng": 132.4500712,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
     "name": "PowerX 充電スタンド (150kW)",
     "address": "日本、〒733-0036 広島県広島市西区観音新町４丁目８−５２",
     "type": "normal",
@@ -1005,18 +909,6 @@ const CHARGER_V2_DATA = [
     "lat": 34.4058729,
     "lng": 132.46230749999998,
     "powerKw": 90,
-    "direction": "none"
-  },
-  {
-    "name": "トヨタEV充電スタンド (180kW)",
-    "address": "日本、〒730-0053 広島県広島市中区東千田町１丁目１−１８",
-    "type": "normal",
-    "powers": [
-      180
-    ],
-    "lat": 34.382697799999995,
-    "lng": 132.4591792,
-    "powerKw": 180,
     "direction": "none"
   },
   {
@@ -1092,18 +984,6 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "トヨタEV充電スポット (150kW)",
-    "address": "日本、〒983-0035 宮城県仙台市宮城野区日の出町２丁目１−１",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 38.2687899,
-    "lng": 140.9303302,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
     "name": "トヨタEV充電スポット (90kW)",
     "address": "日本、〒989-3161 宮城県仙台市青葉区折立１丁目２３−１",
     "type": "normal",
@@ -1112,6 +992,102 @@ const CHARGER_V2_DATA = [
     ],
     "lat": 38.264704699999996,
     "lng": 140.8101525,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (150kW)",
+    "address": "日本、〒260-0843 千葉県千葉市中央区末広５丁目１０−７",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 35.5866859,
+    "lng": 140.130294,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (150kW)",
+    "address": "日本、〒260-0822 千葉県千葉市中央区蘇我１丁目１６−１６",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 35.5739886,
+    "lng": 140.12912459999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "電気自動車充電スタンド (150kW)",
+    "address": "日本、〒260-0045 千葉県千葉市中央区弁天３丁目１−１",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 35.6213797,
+    "lng": 140.1163459,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒261-0001 千葉県千葉市美浜区幸町２丁目２１−１",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.6244004,
+    "lng": 140.0915039,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "トヨタ 充電スタンド (150kW)",
+    "address": "日本、〒260-0028 千葉県千葉市中央区新町 千葉県千葉市中央区新町10 千葉市中央区 JP",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 35.609922999999995,
+    "lng": 140.1150585,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "EV充電スポット (90kW)",
+    "address": "日本、〒261-0005 千葉県千葉市美浜区稲毛海岸５丁目１−２４",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.6386537,
+    "lng": 140.076188,
+    "powerKw": 90,
+    "direction": "none"
+  },
+  {
+    "name": "PowerX 充電スタンド (150kW)",
+    "address": "日本、〒263-0051 千葉県千葉市稲毛区園生町３７７−１",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 35.6522049,
+    "lng": 140.11821,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "日産EV充電スポット (90kW)",
+    "address": "日本、〒260-0001 千葉県千葉市中央区都町３丁目２",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 35.609347299999996,
+    "lng": 140.1372465,
     "powerKw": 90,
     "direction": "none"
   },
@@ -1152,18 +1128,6 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "EV充電スタンド (150kW)",
-    "address": "日本、〒802-0011 福岡県北九州市小倉北区重住３丁目１０−７",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 33.8565769,
-    "lng": 130.88996319999998,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
     "name": "EV充電スポット (100kW)",
     "address": "日本、〒803-0811 福岡県北九州市小倉北区大門２丁目６−１",
     "type": "normal",
@@ -1173,18 +1137,6 @@ const CHARGER_V2_DATA = [
     "lat": 33.8874535,
     "lng": 130.8695734,
     "powerKw": 100,
-    "direction": "none"
-  },
-  {
-    "name": "EV充電スタンド (150kW)",
-    "address": "日本、〒802-0073 福岡県北九州市小倉北区貴船町２−２",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 33.871418,
-    "lng": 130.8730741,
-    "powerKw": 150,
     "direction": "none"
   },
   {
@@ -1368,18 +1320,6 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "EV充電スポット (100kW)",
-    "address": "日本、〒435-0016 静岡県浜松市中央区和田町６４２−１",
-    "type": "normal",
-    "powers": [
-      100
-    ],
-    "lat": 34.722766199999995,
-    "lng": 137.7742581,
-    "powerKw": 100,
-    "direction": "none"
-  },
-  {
     "name": "EV充電スポット (90kW)",
     "address": "日本、〒432-8061 静岡県浜松市中央区入野町 静岡県浜松市西区入野町933-1 浜松市中区 JP",
     "type": "normal",
@@ -1448,18 +1388,6 @@ const CHARGER_V2_DATA = [
     ],
     "lat": 32.7626085,
     "lng": 130.6924229,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
-    "name": "トヨタEV充電スポット (150kW)",
-    "address": "日本、〒860-0824 熊本県熊本市中央区十禅寺４丁目１−１８３",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 32.7808572,
-    "lng": 130.69771369999998,
     "powerKw": 150,
     "direction": "none"
   },
@@ -1560,18 +1488,6 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "EV充電スタンド (100kW)",
-    "address": "日本、〒252-0253 神奈川県相模原市中央区南橋本４丁目２−５",
-    "type": "normal",
-    "powers": [
-      100
-    ],
-    "lat": 35.5758927,
-    "lng": 139.34895029999998,
-    "powerKw": 100,
-    "direction": "none"
-  },
-  {
     "name": "EV充電スポット (90kW)",
     "address": "日本、〒700-0975 岡山県岡山市北区今１丁目１−２５",
     "type": "normal",
@@ -1581,18 +1497,6 @@ const CHARGER_V2_DATA = [
     "lat": 34.6521846,
     "lng": 133.8955112,
     "powerKw": 90,
-    "direction": "none"
-  },
-  {
-    "name": "トヨタEV充電スポット (150kW)",
-    "address": "日本、〒700-0913 岡山県岡山市北区大供３丁目２−１２",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 34.6565778,
-    "lng": 133.9172773,
-    "powerKw": 150,
     "direction": "none"
   },
   {
@@ -1920,18 +1824,6 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "トヨタEV充電スポット (150kW)",
-    "address": "日本、〒332-0017 埼玉県川口市栄町１丁目１６−１２",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 35.8030768,
-    "lng": 139.7308531,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
     "name": "EV充電スポット (100kW)",
     "address": "日本、〒332-0031 埼玉県川口市青木１丁目４−２０",
     "type": "normal",
@@ -1941,18 +1833,6 @@ const CHARGER_V2_DATA = [
     "lat": 35.807151,
     "lng": 139.7254084,
     "powerKw": 100,
-    "direction": "none"
-  },
-  {
-    "name": "トヨタEV充電スポット (150kW)",
-    "address": "日本、〒333-0866 埼玉県川口市芝１丁目３８−１ 1階",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 35.8314497,
-    "lng": 139.7047714,
-    "powerKw": 150,
     "direction": "none"
   },
   {
@@ -1976,18 +1856,6 @@ const CHARGER_V2_DATA = [
     ],
     "lat": 31.541428999999997,
     "lng": 130.5393245,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
-    "name": "EV充電スタンド (150kW)",
-    "address": "日本、〒892-0847 鹿児島県鹿児島市西千石町２−２１",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 31.5878834,
-    "lng": 130.5473978,
     "powerKw": 150,
     "direction": "none"
   },
@@ -2049,18 +1917,6 @@ const CHARGER_V2_DATA = [
     "lat": 31.597093800000003,
     "lng": 130.54017059999998,
     "powerKw": 90,
-    "direction": "none"
-  },
-  {
-    "name": "トヨタEV充電スポット (150kW)",
-    "address": "日本、〒892-0835 鹿児島県鹿児島市城南町８−１９",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 31.5836477,
-    "lng": 130.563713,
-    "powerKw": 150,
     "direction": "none"
   },
   {
@@ -2232,18 +2088,6 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "トヨタEV充電スポット (150kW)",
-    "address": "日本、〒321-0967 栃木県宇都宮市錦３丁目１２−５",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 36.574739799999996,
-    "lng": 139.89318409999998,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
     "name": "EV充電スポット (90kW)",
     "address": "日本、〒321-0933 栃木県宇都宮市簗瀬町１５９４−１",
     "type": "normal",
@@ -2253,30 +2097,6 @@ const CHARGER_V2_DATA = [
     "lat": 36.5430516,
     "lng": 139.8909833,
     "powerKw": 90,
-    "direction": "none"
-  },
-  {
-    "name": "EV充電スポット (90kW)",
-    "address": "日本、〒321-0962 栃木県宇都宮市今泉町２９９６−１",
-    "type": "normal",
-    "powers": [
-      90
-    ],
-    "lat": 36.57211300000001,
-    "lng": 139.9162753,
-    "powerKw": 90,
-    "direction": "none"
-  },
-  {
-    "name": "トヨタEV充電スタンド (150kW)",
-    "address": "日本、〒320-0833 栃木県宇都宮市不動前４丁目２−４８",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 36.5427563,
-    "lng": 139.8806246,
-    "powerKw": 150,
     "direction": "none"
   },
   {
@@ -2312,18 +2132,6 @@ const CHARGER_V2_DATA = [
     ],
     "lat": 33.8567269,
     "lng": 132.7481876,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
-    "name": "EV充電スタンド (150kW)",
-    "address": "日本、〒791-8015 愛媛県松山市中央１丁目１６−５",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 33.854959199999996,
-    "lng": 132.7501925,
     "powerKw": 150,
     "direction": "none"
   },
@@ -2520,471 +2328,159 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "EV Connect Charging Station (180kW)",
-    "address": "52530 US-97, La Pine, OR 97739 アメリカ合衆国",
+    "name": "Shell Recharge Charging Station (150kW)",
+    "address": "2930 SE 14th St, Des Moines, IA 50320 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 41.558149199999995,
+    "lng": -93.5977168,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Shell Recharge Charging Station (150kW)",
+    "address": "4605 Fleur Dr, Des Moines, IA 50321 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 41.541267999999995,
+    "lng": -93.64437579999999,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "4365 Merle Hay Rd, Des Moines, IA 50310 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 41.639465799999996,
+    "lng": -93.6972394,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "10151 University Ave, Clive, IA 50325 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 41.6035705,
+    "lng": -93.7563632,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "ChargeLab Charging Station (150kW)",
+    "address": "4815 Maple Dr, Pleasant Hill, IA 50327 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 41.5972326,
+    "lng": -93.5183394,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Red E Charging Station (180kW)",
+    "address": "1101 SE Oralabor Rd, Ankeny, IA 50021 アメリカ合衆国",
     "type": "normal",
     "powers": [
       180
     ],
-    "lat": 43.708369499999996,
-    "lng": -121.4738788,
+    "lat": 41.7019971,
+    "lng": -93.58056069999999,
     "powerKw": 180,
     "direction": "none"
   },
   {
-    "name": "EVCS Charging Station (175kW)",
-    "address": "483 SW 5th St St, Madras, OR 97741 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      175
-    ],
-    "lat": 44.62885620000001,
-    "lng": -121.1290044,
-    "powerKw": 175,
-    "direction": "none"
-  },
-  {
-    "name": "EVCS Charging Station (175kW)",
-    "address": "101 Olson Rd, Boardman, OR 97818 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      175
-    ],
-    "lat": 45.84137380000001,
-    "lng": -119.68344739999999,
-    "powerKw": 175,
-    "direction": "none"
-  },
-  {
-    "name": "EVCS Charging Station (175kW)",
-    "address": "607 Columbia St, Hood River, OR 97031 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      175
-    ],
-    "lat": 45.710301099999995,
-    "lng": -121.5166195,
-    "powerKw": 175,
-    "direction": "none"
-  },
-  {
-    "name": "Electrify America Charging Station (350kW)",
-    "address": "20120 Pinebrook Blvd, Bend, OR 97702 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      350
-    ],
-    "lat": 44.022560999999996,
-    "lng": -121.31674499999998,
-    "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "Rivian Adventure Network (300kW)",
-    "address": "19860 7th St, Bend, OR 97703 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      300
-    ],
-    "lat": 44.1472749,
-    "lng": -121.33143140000001,
-    "powerKw": 300,
-    "direction": "none"
-  },
-  {
-    "name": "Electrify America Charging Station (350kW)",
-    "address": "3025 Lancaster Dr NE, Salem, OR 97305 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      350
-    ],
-    "lat": 44.9655019,
-    "lng": -122.9853072,
-    "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "Electrify America Charging Station (350kW)",
-    "address": "77522 OR-207, Hermiston, OR 97838 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      350
-    ],
-    "lat": 45.7870826,
-    "lng": -119.32209929999998,
-    "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "Electrify America Charging Station (350kW)",
-    "address": "80 NE Cedar St, Madras, OR 97741 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      350
-    ],
-    "lat": 44.6442457,
-    "lng": -121.12885279999999,
-    "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "Rivian Adventure Network (300kW)",
-    "address": "1400 W 6th St, The Dalles, OR 97058 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      300
-    ],
-    "lat": 45.60759300000001,
-    "lng": -121.20484499999999,
-    "powerKw": 300,
-    "direction": "none"
-  },
-  {
-    "name": "Electrify America Charging Station (350kW)",
-    "address": "40 Washington St W, Huntington, OR 97907 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      350
-    ],
-    "lat": 44.351245899999995,
-    "lng": -117.2684351,
-    "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "Pilot EV Charging Station (350kW)",
-    "address": "109450 US-97, Chemult, OR 97731 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      350
-    ],
-    "lat": 43.215758699999995,
-    "lng": -121.7830671,
-    "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "Rivian Adventure Network (300kW)",
-    "address": "215 NW Cherry Ln, Madras, OR 97741 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      300
-    ],
-    "lat": 44.664265,
-    "lng": -121.1388335,
-    "powerKw": 300,
-    "direction": "none"
-  },
-  {
-    "name": "EVgo Charging Station (350kW)",
-    "address": "800 John Long Rd, Oakland, OR 97462 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      350
-    ],
-    "lat": 43.53914470000001,
-    "lng": -123.28816289999997,
-    "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "Electrify America Charging Station (350kW)",
-    "address": "2700 Wasco St, Hood River, OR 97031 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      350
-    ],
-    "lat": 45.7116559,
-    "lng": -121.5399624,
-    "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (325kW)",
-    "address": "US-95 #909, Jordan Valley, OR 97910 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      325
-    ],
-    "lat": 42.97473900000001,
-    "lng": -117.057574,
-    "powerKw": 325,
-    "direction": "none"
-  },
-  {
-    "name": "Loves Charging Station (200kW)",
-    "address": "115 Harrison Ave, Buena Vista, CO 81211 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      200
-    ],
-    "lat": 38.8505429,
-    "lng": -106.1395635,
-    "powerKw": 200,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (150kW)",
-    "address": "6250 US Hwy 285, Poncha Springs, CO 81242 アメリカ合衆国",
+    "name": "MidAmerican Energy Charging Station (150kW)",
+    "address": "2540 E Euclid Ave, Des Moines, IA 50317 アメリカ合衆国",
     "type": "normal",
     "powers": [
       150
     ],
-    "lat": 38.511461,
-    "lng": -106.076183,
+    "lat": 41.6278899,
+    "lng": -93.5691212,
     "powerKw": 150,
     "direction": "none"
   },
   {
-    "name": "Rivian Adventure Network - Rivian Only (300kW)",
-    "address": "232 G St, Salida, CO 81201 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      300
-    ],
-    "lat": 38.5365239,
-    "lng": -105.99449759999999,
-    "powerKw": 300,
-    "direction": "none"
-  },
-  {
-    "name": "ChargePoint Charging Station (200kW)",
-    "address": "144A Co Rd 105, Salida, CO 81201 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      200
-    ],
-    "lat": 38.523565999999995,
-    "lng": -105.98391799999999,
-    "powerKw": 200,
-    "direction": "none"
-  },
-  {
-    "name": "ChargePoint Charging Station (200kW)",
-    "address": "202 E Tomichi Ave, Gunnison, CO 81230 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      200
-    ],
-    "lat": 38.544888,
-    "lng": -106.9251,
-    "powerKw": 200,
-    "direction": "none"
-  },
-  {
-    "name": "ChargePoint Charging Station (200kW)",
-    "address": "901 Main St, Fairplay, CO 80440 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      200
-    ],
-    "lat": 39.221542,
-    "lng": -105.997163,
-    "powerKw": 200,
-    "direction": "none"
-  },
-  {
-    "name": "Pilot EV Charging Station (350kW)",
-    "address": "2115 S Hwy 395, Stanfield, OR 97875 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      350
-    ],
-    "lat": 45.766349399999996,
-    "lng": -119.20515180000001,
-    "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "Blink Charging Station (180kW)",
-    "address": "3100 Ryan Dr SE, Salem, OR 97301 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      180
-    ],
-    "lat": 44.919429699999995,
-    "lng": -122.99803779999999,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
-    "name": "PowerPump Charging Station (180kW)",
-    "address": "615 State St, Lyle, WA 98635 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      180
-    ],
-    "lat": 45.6932968,
-    "lng": -121.28337669999999,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (250kW)",
-    "address": "Tesla Store, 2755 Mission St SE, Salem, OR 97301 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      250
-    ],
-    "lat": 44.9212455,
-    "lng": -123.0065365,
-    "powerKw": 250,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (250kW)",
-    "address": "SpringHill Suites Marriott, 551 SW Industrial Way, Bend, OR 97702 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      250
-    ],
-    "lat": 44.049444,
-    "lng": -121.3155656,
-    "powerKw": 250,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (250kW)",
-    "address": "3790 Center St NE, Salem, OR 97301 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      250
-    ],
-    "lat": 44.938942999999995,
-    "lng": -122.98790899999999,
-    "powerKw": 250,
-    "direction": "none"
-  },
-  {
-    "name": "Electrify America Charging Station (350kW)",
-    "address": "11619 Island Ave, Island City, OR 97850 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      350
-    ],
-    "lat": 45.336580399999995,
-    "lng": -118.05942239999997,
-    "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "Flo Charging Station (100kW)",
-    "address": "2929 Melrose St, Walla Walla, WA 99362 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      100
-    ],
-    "lat": 46.081030999999996,
-    "lng": -118.28439200000001,
-    "powerKw": 100,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (150kW)",
-    "address": "1 Sunridge Ln, Baker City, OR 97814 アメリカ合衆国",
+    "name": "Shell Recharge Charging Station (150kW)",
+    "address": "5750 Merle Hay Rd #9, Johnston, IA 50131 アメリカ合衆国",
     "type": "normal",
     "powers": [
       150
     ],
-    "lat": 44.782882,
-    "lng": -117.81230599999998,
+    "lat": 41.665039,
+    "lng": -93.6995706,
     "powerKw": 150,
     "direction": "none"
   },
   {
     "name": "Tesla Supercharger (250kW)",
-    "address": "Anchor Way #504, Hood River, OR 97031 アメリカ合衆国",
+    "address": "5050 NW 2nd St, Des Moines, IA 50313 アメリカ合衆国",
     "type": "normal",
     "powers": [
       250
     ],
-    "lat": 45.713865,
-    "lng": -121.515862,
+    "lat": 41.6524265,
+    "lng": -93.62106969999999,
     "powerKw": 250,
     "direction": "none"
   },
   {
-    "name": "Tesla Supercharger (250kW)",
-    "address": "SW Odem Medo Rd #1565, Redmond, OR 97756 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      250
-    ],
-    "lat": 44.252773999999995,
-    "lng": -121.18570599999998,
-    "powerKw": 250,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (250kW)",
-    "address": "2249 Cascade Ave, Hood River, OR 97031 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      250
-    ],
-    "lat": 45.7096109,
-    "lng": -121.53459659999999,
-    "powerKw": 250,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (150kW)",
-    "address": "46510 Wildhorse Blvd, Pendleton, OR 97801 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 45.64655,
-    "lng": -118.68198,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (150kW)",
-    "address": "61535 S Hwy 97, Bend, OR 97702 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 44.03563,
-    "lng": -121.308473,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (150kW)",
-    "address": "2114 W 6th St, The Dalles, OR 97058 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 45.611940999999995,
-    "lng": -121.208249,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
-    "name": "OpConnect Charging Station (120kW)",
-    "address": "104 Mill St, Grass Valley, OR 97039 アメリカ合衆国",
+    "name": "ChargePoint Charging Station (120kW)",
+    "address": "5138 Merle Hay Rd, Johnston, IA 50131 アメリカ合衆国",
     "type": "normal",
     "powers": [
       120
     ],
-    "lat": 45.3607221,
-    "lng": -120.7849393,
+    "lat": 41.653907,
+    "lng": -93.698409,
     "powerKw": 120,
     "direction": "none"
   },
   {
-    "name": "Tesla Supercharger (250kW)",
-    "address": "625 N Arrowleaf Trail, Sisters, OR 97759 アメリカ合衆国",
+    "name": "Shell Recharge Charging Station (150kW)",
+    "address": "11989 Hickman Rd, Urbandale, IA 50323 アメリカ合衆国",
     "type": "normal",
     "powers": [
-      250
+      150
     ],
-    "lat": 44.296203999999996,
-    "lng": -121.5613,
-    "powerKw": 250,
+    "lat": 41.6158364,
+    "lng": -93.781967,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Shell Recharge Charging Station (150kW)",
+    "address": "555 S 51st St, West Des Moines, IA 50265 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 41.5598683,
+    "lng": -93.7743211,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Shell Recharge Charging Station (180kW)",
+    "address": "1701 SE 37th St, Grimes, IA 50111 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      180
+    ],
+    "lat": 41.659325599999995,
+    "lng": -93.7765302,
+    "powerKw": 180,
     "direction": "none"
   }
 ];
