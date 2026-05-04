@@ -54,7 +54,8 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
 .chip-kw-orange { background: rgba(249,115,22,0.15); color: #f97316; border: 1px solid rgba(249,115,22,0.35); }
 .chip-kw-yellow { background: rgba(234,179,8,0.15);  color: #eab308; border: 1px solid rgba(234,179,8,0.35); }
 .chip-kw-gray   { background: rgba(148,163,184,0.12);color: #94a3b8; border: 1px solid rgba(148,163,184,0.3); }
-.chip-auth { background: rgba(59, 130, 246, 0.15); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.3); }
+.chip-auth  { background: rgba(59, 130, 246, 0.15); color: #93c5fd;  border: 1px solid rgba(59, 130, 246, 0.3); }
+.chip-teemo { background: rgba(34, 197, 94, 0.15);  color: #22c55e;  border: 1px solid rgba(34, 197, 94, 0.3); }
 .poi-tag { display: inline-block; background: rgba(148, 163, 184, 0.1); color: #cbd5e1; font-size: 10px; padding: 3px 8px; border-radius: 12px; margin-right: 6px; margin-top: 8px; }
 
 .alt-charger-btn { background: #1e293b; border: 1px solid var(--border); color: var(--accent2); border-radius: 4px; padding: 6px 10px; font-size: 0.75rem; cursor: pointer; transition: 0.2s; white-space: nowrap; }
@@ -1261,7 +1262,7 @@ function renderUI() {
         div.innerHTML = `
             <div class="chg-specs">
                 <span class="chg-chip ${getKwClass(st.charger.powerKw)}">⚡ ${kw}</span>
-                <span class="chg-chip chip-auth">📱 ${authNetwork}</span>
+                <span class="chg-chip ${authNetwork === 'TEEMO' ? 'chip-teemo' : 'chip-auth'}">📱 ${authNetwork}</span>
                 ${roadBadge}
             </div>
             <div style="font-weight:700; color:var(--text); font-size:1.1rem; margin-bottom:6px;">${st.charger.name}</div>
@@ -1648,7 +1649,7 @@ function toggleDbPins() {
                 map: googleMap,
                 title: `${c.name} (${c.powerKw}kW)`,
                 icon: { path: google.maps.SymbolPath.CIRCLE, scale: 5,
-                    fillColor: getKwColor(c.powerKw), fillOpacity: 0.8,
+                    fillColor: c.type === 'teemo' ? '#22c55e' : getKwColor(c.powerKw), fillOpacity: 0.8,
                     strokeWeight: 1, strokeColor: '#ffffff' },
                 zIndex: 0
             }));
@@ -1683,10 +1684,12 @@ function drawMarkers(originPoint, destPoint, stops, deadPoint, warningPoint) {
     }
     stops.forEach(st => {
         const isEmergency = st.charger.name.includes("🆘");
+        const isTeemo = st.charger.type === 'teemo';
+        const markerColor = isEmergency ? "#ef4444" : isTeemo ? "#22c55e" : getKwColor(st.charger.powerKw);
         mapMarkers.push(new google.maps.Marker({
             position: { lat: st.charger.lat, lng: st.charger.lng },
             map: googleMap, title: st.charger.name,
-            icon: { path: "M7 2v11h3v9l7-12h-4l4-8z", fillColor: isEmergency ? "#ef4444" : getKwColor(st.charger.powerKw), fillOpacity: 1, strokeWeight: 1, strokeColor: "#ffffff", scale: 1.5, anchor: new google.maps.Point(10, 10) }
+            icon: { path: "M7 2v11h3v9l7-12h-4l4-8z", fillColor: markerColor, fillOpacity: 1, strokeWeight: 1, strokeColor: "#ffffff", scale: 1.5, anchor: new google.maps.Point(10, 10) }
         }));
     });
 }

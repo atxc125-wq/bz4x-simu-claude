@@ -120,7 +120,8 @@ def fetch_toyota_csvs():
                             charger = {
                                 "name": f"{shop_name} ({kw}kW)",
                                 "address": address,
-                                "type": "normal",
+                                "type": "teemo",
+                                "network": "teemo",
                                 "powers": [kw],
                                 "lat": lat,
                                 "lng": lng,
