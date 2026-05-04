@@ -55,7 +55,8 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
 .chip-kw-yellow { background: rgba(234,179,8,0.15);  color: #eab308; border: 1px solid rgba(234,179,8,0.35); }
 .chip-kw-gray   { background: rgba(148,163,184,0.12);color: #94a3b8; border: 1px solid rgba(148,163,184,0.3); }
 .chip-auth  { background: rgba(59, 130, 246, 0.15); color: #93c5fd;  border: 1px solid rgba(59, 130, 246, 0.3); }
-.chip-teemo { background: rgba(34, 197, 94, 0.15);  color: #22c55e;  border: 1px solid rgba(34, 197, 94, 0.3); }
+.chip-teemo { background: rgba(56, 189, 248, 0.10); color: #cbd5e1;  border: 1px solid rgba(56, 189, 248, 0.35); font-weight: 800; letter-spacing: 0.5px; }
+.chip-teemo .te { color: #38bdf8; }
 .poi-tag { display: inline-block; background: rgba(148, 163, 184, 0.1); color: #cbd5e1; font-size: 10px; padding: 3px 8px; border-radius: 12px; margin-right: 6px; margin-top: 8px; }
 
 .alt-charger-btn { background: #1e293b; border: 1px solid var(--border); color: var(--accent2); border-radius: 4px; padding: 6px 10px; font-size: 0.75rem; cursor: pointer; transition: 0.2s; white-space: nowrap; }
@@ -131,7 +132,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.1.1 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.2 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-03</span>
         </div>
@@ -1262,7 +1263,9 @@ function renderUI() {
         div.innerHTML = `
             <div class="chg-specs">
                 <span class="chg-chip ${getKwClass(st.charger.powerKw)}">⚡ ${kw}</span>
-                <span class="chg-chip ${authNetwork === 'TEEMO' ? 'chip-teemo' : 'chip-auth'}">📱 ${authNetwork}</span>
+                ${authNetwork === 'TEEMO'
+                    ? `<span class="chg-chip chip-teemo">T<span class="te">E</span>EMO</span>`
+                    : `<span class="chg-chip chip-auth">📱 ${authNetwork}</span>`}
                 ${roadBadge}
             </div>
             <div style="font-weight:700; color:var(--text); font-size:1.1rem; margin-bottom:6px;">${st.charger.name}</div>
@@ -2128,6 +2131,14 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.3.2</span><span class="cl-date">2026-05-04</span>
+        <ul class="cl-items">
+          <li>TEEMOロゴバッジ実装：充電カードのネットワーク表示がTEEMO公式ロゴ風に（最初のEがスカイブルー）</li>
+          <li>TEEMOアイコン：マップマーカー・DBピンを緑色で表示</li>
+          <li>build_toyota.py：type/networkフィールドを "teemo" に修正</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.3.1.1</span><span class="cl-date">2026-05-03</span>
         <ul class="cl-items">
