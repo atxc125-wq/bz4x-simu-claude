@@ -756,6 +756,18 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
+    "name": "EV充電スタンド (150kW)",
+    "address": "日本、〒601-8205 京都府京都市南区久世殿城町４５３−２",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 34.95672580000001,
+    "lng": 135.71752189999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
     "name": "e-Mobility Power 充電スタンド (150kW)",
     "address": "日本、〒615-0072 京都府京都市右京区山ノ内池尻町８−２",
     "type": "normal",
@@ -2328,159 +2340,159 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "Shell Recharge Charging Station (150kW)",
-    "address": "2930 SE 14th St, Des Moines, IA 50320 アメリカ合衆国",
+    "name": "Tesla Supercharger (150kW)",
+    "address": "1791 N Mecklenburg Ave, La Crosse, VA 23950 アメリカ合衆国",
     "type": "normal",
     "powers": [
       150
     ],
-    "lat": 41.558149199999995,
-    "lng": -93.5977168,
+    "lat": 36.748515999999995,
+    "lng": -78.103517,
     "powerKw": 150,
     "direction": "none"
   },
   {
-    "name": "Shell Recharge Charging Station (150kW)",
-    "address": "4605 Fleur Dr, Des Moines, IA 50321 アメリカ合衆国",
+    "name": "Rivian Adventure Network (300kW)",
+    "address": "1520 Dabney Dr, Henderson, NC 27536 アメリカ合衆国",
     "type": "normal",
     "powers": [
-      150
+      300
     ],
-    "lat": 41.541267999999995,
-    "lng": -93.64437579999999,
-    "powerKw": 150,
+    "lat": 36.3344971,
+    "lng": -78.4355314,
+    "powerKw": 300,
     "direction": "none"
   },
   {
     "name": "Electrify America Charging Station (350kW)",
-    "address": "4365 Merle Hay Rd, Des Moines, IA 50310 アメリカ合衆国",
+    "address": "200 N Cooper Dr, Henderson, NC 27536 アメリカ合衆国",
     "type": "normal",
     "powers": [
       350
     ],
-    "lat": 41.639465799999996,
-    "lng": -93.6972394,
+    "lat": 36.3345529,
+    "lng": -78.44229899999999,
     "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "Electrify America Charging Station (350kW)",
-    "address": "10151 University Ave, Clive, IA 50325 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      350
-    ],
-    "lat": 41.6035705,
-    "lng": -93.7563632,
-    "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "ChargeLab Charging Station (150kW)",
-    "address": "4815 Maple Dr, Pleasant Hill, IA 50327 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 41.5972326,
-    "lng": -93.5183394,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
-    "name": "Red E Charging Station (180kW)",
-    "address": "1101 SE Oralabor Rd, Ankeny, IA 50021 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      180
-    ],
-    "lat": 41.7019971,
-    "lng": -93.58056069999999,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
-    "name": "MidAmerican Energy Charging Station (150kW)",
-    "address": "2540 E Euclid Ave, Des Moines, IA 50317 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 41.6278899,
-    "lng": -93.5691212,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
-    "name": "Shell Recharge Charging Station (150kW)",
-    "address": "5750 Merle Hay Rd #9, Johnston, IA 50131 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 41.665039,
-    "lng": -93.6995706,
-    "powerKw": 150,
     "direction": "none"
   },
   {
     "name": "Tesla Supercharger (250kW)",
-    "address": "5050 NW 2nd St, Des Moines, IA 50313 アメリカ合衆国",
+    "address": "1007 Philpott Rd, South Boston, VA 24592 アメリカ合衆国",
     "type": "normal",
     "powers": [
       250
     ],
-    "lat": 41.6524265,
-    "lng": -93.62106969999999,
+    "lat": 36.6866568,
+    "lng": -78.90087659999999,
     "powerKw": 250,
     "direction": "none"
   },
   {
-    "name": "ChargePoint Charging Station (120kW)",
-    "address": "5138 Merle Hay Rd, Johnston, IA 50131 アメリカ合衆国",
+    "name": "Tesla Supercharger (250kW)",
+    "address": "E Andrews Ave #1419, Henderson, NC 27536 アメリカ合衆国",
     "type": "normal",
     "powers": [
-      120
+      250
     ],
-    "lat": 41.653907,
-    "lng": -93.698409,
-    "powerKw": 120,
+    "lat": 36.319568,
+    "lng": -78.381294,
+    "powerKw": 250,
     "direction": "none"
   },
   {
-    "name": "Shell Recharge Charging Station (150kW)",
-    "address": "11989 Hickman Rd, Urbandale, IA 50323 アメリカ合衆国",
+    "name": "Tesla Supercharger (250kW)",
+    "address": "1011 Lewis St, Oxford, NC 27565 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 36.2810705,
+    "lng": -78.6033945,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (150kW)",
+    "address": "619 Ruin Creek Rd, Henderson, NC 27536 アメリカ合衆国",
     "type": "normal",
     "powers": [
       150
     ],
-    "lat": 41.6158364,
-    "lng": -93.781967,
+    "lat": 36.329091,
+    "lng": -78.44779,
     "powerKw": 150,
     "direction": "none"
   },
   {
-    "name": "Shell Recharge Charging Station (150kW)",
-    "address": "555 S 51st St, West Des Moines, IA 50265 アメリカ合衆国",
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "303 Market Dr, Emporia, VA 23847 アメリカ合衆国",
     "type": "normal",
     "powers": [
-      150
+      350
     ],
-    "lat": 41.5598683,
-    "lng": -93.7743211,
-    "powerKw": 150,
+    "lat": 36.706939299999995,
+    "lng": -77.5460583,
+    "powerKw": 350,
     "direction": "none"
   },
   {
-    "name": "Shell Recharge Charging Station (180kW)",
-    "address": "1701 SE 37th St, Grimes, IA 50111 アメリカ合衆国",
+    "name": "Pilot Flying J Charging Station (350kW)",
+    "address": "781 Moore's Ferry Rd, Skippers, VA 23879 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 36.606899299999995,
+    "lng": -77.56076070000002,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Blink Charging Station (180kW)",
+    "address": "101 Hampton Blvd, Roanoke Rapids, NC 27870 アメリカ合衆国",
     "type": "normal",
     "powers": [
       180
     ],
-    "lat": 41.659325599999995,
-    "lng": -93.7765302,
+    "lat": 36.4336359,
+    "lng": -77.6309194,
     "powerKw": 180,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "2016 S Main St, Farmville, VA 23901 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 37.271757,
+    "lng": -78.40164899999999,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (325kW)",
+    "address": "10401 NC-903, Halifax, NC 27839 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      325
+    ],
+    "lat": 36.3660049,
+    "lng": -77.6743518,
+    "powerKw": 325,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (325kW)",
+    "address": "Market Dr #200, Emporia, VA 23847 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      325
+    ],
+    "lat": 36.704989999999995,
+    "lng": -77.542667,
+    "powerKw": 325,
     "direction": "none"
   }
 ];
