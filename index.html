@@ -132,7 +132,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.4 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.5 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-03</span>
         </div>
@@ -691,7 +691,7 @@ function calcQuickChgDuration(socBefore, km, totalKm, routeChargerList,
 
 // ★ 引数を1つのparamsオブジェクトに集約（エラー防止）
 async function runSimulation(segments, elevations, params, onProgress) {
-    const { batteryKwh, startSocPct, thresholdSocPct, tripDate, startHour, waypointIndexes, isUpboundLegs, allChargerWps, expertMode, cityEff, hwyEff, manualTemp, altCorrection, preconTempThreshold = 15, preconDest = false, strategyMinKw = 0, strategyBoost15 = false, strategyRest = false, restIntervalMin = 90, strategyQuickChg = false, routeChargerList = null } = params;
+    const { batteryKwh, startSocPct, thresholdSocPct, tripDate, startHour, waypointIndexes, isUpboundLegs, allChargerWps, expertMode, cityEff, hwyEff, manualTemp, altCorrection, preconTempThreshold = 15, preconDest = false, strategyMinKw = 0, strategyBoost15 = false, strategyRest = false, restIntervalMin = 90, strategyQuickChg = false, routeChargerList = null, targetArrivalSocPct = thresholdSocPct } = params;
     const minKw = strategyMinKw;
     let socKwh = (startSocPct / 100) * batteryKwh, km = 0, time = 0;
     const profile = [], stops = [];
@@ -834,8 +834,12 @@ async function runSimulation(segments, elevations, params, onProgress) {
         // Step1: 同方向の高速SA/PAをインライン充電（Google Maps waypoint追加なし → 謎のUターン回避）
         // Step2: SA/PAが無い場合のみFLASH/TEEMO等の下道充電器をwaypointとしてリルート
         const continuousDrivingMin = time - lastChargeTime;
-        const needRestStop = strategyRest && continuousDrivingMin >= restIntervalMin && (km - lastChargeKm) > 30;
-        if ((currentSoc < thresholdSocPct + 10 || needRestStop) && (km - lastChargeKm) > (needRestStop ? 30 : 50)) {
+        // 目的地まで届くSOCがあれば充電も休憩も不要
+        const kmToGoal = totalKm - km;
+        const _rate = totalDrivingKm > 10 ? totalDrivingKwh / totalDrivingKm : batteryKwh / (6.5 * 100);
+        const enoughForDest = currentSoc >= (kmToGoal * _rate / batteryKwh) * 100 + targetArrivalSocPct + 5;
+        const needRestStop = strategyRest && continuousDrivingMin >= restIntervalMin && (km - lastChargeKm) > 30 && !enoughForDest;
+        if (!enoughForDest && (currentSoc < thresholdSocPct + 10 || needRestStop) && (km - lastChargeKm) > (needRestStop ? 30 : 50)) {
             // デバッグ: 近隣SA/PAの道路名マッチング状況をログ出力
             const nearCandidates = chargerDB.filter(c => c.type === 'sa_pa' && haversine(c.lat, c.lng, s.lat, s.lng) < 5.0);
             if (nearCandidates.length > 0) {
@@ -1108,7 +1112,10 @@ async function onCalculate() {
                 strategyQuickChg: document.getElementById('strategy-quickchg').checked,
                 routeChargerList: document.getElementById('strategy-quickchg').checked
                     ? buildRouteChargerList(segments, chargerDB, 150, isUpboundLegs, waypointIndexes)
-                    : null
+                    : null,
+                targetArrivalSocPct: document.getElementById('target-arrival-soc-enabled').checked
+                    ? (parseFloat(document.getElementById('target-arrival-soc').value) || 5)
+                    : parseFloat(document.getElementById('threshold-soc').value)
             };
 
             const result = await runSimulation(segments, elevations, params, onProgress);
@@ -1129,10 +1136,10 @@ async function onCalculate() {
                     const consumption = lastStop.socAfter - result.arrivalSoc; // 最後停車→目的地の消費%
                     const neededExitSoc = targetArrivalSoc + consumption;
                     // 短縮後に新停車が発生しないよう、exit SOC の下限をチェック
-                    const triggerThreshold = parseFloat(document.getElementById('threshold-soc').value) + 10;
-                    const minSafeExitSoc = triggerThreshold + consumption;
+                    // ※ threshold+10 ではなく targetArrivalSoc を使う（目的地は充電不要なので閾値より低くてよい）
+                    const minSafeExitSoc = targetArrivalSoc + consumption; // = neededExitSoc なので実質スキップ無効化
                     if (neededExitSoc < minSafeExitSoc) {
-                        // この停車を短縮すると途中でSOCが閾値を割り込み新停車が生まれる → 調整不可
+                        // 調整不可（通常ここには来ない）
                     } else {
                         let lo = 1, hi = lastStop.duration, bestMins = lastStop.duration;
                         for (let iter = 0; iter < 10; iter++) {
@@ -2139,8 +2146,10 @@ window.onload = () => {
     </div>
     <div id="cl-body">
       <div class="cl-ver">
-        <span class="cl-vtag">v2.3.4</span><span class="cl-date">2026-05-04</span>
+        <span class="cl-vtag">v2.3.5</span><span class="cl-date">2026-05-04</span>
         <ul class="cl-items">
+          <li>【バグ修正】目的地まで十分SOCがある場合、休憩モードの充電停車を抑制</li>
+          <li>【バグ修正】到着SOC調整のカスケードスキップを修正（目標到着SOC5%設定時に最終停車が短縮されない問題）</li>
           <li>マップ拡大時に施設名・ランドマーク名を表示（POIテキストラベル復活）</li>
         </ul>
       </div>
