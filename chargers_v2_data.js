@@ -2976,6 +2976,18 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
+    "name": "Flo Charging Station (100kW)",
+    "address": "2929 Melrose St, Walla Walla, WA 99362 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      100
+    ],
+    "lat": 46.081030999999996,
+    "lng": -118.28439200000001,
+    "powerKw": 100,
+    "direction": "none"
+  },
+  {
     "name": "Tesla Supercharger (150kW)",
     "address": "1 Sunridge Ln, Baker City, OR 97814 アメリカ合衆国",
     "type": "normal",
