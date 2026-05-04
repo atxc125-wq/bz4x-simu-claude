@@ -8,7 +8,6 @@ import json
 import os
 import time
 import logging
-import re
 import math
 from io import StringIO
 from datetime import datetime
@@ -77,8 +76,7 @@ def fetch_toyota_csvs():
             if res.status_code != 200:
                 continue
             
-            # 🌟 ここが最強のデコード処理！
-            # まずUTF-8を試し、ダメならWindows標準のcp932、それでもダメならエラー文字を無視してShift-JISで強制突破
+            # 文字化け絶対許さないマン
             try:
                 csv_text = res.content.decode('utf-8')
             except UnicodeDecodeError:
@@ -88,44 +86,54 @@ def fetch_toyota_csvs():
                     csv_text = res.content.decode('shift_jis', errors='ignore')
             
             reader = csv.reader(StringIO(csv_text))
+            headers_row = next(reader, None)
+            if not headers_row:
+                continue
+            
+            # 🌟 「出力」の列、および「店舗名」「住所」の列が何番目にあるかを自動で探す
+            try:
+                power_idx = next(i for i, h in enumerate(headers_row) if '出力' in h)
+                name_idx = next(i for i, h in enumerate(headers_row) if '店舗' in h)
+                # 住所列が複数ある場合（秋田のCSV等）は最初のものを取る
+                address_idx = next(i for i, h in enumerate(headers_row) if '住所' in h)
+            except StopIteration:
+                log.warning(f"{pref}.csv に必要な列が見つかりません。スキップします。")
+                continue
+
             for row in reader:
-                if not row:
+                if len(row) <= max(power_idx, name_idx, address_idx):
                     continue
                 
-                row_str = " ".join(row)
-                kw_match = re.search(r'(\d+)\s*kW', row_str, re.IGNORECASE)
-                
-                if kw_match:
-                    kw = int(kw_match.group(1))
+                power_str = row[power_idx].strip()
+                # 数字だけで構成されているかチェック
+                if power_str.isdigit():
+                    kw = int(power_str)
+                    
                     if kw >= 90:
-                        dealer_name = row[2] if len(row) > 2 else ""
-                        shop_name = row[3] if len(row) > 3 else "トヨタ販売店"
-                        address = row[5] if len(row) > 5 else row[0]
+                        shop_name = row[name_idx].strip()
+                        address = row[address_idx].strip()
                         
-                        full_name = f"{dealer_name} {shop_name}".strip()
-                        
-                        lat, lng = geocode_address(address, full_name)
+                        lat, lng = geocode_address(address, shop_name)
                         time.sleep(0.5) 
                         
                         if lat and lng:
                             charger = {
-                                "name": f"{full_name} ({kw}kW)",
+                                "name": f"{shop_name} ({kw}kW)",
                                 "address": address,
                                 "type": "normal",
-                                "powers": [int(kw)],
+                                "powers": [kw],
                                 "lat": lat,
                                 "lng": lng,
-                                "powerKw": int(kw),
+                                "powerKw": kw,
                                 "direction": "none"
                             }
                             chargers.append(charger)
-                            log.info(f"抽出成功: {full_name} ({kw}kW)")
+                            log.info(f"抽出成功: {shop_name} ({kw}kW)")
 
         except Exception as e:
             log.error(f"{pref}.csv の処理中にエラー: {e}")
             
     return chargers
-
 
 def main():
     toyota_chargers = fetch_toyota_csvs()
@@ -159,4 +167,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
