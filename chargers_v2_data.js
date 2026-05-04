@@ -2628,327 +2628,459 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
+    "name": "EV Connect Charging Station (180kW)",
+    "address": "52530 US-97, La Pine, OR 97739 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      180
+    ],
+    "lat": 43.708369499999996,
+    "lng": -121.4738788,
+    "powerKw": 180,
+    "direction": "none"
+  },
+  {
+    "name": "EVCS Charging Station (175kW)",
+    "address": "483 SW 5th St St, Madras, OR 97741 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      175
+    ],
+    "lat": 44.62885620000001,
+    "lng": -121.1290044,
+    "powerKw": 175,
+    "direction": "none"
+  },
+  {
+    "name": "EVCS Charging Station (175kW)",
+    "address": "101 Olson Rd, Boardman, OR 97818 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      175
+    ],
+    "lat": 45.84137380000001,
+    "lng": -119.68344739999999,
+    "powerKw": 175,
+    "direction": "none"
+  },
+  {
+    "name": "EVCS Charging Station (175kW)",
+    "address": "607 Columbia St, Hood River, OR 97031 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      175
+    ],
+    "lat": 45.710301099999995,
+    "lng": -121.5166195,
+    "powerKw": 175,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "20120 Pinebrook Blvd, Bend, OR 97702 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 44.022560999999996,
+    "lng": -121.31674499999998,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
     "name": "Rivian Adventure Network (300kW)",
-    "address": "10 Riverton Commons Dr, Front Royal, VA 22630 アメリカ合衆国",
+    "address": "19860 7th St, Bend, OR 97703 アメリカ合衆国",
     "type": "normal",
     "powers": [
       300
     ],
-    "lat": 38.9636177,
-    "lng": -78.1893874,
+    "lat": 44.1472749,
+    "lng": -121.33143140000001,
     "powerKw": 300,
     "direction": "none"
   },
   {
     "name": "Electrify America Charging Station (350kW)",
-    "address": "461 W Reservoir Rd, Woodstock, VA 22664 アメリカ合衆国",
+    "address": "3025 Lancaster Dr NE, Salem, OR 97305 アメリカ合衆国",
     "type": "normal",
     "powers": [
       350
     ],
-    "lat": 38.8695644,
-    "lng": -78.5296451,
+    "lat": 44.9655019,
+    "lng": -122.9853072,
     "powerKw": 350,
     "direction": "none"
   },
   {
     "name": "Electrify America Charging Station (350kW)",
-    "address": "6530 Trading Sq, Haymarket, VA 20169 アメリカ合衆国",
+    "address": "77522 OR-207, Hermiston, OR 97838 アメリカ合衆国",
     "type": "normal",
     "powers": [
       350
     ],
-    "lat": 38.8188015,
-    "lng": -77.64618469999999,
-    "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "Pilot Flying J Charging Station (350kW)",
-    "address": "1014 Mt Olive Rd, Toms Brook, VA 22660 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      350
-    ],
-    "lat": 38.9670181,
-    "lng": -78.4386507,
-    "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (250kW)",
-    "address": "10101 James Madison Hwy, Bealeton, VA 22712 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      250
-    ],
-    "lat": 38.619554799999996,
-    "lng": -77.7992048,
-    "powerKw": 250,
-    "direction": "none"
-  },
-  {
-    "name": "Electrify America Charging Station (350kW)",
-    "address": "747 Fairfax St, Stephens City, VA 22655 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      350
-    ],
-    "lat": 39.081984399999996,
-    "lng": -78.21675660000001,
-    "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (250kW)",
-    "address": "Sheetz, 111 W Reservoir Rd, Woodstock, VA 22664 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      250
-    ],
-    "lat": 38.866743,
-    "lng": -78.519179,
-    "powerKw": 250,
-    "direction": "none"
-  },
-  {
-    "name": "EVgo Charging Station (200kW)",
-    "address": "13850 McLearen Rd, Herndon, VA 20171 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      200
-    ],
-    "lat": 38.9299301,
-    "lng": -77.42473009999999,
-    "powerKw": 200,
-    "direction": "none"
-  },
-  {
-    "name": "Blink Charging Station (120kW)",
-    "address": "6443 Lee Hwy, Warrenton, VA 20187 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      120
-    ],
-    "lat": 38.734345999999995,
-    "lng": -77.769306,
-    "powerKw": 120,
-    "direction": "none"
-  },
-  {
-    "name": "EVgo Charging Station (200kW)",
-    "address": "25224 Poland Rd, Chantilly, VA 20152 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      200
-    ],
-    "lat": 38.9193655,
-    "lng": -77.4962225,
-    "powerKw": 200,
-    "direction": "none"
-  },
-  {
-    "name": "Electrify America Charging Station (350kW)",
-    "address": "24635 Dulles Landing Dr, Dulles, VA 20166 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      350
-    ],
-    "lat": 38.9350526,
-    "lng": -77.522341,
+    "lat": 45.7870826,
+    "lng": -119.32209929999998,
     "powerKw": 350,
     "direction": "none"
   },
   {
     "name": "Electrify America Charging Station (350kW)",
-    "address": "235 Fort Evans Rd NE, Leesburg, VA 20176 アメリカ合衆国",
+    "address": "80 NE Cedar St, Madras, OR 97741 アメリカ合衆国",
     "type": "normal",
     "powers": [
       350
     ],
-    "lat": 39.1090368,
-    "lng": -77.538377,
+    "lat": 44.6442457,
+    "lng": -121.12885279999999,
     "powerKw": 350,
     "direction": "none"
   },
   {
-    "name": "Ionna Charging Station (400kW)",
-    "address": "7201 New Stable Wy, Gainesville, VA 20155 アメリカ合衆国",
+    "name": "Rivian Adventure Network (300kW)",
+    "address": "1400 W 6th St, The Dalles, OR 97058 アメリカ合衆国",
     "type": "normal",
     "powers": [
-      400
+      300
     ],
-    "lat": 38.8018387,
-    "lng": -77.58818459999999,
-    "powerKw": 400,
+    "lat": 45.60759300000001,
+    "lng": -121.20484499999999,
+    "powerKw": 300,
     "direction": "none"
   },
   {
-    "name": "Tesla Supercharger (150kW)",
-    "address": "15315 Washington St, Haymarket, VA 20169 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 38.8150736,
-    "lng": -77.6425433,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (150kW)",
-    "address": "119 Hite Ln, Strasburg, VA 22657 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 39.0049719,
-    "lng": -78.33786909999999,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (250kW)",
-    "address": "10691 Davidson Pl, Manassas, VA 20109 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      250
-    ],
-    "lat": 38.793316399999995,
-    "lng": -77.5154964,
-    "powerKw": 250,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (150kW)",
-    "address": "227 Conicville Rd, Mt Jackson, VA 22842 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 38.7601599,
-    "lng": -78.6311808,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
-    "name": "ChargePoint Charging Station (205kW)",
-    "address": "14101 Whitney Rd, Gainesville, VA 20155 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      205
-    ],
-    "lat": 38.79324,
-    "lng": -77.61124,
-    "powerKw": 205,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (250kW)",
-    "address": "1683 Berryville Pike, Winchester, VA 22602 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      250
-    ],
-    "lat": 39.188228599999995,
-    "lng": -78.1258112,
-    "powerKw": 250,
-    "direction": "none"
-  },
-  {
-    "name": "Flying J EV Charging Station (350kW)",
-    "address": "1530 Rest Church Rd, Clear Brook, VA 22624 アメリカ合衆国",
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "40 Washington St W, Huntington, OR 97907 アメリカ合衆国",
     "type": "normal",
     "powers": [
       350
     ],
-    "lat": 39.290385,
-    "lng": -78.0868603,
+    "lat": 44.351245899999995,
+    "lng": -117.2684351,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Pilot EV Charging Station (350kW)",
+    "address": "109450 US-97, Chemult, OR 97731 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 43.215758699999995,
+    "lng": -121.7830671,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Rivian Adventure Network (300kW)",
+    "address": "215 NW Cherry Ln, Madras, OR 97741 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      300
+    ],
+    "lat": 44.664265,
+    "lng": -121.1388335,
+    "powerKw": 300,
+    "direction": "none"
+  },
+  {
+    "name": "EVgo Charging Station (350kW)",
+    "address": "800 John Long Rd, Oakland, OR 97462 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 43.53914470000001,
+    "lng": -123.28816289999997,
     "powerKw": 350,
     "direction": "none"
   },
   {
     "name": "Electrify America Charging Station (350kW)",
-    "address": "4368 Chantilly Shopping Center, Chantilly, VA 20151 アメリカ合衆国",
+    "address": "2700 Wasco St, Hood River, OR 97031 アメリカ合衆国",
     "type": "normal",
     "powers": [
       350
     ],
-    "lat": 38.888098899999996,
-    "lng": -77.4439806,
+    "lat": 45.7116559,
+    "lng": -121.5399624,
     "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (250kW)",
-    "address": "Compass Creek, 565 Compass Pt Plz, Leesburg, VA 20175 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      250
-    ],
-    "lat": 39.082659799999995,
-    "lng": -77.5629891,
-    "powerKw": 250,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (250kW)",
-    "address": "43300 Southern Walk Plz, Ashburn, VA 20148 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      250
-    ],
-    "lat": 39.008411,
-    "lng": -77.501811,
-    "powerKw": 250,
     "direction": "none"
   },
   {
     "name": "Tesla Supercharger (325kW)",
-    "address": "Van Metre Dr #43101, Ashburn, VA 20148 アメリカ合衆国",
+    "address": "US-95 #909, Jordan Valley, OR 97910 アメリカ合衆国",
     "type": "normal",
     "powers": [
       325
     ],
-    "lat": 39.028527,
-    "lng": -77.511164,
+    "lat": 42.97473900000001,
+    "lng": -117.057574,
     "powerKw": 325,
     "direction": "none"
   },
   {
-    "name": "Tesla Supercharger (325kW)",
-    "address": "Sudley Rd, Manassas, VA 20110 アメリカ合衆国",
+    "name": "Loves Charging Station (200kW)",
+    "address": "115 Harrison Ave, Buena Vista, CO 81211 アメリカ合衆国",
     "type": "normal",
     "powers": [
-      325
+      200
     ],
-    "lat": 38.767063,
-    "lng": -77.4850189,
-    "powerKw": 325,
+    "lat": 38.8505429,
+    "lng": -106.1395635,
+    "powerKw": 200,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (150kW)",
+    "address": "6250 US Hwy 285, Poncha Springs, CO 81242 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 38.511461,
+    "lng": -106.076183,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Rivian Adventure Network - Rivian Only (300kW)",
+    "address": "232 G St, Salida, CO 81201 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      300
+    ],
+    "lat": 38.5365239,
+    "lng": -105.99449759999999,
+    "powerKw": 300,
+    "direction": "none"
+  },
+  {
+    "name": "ChargePoint Charging Station (200kW)",
+    "address": "144A Co Rd 105, Salida, CO 81201 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      200
+    ],
+    "lat": 38.523565999999995,
+    "lng": -105.98391799999999,
+    "powerKw": 200,
+    "direction": "none"
+  },
+  {
+    "name": "ChargePoint Charging Station (200kW)",
+    "address": "202 E Tomichi Ave, Gunnison, CO 81230 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      200
+    ],
+    "lat": 38.544888,
+    "lng": -106.9251,
+    "powerKw": 200,
+    "direction": "none"
+  },
+  {
+    "name": "ChargePoint Charging Station (200kW)",
+    "address": "901 Main St, Fairplay, CO 80440 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      200
+    ],
+    "lat": 39.221542,
+    "lng": -105.997163,
+    "powerKw": 200,
+    "direction": "none"
+  },
+  {
+    "name": "Pilot EV Charging Station (350kW)",
+    "address": "2115 S Hwy 395, Stanfield, OR 97875 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 45.766349399999996,
+    "lng": -119.20515180000001,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Blink Charging Station (180kW)",
+    "address": "3100 Ryan Dr SE, Salem, OR 97301 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      180
+    ],
+    "lat": 44.919429699999995,
+    "lng": -122.99803779999999,
+    "powerKw": 180,
+    "direction": "none"
+  },
+  {
+    "name": "PowerPump Charging Station (180kW)",
+    "address": "615 State St, Lyle, WA 98635 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      180
+    ],
+    "lat": 45.6932968,
+    "lng": -121.28337669999999,
+    "powerKw": 180,
     "direction": "none"
   },
   {
     "name": "Tesla Supercharger (250kW)",
-    "address": "25451 Lizzio Center Dr, South Riding, VA 20152 アメリカ合衆国",
+    "address": "Tesla Store, 2755 Mission St SE, Salem, OR 97301 アメリカ合衆国",
     "type": "normal",
     "powers": [
       250
     ],
-    "lat": 38.913663299999996,
-    "lng": -77.4867919,
+    "lat": 44.9212455,
+    "lng": -123.0065365,
     "powerKw": 250,
     "direction": "none"
   },
   {
-    "name": "Blink Charging Station (120kW)",
-    "address": "1911 Valley Ave, Winchester, VA 22601 アメリカ合衆国",
+    "name": "Tesla Supercharger (250kW)",
+    "address": "SpringHill Suites Marriott, 551 SW Industrial Way, Bend, OR 97702 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 44.049444,
+    "lng": -121.3155656,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "3790 Center St NE, Salem, OR 97301 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 44.938942999999995,
+    "lng": -122.98790899999999,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "11619 Island Ave, Island City, OR 97850 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 45.336580399999995,
+    "lng": -118.05942239999997,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (150kW)",
+    "address": "1 Sunridge Ln, Baker City, OR 97814 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 44.782882,
+    "lng": -117.81230599999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "Anchor Way #504, Hood River, OR 97031 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 45.713865,
+    "lng": -121.515862,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "SW Odem Medo Rd #1565, Redmond, OR 97756 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 44.252773999999995,
+    "lng": -121.18570599999998,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "2249 Cascade Ave, Hood River, OR 97031 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 45.7096109,
+    "lng": -121.53459659999999,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (150kW)",
+    "address": "46510 Wildhorse Blvd, Pendleton, OR 97801 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 45.64655,
+    "lng": -118.68198,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (150kW)",
+    "address": "61535 S Hwy 97, Bend, OR 97702 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 44.03563,
+    "lng": -121.308473,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (150kW)",
+    "address": "2114 W 6th St, The Dalles, OR 97058 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 45.611940999999995,
+    "lng": -121.208249,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "OpConnect Charging Station (120kW)",
+    "address": "104 Mill St, Grass Valley, OR 97039 アメリカ合衆国",
     "type": "normal",
     "powers": [
       120
     ],
-    "lat": 39.167197699999996,
-    "lng": -78.1809641,
+    "lat": 45.3607221,
+    "lng": -120.7849393,
     "powerKw": 120,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "625 N Arrowleaf Trail, Sisters, OR 97759 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 44.296203999999996,
+    "lng": -121.5613,
+    "powerKw": 250,
     "direction": "none"
   }
 ];
