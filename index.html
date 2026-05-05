@@ -132,7 +132,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.7 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.8 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-03</span>
         </div>
@@ -842,7 +842,9 @@ async function runSimulation(segments, elevations, params, onProgress) {
         const _rate = totalDrivingKm > 10 ? totalDrivingKwh / totalDrivingKm : batteryKwh / (6.5 * 100);
         const enoughForDest = currentSoc >= (kmToGoal * _rate / batteryKwh) * 100 + targetArrivalSocPct + 5;
         const needRestStop = strategyRest && continuousDrivingMin >= restIntervalMin && (km - lastChargeKm) > 30 && !enoughForDest;
-        if (!enoughForDest && (currentSoc < thresholdSocPct + 10 || needRestStop) && (km - lastChargeKm) > (needRestStop ? 30 : 50)) {
+        // 目的地まで届かない + SOC35%以下 → SAがあればそこで、なければTEEMOを先手で探す
+        const _proactiveTrigger = !enoughForDest && currentSoc < 35;
+        if (!enoughForDest && (currentSoc < thresholdSocPct + 10 || needRestStop || _proactiveTrigger) && (km - lastChargeKm) > (needRestStop ? 30 : 50)) {
             // デバッグ: 近隣SA/PAの道路名マッチング状況をログ出力
             const nearCandidates = chargerDB.filter(c => c.type === 'sa_pa' && haversine(c.lat, c.lng, s.lat, s.lng) < 5.0);
             if (nearCandidates.length > 0) {
@@ -908,11 +910,22 @@ async function runSimulation(segments, elevations, params, onProgress) {
                 }
             } else {
                 // Step2: 下道の90kW以上急速充電器にリルート
-                // 高速上でも、SOC不足(緊急)の場合はTEEMOも使う。休憩モードのみ除外。
+                // 高速上でも、SOC不足(緊急 or 先手)の場合はTEEMOも使う。
+                // ただし同方向SA/PAが10km以内にある場合はTEEMOを除外（Kuwana修正）。
                 const _socTrigger = currentSoc < thresholdSocPct + 10;
+                const _proactiveTEEMO = !enoughForDest && currentSoc < 35;
+                const _nearSaPa = chargerDB.some(c =>
+                    c.type === 'sa_pa'
+                    && haversine(c.lat, c.lng, s.lat, s.lng) < 10.0
+                    && parseInt(c.powerKw) >= 50
+                    && isValidDirection(c.name, currentTripIsUpbound)
+                );
                 const offRoute = chargerDB.find(c => {
                     if (c.type === 'sa_pa') return false;
-                    if (c.type === 'teemo' && onOrNearHighway && !_socTrigger) return false;
+                    // SA/PAが10km以内 → TEEMOへの迂回を抑制（御在所SA等が近い場合）
+                    if (c.type === 'teemo' && _nearSaPa) return false;
+                    // 高速上 + 緊急でも先手でもない → TEEMO除外
+                    if (c.type === 'teemo' && onOrNearHighway && !_socTrigger && !_proactiveTEEMO) return false;
                     const dist = haversine(c.lat, c.lng, s.lat, s.lng);
                     const key = `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
                     return dist < 7.0
@@ -1671,7 +1684,7 @@ function toggleDbPins() {
                 map: googleMap,
                 title: `${c.name} (${c.powerKw}kW)`,
                 icon: { path: google.maps.SymbolPath.CIRCLE, scale: 5,
-                    fillColor: c.type === 'teemo' ? '#22c55e' : getKwColor(c.powerKw), fillOpacity: 0.8,
+                    fillColor: c.type === 'teemo' ? '#38bdf8' : getKwColor(c.powerKw), fillOpacity: 0.8,
                     strokeWeight: 1, strokeColor: '#ffffff' },
                 zIndex: 0
             }));
@@ -1707,7 +1720,7 @@ function drawMarkers(originPoint, destPoint, stops, deadPoint, warningPoint) {
     stops.forEach(st => {
         const isEmergency = st.charger.name.includes("🆘");
         const isTeemo = st.charger.type === 'teemo';
-        const markerColor = isEmergency ? "#ef4444" : isTeemo ? "#22c55e" : getKwColor(st.charger.powerKw);
+        const markerColor = isEmergency ? "#ef4444" : isTeemo ? "#38bdf8" : getKwColor(st.charger.powerKw);
         mapMarkers.push(new google.maps.Marker({
             position: { lat: st.charger.lat, lng: st.charger.lng },
             map: googleMap, title: st.charger.name,
@@ -2150,6 +2163,14 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.3.8</span><span class="cl-date">2026-05-05</span>
+        <ul class="cl-items">
+          <li>【バグ修正】高速JCT付近でSA/PAが10km以内にある場合はTEEMOへの迂回を抑制（桑名付近・御在所SA通過問題を修正）</li>
+          <li>【バグ修正】経由地（空港等）で遠回り後にSOCが35%未満かつ目的地まで届かない場合、高速上でもTEEMOを先手で選択（旭川→帯広空港→苫小牧の電欠を修正）</li>
+          <li>TEEMOピン（⚡マーク）をスカイブルーに変更</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.3.7</span><span class="cl-date">2026-05-04</span>
         <ul class="cl-items">
