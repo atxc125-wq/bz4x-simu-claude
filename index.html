@@ -132,7 +132,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.8 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.9 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-03</span>
         </div>
@@ -920,19 +920,27 @@ async function runSimulation(segments, elevations, params, onProgress) {
                     && parseInt(c.powerKw) >= 50
                     && isValidDirection(c.name, currentTripIsUpbound)
                 );
-                const offRoute = chargerDB.find(c => {
+                // 先手TEEMOの場合は半径を15kmに拡大（空港経由等で通常7kmでは届かないケース対策）
+                const teemoRadius = _proactiveTEEMO ? 15.0 : 7.0;
+                const _offRouteCandidates = chargerDB.filter(c => {
                     if (c.type === 'sa_pa') return false;
                     // SA/PAが10km以内 → TEEMOへの迂回を抑制（御在所SA等が近い場合）
                     if (c.type === 'teemo' && _nearSaPa) return false;
                     // 高速上 + 緊急でも先手でもない → TEEMO除外
                     if (c.type === 'teemo' && onOrNearHighway && !_socTrigger && !_proactiveTEEMO) return false;
                     const dist = haversine(c.lat, c.lng, s.lat, s.lng);
+                    const radius = c.type === 'teemo' ? teemoRadius : 7.0;
                     const key = `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
-                    return dist < 7.0
+                    return dist < radius
                         && !userIgnoredChargers.includes(key)
                         && parseInt(c.powerKw) >= Math.max(90, minKw)
                         && isValidDirection(c.name, currentTripIsUpbound);
                 });
+                // 最近傍を選ぶ
+                const offRoute = _offRouteCandidates.reduce((best, c) => {
+                    const d = haversine(c.lat, c.lng, s.lat, s.lng);
+                    return (!best || d < haversine(best.lat, best.lng, s.lat, s.lng)) ? c : best;
+                }, null);
                 if (offRoute) {
                     const key = `${offRoute.lat.toFixed(4)},${offRoute.lng.toFixed(4)}`;
                     if (!allChargerWps.some(ac => (ac.key || `${ac.lat.toFixed(4)},${ac.lng.toFixed(4)}`) === key)) {
@@ -2163,6 +2171,13 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.3.9</span><span class="cl-date">2026-05-06</span>
+        <ul class="cl-items">
+          <li>【バグ修正】先手TEEMO探索の半径を7km → 15kmに拡大（空港経由等でルートがTEEMOから7km以上離れるケース対策）</li>
+          <li>Step2の最近傍選択を改善（半径内に複数候補がある場合、最も近いものを選ぶ）</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.3.8</span><span class="cl-date">2026-05-05</span>
         <ul class="cl-items">
