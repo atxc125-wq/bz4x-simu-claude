@@ -132,7 +132,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.9 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.10 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-03</span>
         </div>
@@ -1291,13 +1291,15 @@ function renderUI() {
     currentSim.stops.forEach((st, idx) => {
         const div = document.createElement('div'); div.className = 'stop-item';
         const isEmergency = st.charger.name.includes("🆘");
-        if(isEmergency) div.style.borderColor = '#ef4444';
-
         const chgKey = `${st.charger.lat.toFixed(4)},${st.charger.lng.toFixed(4)}`;
         const safeId = chgKey.replace(/[.,]/g, '_');
         const isCustomDur = !chgPresets.includes(st.duration);
         const kw = st.charger.powerKw ? `${st.charger.powerKw}kW` : '出力不明';
         const authNetwork = isEmergency ? '各種アプリ/クレカ' : getAuthNetwork(st.charger.name, st.charger.powerKw, st.charger.type);
+        // 左帯カラー: 緊急=赤 / TEEMO=スカイブルー / FLASH=赤 / 一般道=グレー / SA/PA=緑(CSSデフォルト)
+        if (isEmergency || authNetwork === 'FLASH') div.style.borderColor = '#ef4444';
+        else if (authNetwork === 'TEEMO') div.style.borderColor = '#38bdf8';
+        else if (st.charger.type !== 'sa_pa') div.style.borderColor = '#64748b';
         const isOffRoute = st.charger.type && st.charger.type !== 'sa_pa';
         const roadBadge = st.detectedRoad ? `<span style="background:rgba(234,179,8,0.15);color:#fbbf24;border:1px solid rgba(234,179,8,0.3);border-radius:4px;font-size:10px;font-weight:bold;padding:2px 6px;">🛣 ${st.detectedRoad}</span>` : (isOffRoute ? `<span style="background:rgba(148,163,184,0.15);color:#94a3b8;border:1px solid rgba(148,163,184,0.3);border-radius:4px;font-size:10px;font-weight:bold;padding:2px 6px;">🏙 一般道</span>` : '');
         div.innerHTML = `
@@ -2171,6 +2173,12 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.3.10</span><span class="cl-date">2026-05-06</span>
+        <ul class="cl-items">
+          <li>充電カード左帯の色をネットワーク別に変更: SA/PA=緑 / TEEMO=スカイブルー / FLASH=赤 / 一般道=グレー</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.3.9</span><span class="cl-date">2026-05-06</span>
         <ul class="cl-items">
