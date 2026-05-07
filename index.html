@@ -132,7 +132,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.13 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.14 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-03</span>
         </div>
@@ -2458,6 +2458,17 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.3.14</span><span class="cl-date">2026-05-07</span>
+        <ul class="cl-items">
+          <li>【バグ修正】高速往復時のTEEMO誤選択・ルート膨張を修正: SA/PA間でproactiveTriggerが発火しTEEMOが追加されルートが1000km→1400km超に膨張するカスケードを防ぐ「SA/PA lookahead」を追加（前方60km以内に到達可能なSA/PAがあればTEEMO迂回をスキップ）</li>
+          <li>【バグ修正】短いleg（TEEMO迂回等、20km未満）の上り/下り判定が逆転する問題を修正: 前のlegの方向を引き継ぐことで帰り高速SA/PAが正しく選択されるよう改善</li>
+          <li>【バグ修正】X分おき休憩がSOC十分なルート（例: 東京→福島90%出発）で発動しなかった問題を修正</li>
+          <li>【バグ修正】「他の充電器」でSA/PAを選択した際、上り/下りが逆になっていた問題を修正（DB座標が85m以内の同一地点に並存するため名前優先検索に変更）</li>
+          <li>高速通行料金: 一般道降車waypoint（TEEMO/FLASH）を含めて計算し区間ごとの料金を表示</li>
+          <li>コスト試算の通行料金区間内訳をカード全幅レイアウトに変更（8文字→8文字 左寄せ・料金右寄せ）</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.3.13</span><span class="cl-date">2026-05-07</span>
         <ul class="cl-items">
