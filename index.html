@@ -1062,6 +1062,12 @@ function hideLoading() {
 // originLoc, destLoc: google.maps.LatLng オブジェクト（DirectionsService結果から抽出）
 // waypointLocs: 各legのend_location配列（中間経由地）
 async function fetchTollAmount(originLoc, destLoc, waypointLocs = []) {
+    // ④ APIキー確認
+    if (!activeApiKey) {
+        console.warn('[Routes API] activeApiKey が未設定です');
+        return { error: 'nokey' };
+    }
+
     const tripDate    = document.getElementById('trip-date').value;
     const startTimeStr = document.getElementById('start-time').value;
     const avoidHighways = document.getElementById('avoid-highways').checked;
@@ -1095,18 +1101,38 @@ async function fetchTollAmount(originLoc, destLoc, waypointLocs = []) {
             headers: {
                 'Content-Type': 'application/json',
                 'X-Goog-Api-Key': activeApiKey,
-                'X-Goog-FieldMask': 'routes.travelAdvisory.tollInfo'
+                // ③ legs別と合計の両方を取得
+                'X-Goog-FieldMask': 'routes.legs.travelAdvisory.tollInfo,routes.travelAdvisory.tollInfo'
             },
             body: JSON.stringify(body)
         });
-        if (!res.ok) { console.warn('Routes API toll:', res.status, await res.text()); return false; }
-        const data = await res.json();
+        // ① レスポンスを丸ごとログ（HTTP errorでもJSONを試みる）
+        let data = {};
+        try { data = await res.json(); } catch { /* non-JSON */ }
+        console.log('[Routes API] response:', JSON.stringify(data, null, 2));
+        if (data.error) {
+            console.error('[Routes API] API error:', data.error);
+            return { error: data.error.message || JSON.stringify(data.error) };
+        }
+        if (!res.ok) { console.warn('[Routes API] HTTP error:', res.status); return false; }
+
+        // ② per-leg toll 内訳
+        const legs = data.routes?.[0]?.legs || [];
+        const legTolls = legs.map((leg, idx) => {
+            const prices = leg?.travelAdvisory?.tollInfo?.estimatedPrice || [];
+            const jpy = prices.find(p => p.currencyCode === 'JPY');
+            if (!jpy) return null;
+            const yen = parseInt(jpy.units || '0') + Math.round((jpy.nanos || 0) / 1e9);
+            return { idx, yen };
+        }).filter(Boolean);
+        console.log('[Routes API] legTolls:', legTolls);
+
         const prices = data.routes?.[0]?.travelAdvisory?.tollInfo?.estimatedPrice;
         if (!prices || prices.length === 0) return { yen: null };
         const jpy = prices.find(p => p.currencyCode === 'JPY');
         if (!jpy) return { yen: null };
         const yen = parseInt(jpy.units || '0') + Math.round((jpy.nanos || 0) / 1e9);
-        return { yen };
+        return { yen, legTolls: legTolls.length > 0 ? legTolls : null };
     } catch (e) { console.error('Toll fetch error:', e); return false; }
 }
 
@@ -1139,18 +1165,37 @@ function renderCostSummary(tollInfo) {
     } else if (tollInfo === false) {
         tollRow = `<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
             <span style="color:var(--muted);">高速通行料金（ETC2.0）</span>
-            <span style="color:#64748b;font-size:11px;">取得失敗</span></div>`;
+            <span style="color:#64748b;font-size:11px;">取得失敗（コンソール確認）</span></div>`;
+    } else if (tollInfo && tollInfo.error === 'nokey') {
+        tollRow = `<div style="font-size:12px;margin-bottom:6px;">
+            <div style="display:flex;justify-content:space-between;">
+                <span style="color:var(--muted);">高速通行料金（ETC2.0）</span>
+                <span style="color:#f59e0b;font-size:11px;">⚠ 取得失敗</span></div>
+            <div style="font-size:10px;color:#f59e0b;margin-top:2px;">APIキーを確認してください（activeApiKey 未設定）</div></div>`;
+    } else if (tollInfo && tollInfo.error) {
+        const errShort = tollInfo.error.length > 60 ? tollInfo.error.slice(0, 60) + '…' : tollInfo.error;
+        tollRow = `<div style="font-size:12px;margin-bottom:6px;">
+            <div style="display:flex;justify-content:space-between;">
+                <span style="color:var(--muted);">高速通行料金（ETC2.0）</span>
+                <span style="color:#ef4444;font-size:11px;">APIエラー</span></div>
+            <div style="font-size:10px;color:#ef4444;margin-top:2px;">${errShort}</div></div>`;
     } else if (tollInfo.yen === null) {
         tollRow = `<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
             <span style="color:var(--muted);">高速通行料金（ETC2.0）</span>
             <span style="color:#64748b;font-size:11px;">対象外 / データなし</span></div>`;
     } else {
         tollYen = tollInfo.yen;
-        // ETC2.0指定・departureTime込みで算出済みなので「割引込み」と明示
         const note = tollInfo.note === 'avoid' ? '回避設定' : 'ETC2.0・時間帯割引込み試算';
-        tollRow = `<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
+        // ② per-leg 内訳（経由地あり時に表示）
+        let legBreakdown = '';
+        if (tollInfo.legTolls && tollInfo.legTolls.length > 1) {
+            legBreakdown = tollInfo.legTolls.map(l =>
+                `<div style="font-size:10px;color:var(--muted);text-align:right;">区間${l.idx + 1}: ¥${l.yen.toLocaleString()}</div>`
+            ).join('');
+        }
+        tollRow = `<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;align-items:flex-start;">
             <span style="color:var(--muted);">高速通行料金 <span style="font-size:10px;">(${note})</span></span>
-            <span style="color:var(--text);font-weight:600;">¥${tollYen.toLocaleString()}</span></div>`;
+            <div style="text-align:right;"><span style="color:var(--text);font-weight:600;">¥${tollYen.toLocaleString()}</span>${legBreakdown}</div></div>`;
     }
 
     const totalYen = homeYen + commercialYen + tollYen;
