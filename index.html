@@ -132,7 +132,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.12 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.13 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-03</span>
         </div>
@@ -316,6 +316,8 @@ let _socAdjusted = false; // 到着SOC自動調整フラグ（1回のみ）
 let userCustomDurations = {}; 
 let userIgnoredChargers = []; 
 let currentAxis = 'time';
+let currentTollInfo = null; // null=未取得, false=取得失敗, {yen,note}=取得済み
+let _tollFetching = false;
 let chartFullXMin = 0, chartFullXMax = 0;
 let chartViewMin = 0, chartViewMax = 0;
 let chartStartCity = '', chartEndCity = '';
@@ -1056,6 +1058,127 @@ function hideLoading() {
     document.getElementById('loading').classList.remove('show');
 }
 
+// Routes API (新版) でETC高速料金を取得
+async function fetchTollAmount() {
+    const origin = document.getElementById('origin').value;
+    const dest   = document.getElementById('dest').value;
+    const waypointVal = document.getElementById('waypoint').value;
+    const tripDate    = document.getElementById('trip-date').value;
+    const startTimeStr = document.getElementById('start-time').value;
+    const avoidHighways = document.getElementById('avoid-highways').checked;
+
+    if (document.getElementById('avoid-tolls').checked) return { yen: 0, note: 'avoid' };
+
+    const departureTime = new Date(`${tripDate}T${startTimeStr}:00+09:00`).toISOString();
+
+    const intermediates = [];
+    if (waypointVal) intermediates.push({ address: waypointVal });
+    userWaypoints.filter(w => !w.isDestArea && !w.isSOS).forEach(w =>
+        intermediates.push({ location: { latLng: { latitude: w.lat, longitude: w.lng } } })
+    );
+
+    const body = {
+        origin: { address: origin },
+        destination: { address: dest },
+        travelMode: 'DRIVE',
+        routingPreference: 'TRAFFIC_AWARE',
+        departureTime,
+        extraComputations: ['TOLLS'],
+        routeModifiers: {
+            avoidHighways,
+            vehicleInfo: { emissionType: 'ELECTRIC' }, // BZ4X=EV（料金区分は普通車）
+            tollPasses: ['JP_ETC2', 'JP_ETC']
+        }
+    };
+    if (intermediates.length > 0) body.intermediates = intermediates;
+
+    try {
+        const res = await fetch('https://routes.googleapis.com/directions/v2:computeRoutes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Goog-Api-Key': activeApiKey,
+                'X-Goog-FieldMask': 'routes.travelAdvisory.tollInfo'
+            },
+            body: JSON.stringify(body)
+        });
+        if (!res.ok) { console.warn('Routes API toll:', res.status, await res.text()); return false; }
+        const data = await res.json();
+        const prices = data.routes?.[0]?.travelAdvisory?.tollInfo?.estimatedPrice;
+        if (!prices || prices.length === 0) return { yen: null };
+        const jpy = prices.find(p => p.currencyCode === 'JPY');
+        if (!jpy) return { yen: null };
+        const yen = parseInt(jpy.units || '0') + Math.round((jpy.nanos || 0) / 1e9);
+        return { yen };
+    } catch (e) { console.error('Toll fetch error:', e); return false; }
+}
+
+// コストサマリーを描画（toll情報が後から届いたときも再描画）
+function renderCostSummary(tollInfo) {
+    const costEl = document.getElementById('cost-summary');
+    if (!costEl || !currentSim) return;
+
+    const BATTERY_KWH = 71.4;
+    const HOME_YEN_PER_KWH = 31;
+    const chargedSoc = currentSim.stops.reduce((s, st) => s + (st.socAfter - st.socBefore), 0);
+    const consumedKwh = ((currentSim.startSocPct || 100) + chargedSoc - (currentSim.isDead ? 0 : currentSim.arrivalSoc)) / 100 * BATTERY_KWH;
+    const commercialKwh = chargedSoc / 100 * BATTERY_KWH;
+    const homeKwh = Math.max(0, consumedKwh - commercialKwh);
+    const homeYen = Math.round(homeKwh * HOME_YEN_PER_KWH);
+    const commercialYen = currentSim.stops.reduce((sum, st) => sum + calcChargingCost(st, BATTERY_KWH).yen, 0);
+
+    // toll 行の状態
+    let tollRow, tollYen = 0;
+    const avoidTolls = document.getElementById('avoid-tolls').checked;
+    if (avoidTolls) {
+        tollRow = `<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
+            <span style="color:var(--muted);">高速通行料金（ETC）</span>
+            <span style="color:#10b981;">¥0（回避設定）</span></div>`;
+    } else if (tollInfo === null || tollInfo === undefined) {
+        // 取得中
+        tollRow = `<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
+            <span style="color:var(--muted);">高速通行料金（ETC2.0）</span>
+            <span style="color:#64748b;font-size:11px;">⏳ 取得中...</span></div>`;
+    } else if (tollInfo === false) {
+        tollRow = `<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
+            <span style="color:var(--muted);">高速通行料金（ETC2.0）</span>
+            <span style="color:#64748b;font-size:11px;">取得失敗</span></div>`;
+    } else if (tollInfo.yen === null) {
+        tollRow = `<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
+            <span style="color:var(--muted);">高速通行料金（ETC2.0）</span>
+            <span style="color:#64748b;font-size:11px;">対象外 / データなし</span></div>`;
+    } else {
+        tollYen = tollInfo.yen;
+        // ETC2.0指定・departureTime込みで算出済みなので「割引込み」と明示
+        const note = tollInfo.note === 'avoid' ? '回避設定' : 'ETC2.0・時間帯割引込み試算';
+        tollRow = `<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
+            <span style="color:var(--muted);">高速通行料金 <span style="font-size:10px;">(${note})</span></span>
+            <span style="color:var(--text);font-weight:600;">¥${tollYen.toLocaleString()}</span></div>`;
+    }
+
+    const totalYen = homeYen + commercialYen + tollYen;
+    const totalNote = (tollInfo === null || tollInfo === undefined) ? '（高速料金は取得中）' : '';
+
+    costEl.innerHTML = `
+        <div style="background:#0f172a;border-radius:8px;padding:12px 14px;margin-top:14px;border:1px solid rgba(251,191,36,0.2);">
+            <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">💴 コスト試算</div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
+                <span style="color:var(--muted);">充電スタンド費用</span>
+                <span style="color:var(--text);font-weight:600;">¥${commercialYen.toLocaleString()}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
+                <span style="color:var(--muted);">自宅充電分 <span style="font-size:10px;">(${homeKwh.toFixed(1)}kWh × ¥${HOME_YEN_PER_KWH})</span></span>
+                <span style="color:var(--text);font-weight:600;">¥${homeYen.toLocaleString()}</span>
+            </div>
+            ${tollRow}
+            <div style="display:flex;justify-content:space-between;font-size:13px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.08);font-weight:700;">
+                <span style="color:#fbbf24;">合計${totalNote}</span>
+                <span style="color:#fbbf24;">¥${totalYen.toLocaleString()}</span>
+            </div>
+            <div style="font-size:10px;color:var(--muted);margin-top:8px;opacity:0.7;">※ FLASH=¥44/kWh、TEEMO=出力別/分、eMP=¥80/分（TEEMO会員）。高速料金はGoogle Routes API試算。</div>
+        </div>`;
+}
+
 async function onCalculate() {
     if(chargerDB.length === 0) return alert('充電器データがロードされていません！');
     const origin = document.getElementById('origin').value;
@@ -1065,6 +1188,9 @@ async function onCalculate() {
     // ローディングメッセージ: 初回 or 再計算（経由地追加）
     const rerouteNum = autoChargers.length;
     if (rerouteNum === 0) {
+        // 初回計算: toll情報をリセット
+        currentTollInfo = null;
+        _tollFetching = false;
         showLoading(`🗺️ ${origin} → ${dest}`, 'ルートを検索中...');
     } else {
         const lastChg = autoChargers[rerouteNum - 1];
@@ -1247,6 +1373,16 @@ async function onCalculate() {
 
             hideLoading();
             renderUI();
+
+            // 高速料金を Routes API で非同期取得（初回のみ）
+            if (currentTollInfo === null && !_tollFetching) {
+                _tollFetching = true;
+                fetchTollAmount().then(info => {
+                    currentTollInfo = info;
+                    _tollFetching = false;
+                    renderCostSummary(currentTollInfo);
+                });
+            }
         });
     });
 }
@@ -1357,43 +1493,15 @@ function renderUI() {
         list.appendChild(div);
     });
 
-    // コストサマリーボックス
-    {
-        const BATTERY_KWH = 71.4;
-        const HOME_YEN_PER_KWH = 31;
-        const chargedSoc = currentSim.stops.reduce((s, st) => s + (st.socAfter - st.socBefore), 0);
-        const consumedKwh = ((currentSim.startSocPct || 100) + chargedSoc - (currentSim.isDead ? 0 : currentSim.arrivalSoc)) / 100 * BATTERY_KWH;
-        const commercialKwh = chargedSoc / 100 * BATTERY_KWH;
-        const homeKwh = Math.max(0, consumedKwh - commercialKwh);
-        const homeYen = Math.round(homeKwh * HOME_YEN_PER_KWH);
-        const commercialYen = currentSim.stops.reduce((sum, st) => sum + calcChargingCost(st, BATTERY_KWH).yen, 0);
-        const totalYen = homeYen + commercialYen;
-
-        let costEl = document.getElementById('cost-summary');
-        if (!costEl) {
-            costEl = document.createElement('div');
-            costEl.id = 'cost-summary';
-            list.parentNode.insertBefore(costEl, list.nextSibling);
-        }
-        costEl.innerHTML = `
-            <div style="background:#0f172a; border-radius:8px; padding:12px 14px; margin-top:14px; border:1px solid rgba(251,191,36,0.2);">
-                <div style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px;">💴 コスト試算</div>
-                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px;">
-                    <span style="color:var(--muted);">充電スタンド費用</span>
-                    <span style="color:var(--text); font-weight:600;">¥${commercialYen.toLocaleString()}</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px;">
-                    <span style="color:var(--muted);">自宅充電分 <span style="font-size:10px;">(${homeKwh.toFixed(1)}kWh × ¥${HOME_YEN_PER_KWH})</span></span>
-                    <span style="color:var(--text); font-weight:600;">¥${homeYen.toLocaleString()}</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; font-size:13px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.08); font-weight:700;">
-                    <span style="color:#fbbf24;">合計（電気代）</span>
-                    <span style="color:#fbbf24;">¥${totalYen.toLocaleString()}</span>
-                </div>
-                <div style="font-size:10px; color:var(--muted); margin-top:8px; opacity:0.7;">※ 高速通行料金は別途。FLASH=¥44/kWh、TEEMO=出力別/分、eMP=¥80/分（TEEMO会員）で試算。</div>
-            </div>
-        `;
+    // コストサマリーボックス（toll は後から renderCostSummary() で更新）
+    { let costEl = document.getElementById('cost-summary');
+      if (!costEl) {
+          costEl = document.createElement('div');
+          costEl.id = 'cost-summary';
+          list.parentNode.insertBefore(costEl, list.nextSibling);
+      }
     }
+    renderCostSummary(currentTollInfo);
 
     // 目的地周辺充電スポット選択ボタン（到着SOC調整チェック時のみ表示）
     const socAdjOn = document.getElementById('target-arrival-soc-enabled').checked;
@@ -2240,6 +2348,14 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.3.13</span><span class="cl-date">2026-05-07</span>
+        <ul class="cl-items">
+          <li>高速通行料金をGoogle Routes APIで取得（ETC2.0料金・時間帯割引込み試算）してコストサマリーに追加</li>
+          <li>計算結果表示後に非同期で取得し「⏳ 取得中...」→ 金額に自動更新</li>
+          <li>有料道路回避設定時は¥0（回避設定）、データなし/無料区間は対象外と表示</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.3.12</span><span class="cl-date">2026-05-07</span>
         <ul class="cl-items">
