@@ -874,14 +874,15 @@ async function runSimulation(segments, elevations, params, onProgress) {
         const continuousDrivingMin = time - lastChargeTime;
         if (currentRoadName) lastHighwayKm = km;
         const onOrNearHighway = currentRoadName || (km - lastHighwayKm < 30); // JCT grace 30km
-        // 目的地まで届くSOCがあれば充電も休憩も不要
+        // 目的地まで届くSOCがあれば充電不要（ただし休憩は別途判定）
         const kmToGoal = totalKm - km;
         const _rate = totalDrivingKm > 10 ? totalDrivingKwh / totalDrivingKm : batteryKwh / (6.5 * 100);
         const enoughForDest = currentSoc >= (kmToGoal * _rate / batteryKwh) * 100 + targetArrivalSocPct + 5;
-        const needRestStop = strategyRest && continuousDrivingMin >= restIntervalMin && (km - lastChargeKm) > 30 && !enoughForDest;
+        // 休憩: SOC関係なく連続運転時間だけで判定（!enoughForDestは不要）
+        const needRestStop = strategyRest && continuousDrivingMin >= restIntervalMin && (km - lastChargeKm) > 30;
         // 目的地まで届かない + SOC35%以下 → SAがあればそこで、なければTEEMOを先手で探す
         const _proactiveTrigger = !enoughForDest && currentSoc < 35;
-        if (!enoughForDest && (currentSoc < thresholdSocPct + 10 || needRestStop || _proactiveTrigger) && (km - lastChargeKm) > (needRestStop ? 30 : 50)) {
+        if ((!enoughForDest || needRestStop) && (currentSoc < thresholdSocPct + 10 || needRestStop || _proactiveTrigger) && (km - lastChargeKm) > (needRestStop ? 30 : 50)) {
             // デバッグ: 近隣SA/PAの道路名マッチング状況をログ出力
             const nearCandidates = chargerDB.filter(c => c.type === 'sa_pa' && haversine(c.lat, c.lng, s.lat, s.lng) < 5.0);
             if (nearCandidates.length > 0) {
