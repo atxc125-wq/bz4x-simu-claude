@@ -132,7 +132,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.14 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.15<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-03</span>
         </div>
@@ -702,26 +702,42 @@ function buildRouteChargerList(segments, chargerDB, minKw, isUpboundLegs, waypoi
 }
 
 // 次の充電地点まで届く最短充電時間を算出
+// 戻り値 0 = このSA/PAはスキップ（次の150kW機まで十分なSOCあり）
 function calcQuickChgDuration(socBefore, km, totalKm, routeChargerList,
                                thresholdSocPct, batteryKwh,
                                totalDrivingKwh, totalDrivingKm, chargerInfo) {
-    // 次の150kW機（ルートリスト）まで必要なSOCを推算
-    const nextC = routeChargerList.find(c => c.km > km + 5);
-    const distToNext = nextC ? nextC.km - km : Math.max(60, totalKm - km);
-    const rateKwhPerKm = totalDrivingKm > 10
+    const _rate = totalDrivingKm > 10
         ? totalDrivingKwh / totalDrivingKm
         : batteryKwh / (6.5 * 100);
-    const consumptionPct = (distToNext * rateKwhPerKm / batteryKwh) * 100;
-    const minToReach = thresholdSocPct + 10 + consumptionPct + 5;
+    const chargerPowerKw = parseInt(chargerInfo.powerKw) || 50;
 
-    const is150kW = parseInt(chargerInfo.powerKw) >= 150;
-    // 150kW機: max(minToReach, 70%) ← 車両受入90kW(=一般急速充電機MAX)になる点
-    // 90kW機: minToReachのみ（最小限）
-    const target = Math.min(80, is150kW ? Math.max(70, minToReach) : minToReach);
+    // Case 1: 前方に次の150kW機がある → そこへ届く最小SOCまでだけ充電
+    const nextC = routeChargerList.find(c => c.km > km + 5);
+    if (nextC) {
+        const distToNext = nextC.km - km;
+        const consumptionPct = (distToNext * _rate / batteryKwh) * 100;
+        const target = Math.min(80, thresholdSocPct + consumptionPct + 5);
+        // 既に届くSOC → return 0 でスキップを指示
+        if (target <= socBefore) return 0;
+        let t = 1;
+        while (t < 90 && calculateCharging(socBefore, t, chargerInfo) < target) t++;
+        return Math.max(5, t);
+    }
 
-    if (target <= socBefore) return 5;
+    // Case 2: 次の150kW機なし → 充電器の定格出力が維持できなくなるSOCまで（最大30分）
+    // 90kW機: 受入電力が90kWに落ちる70%まで
+    // 150kW機: 車両受入は最大140kWで150kWに届かないため70%を実用上限とする
+    const kneeSOC = (() => {
+        if (chargerPowerKw >= 150) return 70;
+        for (let soc = 40; soc <= 80; soc++) {
+            if (getVehicleAcceptanceKw(soc) <= chargerPowerKw) return soc;
+        }
+        return 80;
+    })();
+    const targetSoc = Math.min(80, Math.max(kneeSOC, Math.ceil(socBefore) + 5));
+    if (targetSoc <= socBefore) return 5;
     let t = 1;
-    while (t < 90 && calculateCharging(socBefore, t, chargerInfo) < target) t++;
+    while (t < 30 && calculateCharging(socBefore, t, chargerInfo) < targetSoc) t++;
     return Math.max(5, t);
 }
 
@@ -787,7 +803,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                 const socBefore0 = (socKwh / batteryKwh) * 100;
                 const chargerInfo0 = { name: hit.name, lat: hit.lat, lng: hit.lng, powerKw: hit.powerKw, type: hit.type || 'emp' };
                 const quickDur = (strategyQuickChg && routeChargerList)
-                    ? calcQuickChgDuration(socBefore0, km, totalKm, routeChargerList, thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm, chargerInfo0)
+                    ? Math.max(5, calcQuickChgDuration(socBefore0, km, totalKm, routeChargerList, thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm, chargerInfo0))
                     : defaultDur;
                 const duration = userCustomDurations[chgKey] || Math.min(defaultDur, quickDur);
                 const socBefore = (socKwh / batteryKwh) * 100;
@@ -910,41 +926,45 @@ async function runSimulation(segments, elevations, params, onProgress) {
             if (saPa) {
                 const chgKey = `${saPa.lat.toFixed(4)},${saPa.lng.toFixed(4)}`;
                 if (!stops.some(st => `${st.charger.lat.toFixed(4)},${st.charger.lng.toFixed(4)}` === chgKey)) {
-                    if (onProgress) onProgress(`🔌 ${saPa.name.replace(/^.*?　/, '')} を発見 (${Math.round(km)}km地点)`);
-                    const isRestStop = needRestStop;
-                    const defaultDur = isRestStop ? 15 : (strategyBoost15 && parseInt(saPa.powerKw) >= 150) ? 15 : 30;
-                    let duration = userCustomDurations[chgKey] || defaultDur;
-                    // プレコン: 閾値以下 + 90kW以上 → 到着30分前から3kWh追加消費（常時有効）
-                    if (localTemp <= preconTempThreshold && parseInt(saPa.powerKw) >= 90) {
-                        socKwh = Math.max(0.1, socKwh - 3);
-                        const preconStartT = time - 30;
-                        for (let j = profile.length - 1; j >= 0 && profile[j].time >= preconStartT; j--) {
-                            // preconElapsed: プレコン開始からの経過分 → 時間が進むほどSOC低下が大きい
-                            const preconElapsed = profile[j].time - preconStartT;
-                            profile[j].soc = Math.max(0, profile[j].soc - (preconElapsed / 30) * (3 / batteryKwh) * 100);
-                            profile[j].precon = true;
+                    // 最短充電モード: 次の150kW機まで届くSOCがあり休憩不要 → このSA/PAをスキップ
+                    const _quickDur = (!needRestStop && strategyQuickChg && routeChargerList && !userCustomDurations[chgKey])
+                        ? calcQuickChgDuration((socKwh / batteryKwh) * 100, km, totalKm, routeChargerList,
+                            thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm,
+                            { powerKw: saPa.powerKw, name: saPa.name, lat: saPa.lat, lng: saPa.lng, type: 'sa_pa' })
+                        : -1;
+                    if (_quickDur !== 0) {
+                        if (onProgress) onProgress(`🔌 ${saPa.name.replace(/^.*?　/, '')} を発見 (${Math.round(km)}km地点)`);
+                        const isRestStop = needRestStop;
+                        const defaultDur = isRestStop ? 15 : (strategyBoost15 && parseInt(saPa.powerKw) >= 150) ? 15 : 30;
+                        let duration = (_quickDur > 0) ? Math.min(userCustomDurations[chgKey] || defaultDur, _quickDur)
+                                                       : userCustomDurations[chgKey] || defaultDur;
+                        // プレコン: 閾値以下 + 90kW以上 → 到着30分前から3kWh追加消費（常時有効）
+                        if (localTemp <= preconTempThreshold && parseInt(saPa.powerKw) >= 90) {
+                            socKwh = Math.max(0.1, socKwh - 3);
+                            const preconStartT = time - 30;
+                            for (let j = profile.length - 1; j >= 0 && profile[j].time >= preconStartT; j--) {
+                                // preconElapsed: プレコン開始からの経過分 → 時間が進むほどSOC低下が大きい
+                                const preconElapsed = profile[j].time - preconStartT;
+                                profile[j].soc = Math.max(0, profile[j].soc - (preconElapsed / 30) * (3 / batteryKwh) * 100);
+                                profile[j].precon = true;
+                            }
                         }
-                    }
-                    const socBefore = (socKwh / batteryKwh) * 100;
-                    const chargerInfo = { name: saPa.name, lat: saPa.lat, lng: saPa.lng, powerKw: saPa.powerKw, type: 'sa_pa' };
-                    if (strategyQuickChg && routeChargerList && !userCustomDurations[chgKey]) {
-                        const quickDur = calcQuickChgDuration(socBefore, km, totalKm, routeChargerList,
-                            thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm, chargerInfo);
-                        duration = Math.min(duration, quickDur);
-                    }
-                    const socAfter = calculateCharging(socBefore, duration, chargerInfo);
-                    for (let t = 1; t <= duration; t++) {
-                        const tempSoc = calculateCharging(socBefore, t, chargerInfo);
-                        if (t % 5 === 0 || t === duration) {
-                            const avgKw = ((tempSoc - (t<=5?socBefore:calculateCharging(socBefore,t-5,chargerInfo))) / 100) * batteryKwh * 60 / Math.min(t,5);
-                            profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev, chargingKw: avgKw });
+                        const socBefore = (socKwh / batteryKwh) * 100;
+                        const chargerInfo = { name: saPa.name, lat: saPa.lat, lng: saPa.lng, powerKw: saPa.powerKw, type: 'sa_pa' };
+                        const socAfter = calculateCharging(socBefore, duration, chargerInfo);
+                        for (let t = 1; t <= duration; t++) {
+                            const tempSoc = calculateCharging(socBefore, t, chargerInfo);
+                            if (t % 5 === 0 || t === duration) {
+                                const avgKw = ((tempSoc - (t<=5?socBefore:calculateCharging(socBefore,t-5,chargerInfo))) / 100) * batteryKwh * 60 / Math.min(t,5);
+                                profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev, chargingKw: avgKw });
+                            }
                         }
+                        stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, km, isUpbound: currentTripIsUpbound, detectedRoad: currentRoadName || '不明' });
+                        time += duration;
+                        lastChargeTime = time;
+                        socKwh = (socAfter / 100) * batteryKwh;
+                        lastChargeKm = km;
                     }
-                    stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, km, isUpbound: currentTripIsUpbound, detectedRoad: currentRoadName || '不明' });
-                    time += duration;
-                    lastChargeTime = time;
-                    socKwh = (socAfter / 100) * batteryKwh;
-                    lastChargeKm = km;
                 }
             } else {
                 // Step2: 下道の90kW以上急速充電器にリルート
@@ -1010,9 +1030,17 @@ async function runSimulation(segments, elevations, params, onProgress) {
                     );
                     if (emergencySaPa) {
                         const chgKey = eKey(emergencySaPa);
+                        // 最短充電モード: 次の150kW機まで届くSOCがあれば緊急停車もスキップ（休憩は除外）
+                        const _quickDur3 = (!needRestStop && strategyQuickChg && routeChargerList && !userCustomDurations[chgKey])
+                            ? calcQuickChgDuration((socKwh / batteryKwh) * 100, km, totalKm, routeChargerList,
+                                thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm,
+                                { powerKw: emergencySaPa.powerKw, name: emergencySaPa.name, lat: emergencySaPa.lat, lng: emergencySaPa.lng, type: 'sa_pa' })
+                            : -1;
+                        if (_quickDur3 !== 0) {
                         if (onProgress) onProgress(`🔌 ${emergencySaPa.name.replace(/^.*?　/, '')} (緊急 ${emergencySaPa.powerKw}kW) を使用 (${Math.round(km)}km地点)`);
                         const defaultDur = (strategyBoost15 && parseInt(emergencySaPa.powerKw) >= 150) ? 15 : 30;
-                        let duration = userCustomDurations[chgKey] || defaultDur;
+                        let duration = (_quickDur3 > 0) ? Math.min(userCustomDurations[chgKey] || defaultDur, _quickDur3)
+                                                        : userCustomDurations[chgKey] || defaultDur;
                         // プレコン（常時有効）
                         if (localTemp <= preconTempThreshold && parseInt(emergencySaPa.powerKw) >= 90) {
                             socKwh = Math.max(0.1, socKwh - 3);
@@ -1025,11 +1053,6 @@ async function runSimulation(segments, elevations, params, onProgress) {
                         }
                         const socBefore = (socKwh / batteryKwh) * 100;
                         const chargerInfo = { name: emergencySaPa.name, lat: emergencySaPa.lat, lng: emergencySaPa.lng, powerKw: emergencySaPa.powerKw, type: 'sa_pa' };
-                        if (strategyQuickChg && routeChargerList && !userCustomDurations[chgKey]) {
-                            const quickDur = calcQuickChgDuration(socBefore, km, totalKm, routeChargerList,
-                                thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm, chargerInfo);
-                            duration = Math.min(duration, quickDur);
-                        }
                         const socAfter = calculateCharging(socBefore, duration, chargerInfo);
                         for (let t = 1; t <= duration; t++) {
                             const tempSoc = calculateCharging(socBefore, t, chargerInfo);
@@ -1040,6 +1063,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                         }
                         stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, km, isUpbound: currentTripIsUpbound, detectedRoad: currentRoadName || '不明' });
                         time += duration; lastChargeTime = time; socKwh = (socAfter / 100) * batteryKwh; lastChargeKm = km;
+                        }
                     }
                 }
             }
@@ -2458,6 +2482,14 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.3.15</span><span class="cl-date">2026-05-07</span>
+        <ul class="cl-items">
+          <li>【最短充電モード刷新】次の150kW機まで届くSOCがあればSA/PAをスキップ（停車数を大幅削減）</li>
+          <li>【最短充電モード刷新】次の150kW機がある場合: 届く最小SOCまでだけ充電。ない場合: 充電器定格出力が維持できなくなるSOCまで（最大30分、90kW機→70%、150kW機→70%）</li>
+          <li>強制経由充電器（TEEMO/FLASH等ウェイポイント追加済み）はスキップせず最低5分充電を維持</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.3.14</span><span class="cl-date">2026-05-07</span>
         <ul class="cl-items">
