@@ -132,7 +132,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.10 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.11 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-03</span>
         </div>
@@ -148,10 +148,20 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
         <div class="field"><label>出発地</label><div class="input-wrap"><input type="text" id="origin" value="東京"><button class="input-clear" onclick="document.getElementById('origin').value='';document.getElementById('origin').focus()">✕</button></div></div>
         <div class="field"><label>経由地 (往復の場合は目的地)</label><div class="input-wrap"><input type="text" id="waypoint" placeholder="例: 大阪城"><button class="input-clear" onclick="document.getElementById('waypoint').value='';document.getElementById('waypoint').focus()">✕</button></div></div>
         <div class="field"><label>目的地 (往復の場合は出発地)</label><div class="input-wrap"><input type="text" id="dest" value="大阪"><button class="input-clear" onclick="document.getElementById('dest').value='';document.getElementById('dest').focus()">✕</button></div>
-            <label style="cursor:pointer; display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--muted); margin-top:5px;">
-                <input type="checkbox" id="precon-dest" style="width:auto; margin:0;">
-                🔆 目的地到着前にもプレコン
-            </label>
+            <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:5px;">
+                <label style="cursor:pointer; display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--muted);">
+                    <input type="checkbox" id="precon-dest" style="width:auto; margin:0;">
+                    🔆 目的地到着前にもプレコン
+                </label>
+                <label style="cursor:pointer; display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--muted);">
+                    <input type="checkbox" id="avoid-tolls" style="width:auto; margin:0;">
+                    🪙 有料道路を避ける
+                </label>
+                <label style="cursor:pointer; display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--muted);">
+                    <input type="checkbox" id="avoid-highways" style="width:auto; margin:0;">
+                    🛣 高速道路を避ける
+                </label>
+            </div>
         </div>
         
         <div class="stat-grid" style="grid-template-columns: 1fr 1fr;">
@@ -1055,7 +1065,7 @@ async function onCalculate() {
         combinedWps.unshift({ location: waypointVal, stopover: true });
     }
 
-    directionsService.route({ origin, destination: dest, waypoints: combinedWps, optimizeWaypoints: false, travelMode: 'DRIVING' }, async (res, status) => {
+    directionsService.route({ origin, destination: dest, waypoints: combinedWps, optimizeWaypoints: false, travelMode: 'DRIVING', avoidTolls: document.getElementById('avoid-tolls').checked, avoidHighways: document.getElementById('avoid-highways').checked }, async (res, status) => {
         if (status !== 'OK') return hideLoading() || alert('ルート解析失敗');
 
         // Google Maps の住所から「○○府○○市」形式に短縮
@@ -2173,6 +2183,13 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.3.11</span><span class="cl-date">2026-05-07</span>
+        <ul class="cl-items">
+          <li>ルートオプション追加: 「🪙 有料道路を避ける」「🛣 高速道路を避ける」チェックボックスを目的地欄下に追加</li>
+          <li>高速回避時はSA/PAが存在しないため、TEEMO/FLASH等の一般道充電器が自動的に候補になる</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.3.10</span><span class="cl-date">2026-05-06</span>
         <ul class="cl-items">
