@@ -569,6 +569,13 @@ function shortHighway(name) {
     return name.replace(/高速道路$/, '').replace(/高速自動車道$/, '').replace(/自動車道$/, '道').replace(/高速$/, '');
 }
 
+function shortStopName(name) {
+    // "新東名高速道路　NEOPASA浜松（下り）" → "NEOPASA浜松（下り）"
+    const m = (name || '').match(/^[^\s　]+(高速道路|自動車道|高速)[\s　]+/);
+    const s = m ? name.slice(m[0].length) : (name || '');
+    return s.length > 13 ? s.slice(0, 13) + '…' : s;
+}
+
 // 現在のルートパス（routeKmLatLng）から threshKm 以内かチェック
 function isNearRoute(lat, lng, threshKm = 10) {
     if (!routeKmLatLng.length) return true;
@@ -1061,8 +1068,9 @@ function hideLoading() {
 
 // Routes API (新版) でETC高速料金を取得
 // originLoc, destLoc: google.maps.LatLng オブジェクト（DirectionsService結果から抽出）
-// waypointLocs: 各legのend_location配列（中間経由地）
-async function fetchTollAmount(originLoc, destLoc, waypointLocs = []) {
+// waypoints: [{loc: google.maps.LatLng, name: string}] SA/PA除く充電器 + ユーザー経由地
+// originName/destName: 区間ラベル用の都市名
+async function fetchTollAmount(originLoc, destLoc, waypoints = [], originName = '', destName = '') {
     // ④ APIキー確認
     if (!activeApiKey) {
         console.warn('[Routes API] activeApiKey が未設定です');
@@ -1094,9 +1102,9 @@ async function fetchTollAmount(originLoc, destLoc, waypointLocs = []) {
             tollPasses: ['JP_ETC2', 'JP_ETC']
         }
     };
-    if (waypointLocs.length > 0) {
-        body.intermediates = waypointLocs.map(loc => ({
-            location: { latLng: { latitude: loc.lat(), longitude: loc.lng() } }
+    if (waypoints.length > 0) {
+        body.intermediates = waypoints.map(w => ({
+            location: { latLng: { latitude: w.loc.lat(), longitude: w.loc.lng() } }
         }));
     }
 
@@ -1121,15 +1129,16 @@ async function fetchTollAmount(originLoc, destLoc, waypointLocs = []) {
         }
         if (!res.ok) { console.warn('[Routes API] HTTP error:', res.status); return false; }
 
-        // ② per-leg toll 内訳
+        // ② per-leg toll 内訳（区間ラベル付き）
         const legs = data.routes?.[0]?.legs || [];
+        // stopNames: [出発地, waypoint1名, waypoint2名, ..., 目的地]
+        const stopNames = [originName, ...waypoints.map(w => shortStopName(w.name)), destName];
         const legTolls = legs.map((leg, idx) => {
             const prices = leg?.travelAdvisory?.tollInfo?.estimatedPrice || [];
             const jpy = prices.find(p => p.currencyCode === 'JPY');
-            if (!jpy) return null;
-            const yen = parseInt(jpy.units || '0') + Math.round((jpy.nanos || 0) / 1e9);
-            return { idx, yen };
-        }).filter(Boolean);
+            const yen = jpy ? (parseInt(jpy.units || '0') + Math.round((jpy.nanos || 0) / 1e9)) : 0;
+            return { idx, yen, from: stopNames[idx] || `地点${idx + 1}`, to: stopNames[idx + 1] || `地点${idx + 2}` };
+        });
         console.log('[Routes API] legTolls:', legTolls);
 
         const prices = data.routes?.[0]?.travelAdvisory?.tollInfo?.estimatedPrice;
@@ -1138,6 +1147,7 @@ async function fetchTollAmount(originLoc, destLoc, waypointLocs = []) {
         if (!jpy) return { yen: null };
         const yen = parseInt(jpy.units || '0') + Math.round((jpy.nanos || 0) / 1e9);
         return { yen, legTolls: legTolls.length > 0 ? legTolls : null };
+    // legTolls は yen=0 を含む全legを返す（区間ラベル表示のため）
     } catch (e) { console.error('Toll fetch error:', e); return false; }
 }
 
@@ -1191,12 +1201,17 @@ function renderCostSummary(tollInfo) {
     } else {
         tollYen = tollInfo.yen;
         const note = tollInfo.note === 'avoid' ? '回避設定' : 'ETC2.0・時間帯割引込み試算';
-        // ② per-leg 内訳（経由地あり時に表示）
+        // per-leg 内訳（waypoint 2区間以上 or 有料区間あり時に表示）
         let legBreakdown = '';
         if (tollInfo.legTolls && tollInfo.legTolls.length > 1) {
-            legBreakdown = tollInfo.legTolls.map(l =>
-                `<div style="font-size:10px;color:var(--muted);text-align:right;">区間${l.idx + 1}: ¥${l.yen.toLocaleString()}</div>`
-            ).join('');
+            legBreakdown = tollInfo.legTolls
+                .filter(l => l.yen > 0)
+                .map(l => {
+                    const label = (l.from || l.to)
+                        ? `${l.from || ''}→${l.to || ''}`
+                        : `区間${l.idx + 1}`;
+                    return `<div style="font-size:10px;color:var(--muted);text-align:right;">${label}: ¥${l.yen.toLocaleString()}</div>`;
+                }).join('');
         }
         tollRow = `<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;align-items:flex-start;">
             <span style="color:var(--muted);">高速通行料金 <span style="font-size:10px;">(${note})</span></span>
@@ -1429,17 +1444,19 @@ async function onCalculate() {
                 const _legs = res.routes[0].legs;
                 const _originLoc = _legs[0].start_location;
                 const _destLoc   = _legs[_legs.length - 1].end_location;
-                // 中間地点: ユーザー指定経由地 + SA/PAチャージャー（on-highway）のみ
-                // off-highway TEEMO/FLASHは除外（高速出口で別料金が発生しないことが多く、
-                // Routes APIに渡すとデータなしを返す原因になる）
-                const _saPaLegs = [...userWaypoints, ...autoChargers]
-                    .filter(w => w.type === 'sa_pa')
-                    .map(w => new google.maps.LatLng(w.origLat ?? w.lat, w.origLng ?? w.lng));
-                const _userViaLocs = [
-                    ...(waypointVal ? [_legs[0].end_location] : []),
-                    ..._saPaLegs
+                // SA/PAを除く充電器 + ユーザー経由地を名前付きで渡す
+                // SA/PAはon-highwayで料金変化なし → 除外してwaypoint数を減らす
+                // TEEMO/FLASHは一般道降車を伴う可能性 → 含めて実際の料金変化を反映
+                const _makeWpList = wps => wps
+                    .filter(w => w.type !== 'sa_pa')
+                    .map(w => ({ loc: new google.maps.LatLng(w.origLat ?? w.lat, w.origLng ?? w.lng), name: w.name }));
+                const _tollWps = [
+                    ...(waypointVal ? [{ loc: _legs[0].end_location, name: waypointVal }] : []),
+                    ..._makeWpList(regularWps),
+                    ..._makeWpList(autoChargers),
+                    ..._makeWpList(destAreaWps)
                 ];
-                fetchTollAmount(_originLoc, _destLoc, _userViaLocs).then(info => {
+                fetchTollAmount(_originLoc, _destLoc, _tollWps, startCity, endCity).then(info => {
                     currentTollInfo = info;
                     _tollFetching = false;
                     renderCostSummary(currentTollInfo);
