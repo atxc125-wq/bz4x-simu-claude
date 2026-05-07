@@ -1201,21 +1201,22 @@ function renderCostSummary(tollInfo) {
     } else {
         tollYen = tollInfo.yen;
         const note = tollInfo.note === 'avoid' ? '回避設定' : 'ETC2.0・時間帯割引込み試算';
-        // per-leg 内訳（waypoint 2区間以上 or 有料区間あり時に表示）
+        // per-leg 内訳: フル幅行で 左:「8文字→8文字」 右:¥金額
         let legBreakdown = '';
         if (tollInfo.legTolls && tollInfo.legTolls.length > 1) {
             legBreakdown = tollInfo.legTolls
                 .filter(l => l.yen > 0)
                 .map(l => {
-                    const label = (l.from || l.to)
-                        ? `${l.from || ''}→${l.to || ''}`
-                        : `区間${l.idx + 1}`;
-                    return `<div style="font-size:10px;color:var(--muted);text-align:right;">${label}: ¥${l.yen.toLocaleString()}</div>`;
+                    const from = (l.from || '').slice(0, 8);
+                    const to   = (l.to   || '').slice(0, 8);
+                    return `<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:3px;gap:6px;"><span style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;min-width:0;">${from}→${to}</span><span style="flex-shrink:0;">¥${l.yen.toLocaleString()}</span></div>`;
                 }).join('');
         }
-        tollRow = `<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;align-items:flex-start;">
-            <span style="color:var(--muted);">高速通行料金 <span style="font-size:10px;">(${note})</span></span>
-            <div style="text-align:right;"><span style="color:var(--text);font-weight:600;">¥${tollYen.toLocaleString()}</span>${legBreakdown}</div></div>`;
+        tollRow = `<div style="font-size:12px;margin-bottom:6px;">
+            <div style="display:flex;justify-content:space-between;">
+                <span style="color:var(--muted);">高速通行料金 <span style="font-size:10px;">(${note})</span></span>
+                <span style="color:var(--text);font-weight:600;">¥${tollYen.toLocaleString()}</span>
+            </div>${legBreakdown}</div>`;
     }
 
     const totalYen = homeYen + commercialYen + tollYen;
