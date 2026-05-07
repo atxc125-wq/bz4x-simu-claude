@@ -1074,7 +1074,11 @@ async function fetchTollAmount(originLoc, destLoc, waypointLocs = []) {
 
     if (document.getElementById('avoid-tolls').checked) return { yen: 0, note: 'avoid' };
 
-    const departureTime = new Date(`${tripDate}T${startTimeStr}:00+09:00`).toISOString();
+    // 過去日時の場合、同じ曜日・時間帯を維持したまま +7日ずつシフト（ETC割引を擬似再現）
+    let depDate = new Date(`${tripDate}T${startTimeStr}:00+09:00`);
+    const now = Date.now();
+    while (depDate.getTime() <= now) depDate = new Date(depDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const departureTime = depDate.toISOString();
 
     const body = {
         origin:      { location: { latLng: { latitude: originLoc.lat(), longitude: originLoc.lng() } } },
