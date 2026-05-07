@@ -1429,8 +1429,16 @@ async function onCalculate() {
                 const _legs = res.routes[0].legs;
                 const _originLoc = _legs[0].start_location;
                 const _destLoc   = _legs[_legs.length - 1].end_location;
-                // waypointValがある場合: legs[0].end_location = ユーザー指定経由地
-                const _userViaLocs = waypointVal ? [_legs[0].end_location] : [];
+                // 中間地点: ユーザー指定経由地 + SA/PAチャージャー（on-highway）のみ
+                // off-highway TEEMO/FLASHは除外（高速出口で別料金が発生しないことが多く、
+                // Routes APIに渡すとデータなしを返す原因になる）
+                const _saPaLegs = [...userWaypoints, ...autoChargers]
+                    .filter(w => w.type === 'sa_pa')
+                    .map(w => new google.maps.LatLng(w.origLat ?? w.lat, w.origLng ?? w.lng));
+                const _userViaLocs = [
+                    ...(waypointVal ? [_legs[0].end_location] : []),
+                    ..._saPaLegs
+                ];
                 fetchTollAmount(_originLoc, _destLoc, _userViaLocs).then(info => {
                     currentTollInfo = info;
                     _tollFetching = false;
@@ -1884,9 +1892,11 @@ window.retryWithLowerKw = function(newMinKw) {
 };
 
 window.forceChg = function(lat, lng, idx, name, type) {
-    // 座標優先で検索（非ユニークな名前による誤マッチ防止: 例 "Toyota充電スタンド(150kW)"が全国に複数存在）
-    const found = chargerDB.find(c => haversine(c.lat, c.lng, lat, lng) < 0.2)
-        || (name ? chargerDB.find(c => c.name === name) : null);
+    // SA/PAは上り/下りが85m以内の同座標に並存するため、名前優先で検索
+    // 他タイプ（TEEMO等）は全国同名が複数存在するため座標優先
+    const found = (type === 'sa_pa' && name)
+        ? (chargerDB.find(c => c.name === name) || chargerDB.find(c => haversine(c.lat, c.lng, lat, lng) < 0.2))
+        : (chargerDB.find(c => haversine(c.lat, c.lng, lat, lng) < 0.2) || (name ? chargerDB.find(c => c.name === name) : null));
     if (!found) return;
 
     // SA/PAはDBの座標が上り/下り逆になっている場合があるため、
