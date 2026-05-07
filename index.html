@@ -132,7 +132,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.11 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.12 <span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-03</span>
         </div>
@@ -514,6 +514,23 @@ function getAuthNetwork(name, powerKw, type) {
     if (n.includes('FLASH') || n.includes('フラッシュ') || parseInt(powerKw) >= 200 || type === 'flash') return 'FLASH';
     if (n.includes('TEEMO') || type === 'teemo') return 'TEEMO';
     return 'eMP';
+}
+
+// 充電スポットのコスト試算
+// FLASH: ¥44/kWh | TEEMO: ≤50kW=¥40/分、~150kW=¥60/分、150kW+=¥80/分 | eMP(TEEMO会員): ¥80/分
+function calcChargingCost(stop, batteryKwh) {
+    const auth = getAuthNetwork(stop.charger.name, stop.charger.powerKw, stop.charger.type);
+    const kWhAdded = Math.max(0, (stop.socAfter - stop.socBefore) / 100 * batteryKwh);
+    if (auth === 'FLASH') {
+        return { yen: Math.round(kWhAdded * 44), detail: `${kWhAdded.toFixed(1)}kWh×¥44` };
+    }
+    if (auth === 'TEEMO') {
+        const kw = parseInt(stop.charger.powerKw) || 50;
+        const rate = kw >= 150 ? 80 : kw > 50 ? 60 : 40;
+        return { yen: Math.round(stop.duration * rate), detail: `${stop.duration}分×¥${rate}` };
+    }
+    // eMP (TEEMO会員として¥80/分)
+    return { yen: Math.round(stop.duration * 80), detail: `${stop.duration}分×¥80` };
 }
 
 function haversine(l1, g1, l2, g2) {
@@ -1312,6 +1329,7 @@ function renderUI() {
         else if (st.charger.type !== 'sa_pa') div.style.borderColor = '#64748b';
         const isOffRoute = st.charger.type && st.charger.type !== 'sa_pa';
         const roadBadge = st.detectedRoad ? `<span style="background:rgba(234,179,8,0.15);color:#fbbf24;border:1px solid rgba(234,179,8,0.3);border-radius:4px;font-size:10px;font-weight:bold;padding:2px 6px;">🛣 ${st.detectedRoad}</span>` : (isOffRoute ? `<span style="background:rgba(148,163,184,0.15);color:#94a3b8;border:1px solid rgba(148,163,184,0.3);border-radius:4px;font-size:10px;font-weight:bold;padding:2px 6px;">🏙 一般道</span>` : '');
+        const stopCost = calcChargingCost(st, 71.4);
         div.innerHTML = `
             <div class="chg-specs">
                 <span class="chg-chip ${getKwClass(st.charger.powerKw)}">⚡ ${kw}</span>
@@ -1321,8 +1339,9 @@ function renderUI() {
                 ${roadBadge}
             </div>
             <div style="font-weight:700; color:var(--text); font-size:1.1rem; margin-bottom:6px;">${st.charger.name}</div>
-            
-            <div style="font-size:12px; color:var(--muted); margin-bottom:10px;">到着 ${st.socBefore.toFixed(0)}% ➔ 出発 ${st.socAfter.toFixed(0)}%</div>
+
+            <div style="font-size:12px; color:var(--muted); margin-bottom:4px;">到着 ${st.socBefore.toFixed(0)}% ➔ 出発 ${st.socAfter.toFixed(0)}%</div>
+            <div style="font-size:11px; color:#fbbf24; margin-bottom:8px;">💴 ¥${stopCost.yen.toLocaleString()} <span style="opacity:0.6;">(${stopCost.detail})</span></div>
             
             <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
                 <select id="chgsel-${safeId}" onchange="onChgSelChange('${chgKey}','${safeId}',this.value)" style="width:auto; padding:5px; font-size:11px;">
@@ -1337,6 +1356,44 @@ function renderUI() {
         `;
         list.appendChild(div);
     });
+
+    // コストサマリーボックス
+    {
+        const BATTERY_KWH = 71.4;
+        const HOME_YEN_PER_KWH = 31;
+        const chargedSoc = currentSim.stops.reduce((s, st) => s + (st.socAfter - st.socBefore), 0);
+        const consumedKwh = ((currentSim.startSocPct || 100) + chargedSoc - (currentSim.isDead ? 0 : currentSim.arrivalSoc)) / 100 * BATTERY_KWH;
+        const commercialKwh = chargedSoc / 100 * BATTERY_KWH;
+        const homeKwh = Math.max(0, consumedKwh - commercialKwh);
+        const homeYen = Math.round(homeKwh * HOME_YEN_PER_KWH);
+        const commercialYen = currentSim.stops.reduce((sum, st) => sum + calcChargingCost(st, BATTERY_KWH).yen, 0);
+        const totalYen = homeYen + commercialYen;
+
+        let costEl = document.getElementById('cost-summary');
+        if (!costEl) {
+            costEl = document.createElement('div');
+            costEl.id = 'cost-summary';
+            list.parentNode.insertBefore(costEl, list.nextSibling);
+        }
+        costEl.innerHTML = `
+            <div style="background:#0f172a; border-radius:8px; padding:12px 14px; margin-top:14px; border:1px solid rgba(251,191,36,0.2);">
+                <div style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px;">💴 コスト試算</div>
+                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px;">
+                    <span style="color:var(--muted);">充電スタンド費用</span>
+                    <span style="color:var(--text); font-weight:600;">¥${commercialYen.toLocaleString()}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px;">
+                    <span style="color:var(--muted);">自宅充電分 <span style="font-size:10px;">(${homeKwh.toFixed(1)}kWh × ¥${HOME_YEN_PER_KWH})</span></span>
+                    <span style="color:var(--text); font-weight:600;">¥${homeYen.toLocaleString()}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:13px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.08); font-weight:700;">
+                    <span style="color:#fbbf24;">合計（電気代）</span>
+                    <span style="color:#fbbf24;">¥${totalYen.toLocaleString()}</span>
+                </div>
+                <div style="font-size:10px; color:var(--muted); margin-top:8px; opacity:0.7;">※ 高速通行料金は別途。FLASH=¥44/kWh、TEEMO=出力別/分、eMP=¥80/分（TEEMO会員）で試算。</div>
+            </div>
+        `;
+    }
 
     // 目的地周辺充電スポット選択ボタン（到着SOC調整チェック時のみ表示）
     const socAdjOn = document.getElementById('target-arrival-soc-enabled').checked;
@@ -2183,6 +2240,13 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.3.12</span><span class="cl-date">2026-05-07</span>
+        <ul class="cl-items">
+          <li>コスト試算機能追加: 各充電停車カードに費用を表示（FLASH=¥44/kWh、TEEMO=出力別/分、eMP=¥80/分）</li>
+          <li>コストサマリーボックスを停車リスト下に追加（充電スタンド費用 + 自宅充電分¥31/kWh = 合計）</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.3.11</span><span class="cl-date">2026-05-07</span>
         <ul class="cl-items">
