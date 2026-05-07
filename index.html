@@ -772,7 +772,8 @@ async function runSimulation(segments, elevations, params, onProgress) {
             currentLegIdx++;
             
             // 経由地に追加された充電器とのGPSマッチング
-            const hit = allChargerWps.find(c => haversine(c.lat, c.lng, s.lat, s.lng) < 0.5);
+            // origLat/origLng: forceChg経由のSA/PAはDB実座標で照合（スナップ座標はルート再計算後にズレる）
+            const hit = allChargerWps.find(c => haversine(c.origLat ?? c.lat, c.origLng ?? c.lng, s.lat, s.lng) < 2.0);
             if (hit && (km - lastChargeKm) > 5) {
                 const chgKey = hit.key || `${hit.lat.toFixed(4)},${hit.lng.toFixed(4)}`;
                 const defaultDur = (strategyBoost15 && parseInt(hit.powerKw) >= 150) ? 15 : 30;
@@ -1421,15 +1422,16 @@ async function onCalculate() {
             renderUI();
 
             // 高速料金を Routes API で非同期取得（初回のみ）
-            // DirectionsService の結果から google.maps.LatLng オブジェクトを抽出して渡す
+            // 充電器waypointは除外し、ユーザー指定の経由地（waypointVal）だけを渡す
+            // （off-highway充電waypoint混入でAPIがデータなしを返す問題を回避）
             if (currentTollInfo === null && !_tollFetching) {
                 _tollFetching = true;
                 const _legs = res.routes[0].legs;
                 const _originLoc = _legs[0].start_location;
                 const _destLoc   = _legs[_legs.length - 1].end_location;
-                // 各legのend_location（最終leg以外）= 中間経由地
-                const _waypointLocs = _legs.slice(0, -1).map(leg => leg.end_location);
-                fetchTollAmount(_originLoc, _destLoc, _waypointLocs).then(info => {
+                // waypointValがある場合: legs[0].end_location = ユーザー指定経由地
+                const _userViaLocs = waypointVal ? [_legs[0].end_location] : [];
+                fetchTollAmount(_originLoc, _destLoc, _userViaLocs).then(info => {
                     currentTollInfo = info;
                     _tollFetching = false;
                     renderCostSummary(currentTollInfo);
@@ -1905,7 +1907,9 @@ window.forceChg = function(lat, lng, idx, name, type) {
     // 旧autoChargersをリセット: 古いSA/PAがwaypoint順序で新チャージャーより後ろに並ぶと
     // Google Mapsが北海道方面へ迂回するルートを生成するバグを防ぐ
     autoChargers = [];
-    userWaypoints.push({ lat: wpLat, lng: wpLng, name: found.name, powerKw: found.powerKw, type: found.type, isSOS: false });
+    // origLat/origLng: 充電器DBの実座標（シミュレーション内のallChargerWpsマッチングに使用）
+    // lat/lng: ルートパスにスナップした座標（Google Maps waypoint routing に使用）
+    userWaypoints.push({ lat: wpLat, lng: wpLng, origLat: found.lat, origLng: found.lng, name: found.name, powerKw: found.powerKw, type: found.type, isSOS: false });
     onCalculate();
 }
 
