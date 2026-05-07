@@ -1059,10 +1059,9 @@ function hideLoading() {
 }
 
 // Routes API (新版) でETC高速料金を取得
-async function fetchTollAmount() {
-    const origin = document.getElementById('origin').value;
-    const dest   = document.getElementById('dest').value;
-    const waypointVal = document.getElementById('waypoint').value;
+// originLoc, destLoc: google.maps.LatLng オブジェクト（DirectionsService結果から抽出）
+// waypointLocs: 各legのend_location配列（中間経由地）
+async function fetchTollAmount(originLoc, destLoc, waypointLocs = []) {
     const tripDate    = document.getElementById('trip-date').value;
     const startTimeStr = document.getElementById('start-time').value;
     const avoidHighways = document.getElementById('avoid-highways').checked;
@@ -1071,15 +1070,9 @@ async function fetchTollAmount() {
 
     const departureTime = new Date(`${tripDate}T${startTimeStr}:00+09:00`).toISOString();
 
-    const intermediates = [];
-    if (waypointVal) intermediates.push({ address: waypointVal });
-    userWaypoints.filter(w => !w.isDestArea && !w.isSOS).forEach(w =>
-        intermediates.push({ location: { latLng: { latitude: w.lat, longitude: w.lng } } })
-    );
-
     const body = {
-        origin: { address: origin },
-        destination: { address: dest },
+        origin:      { location: { latLng: { latitude: originLoc.lat(), longitude: originLoc.lng() } } },
+        destination: { location: { latLng: { latitude: destLoc.lat(),   longitude: destLoc.lng()   } } },
         travelMode: 'DRIVE',
         routingPreference: 'TRAFFIC_AWARE',
         departureTime,
@@ -1090,7 +1083,11 @@ async function fetchTollAmount() {
             tollPasses: ['JP_ETC2', 'JP_ETC']
         }
     };
-    if (intermediates.length > 0) body.intermediates = intermediates;
+    if (waypointLocs.length > 0) {
+        body.intermediates = waypointLocs.map(loc => ({
+            location: { latLng: { latitude: loc.lat(), longitude: loc.lng() } }
+        }));
+    }
 
     try {
         const res = await fetch('https://routes.googleapis.com/directions/v2:computeRoutes', {
@@ -1375,9 +1372,15 @@ async function onCalculate() {
             renderUI();
 
             // 高速料金を Routes API で非同期取得（初回のみ）
+            // DirectionsService の結果から google.maps.LatLng オブジェクトを抽出して渡す
             if (currentTollInfo === null && !_tollFetching) {
                 _tollFetching = true;
-                fetchTollAmount().then(info => {
+                const _legs = res.routes[0].legs;
+                const _originLoc = _legs[0].start_location;
+                const _destLoc   = _legs[_legs.length - 1].end_location;
+                // 各legのend_location（最終leg以外）= 中間経由地
+                const _waypointLocs = _legs.slice(0, -1).map(leg => leg.end_location);
+                fetchTollAmount(_originLoc, _destLoc, _waypointLocs).then(info => {
                     currentTollInfo = info;
                     _tollFetching = false;
                     renderCostSummary(currentTollInfo);
