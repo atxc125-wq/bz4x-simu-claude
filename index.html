@@ -132,7 +132,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.15<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.16<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-03</span>
         </div>
@@ -312,9 +312,11 @@ let routePolylines = [], comboChart = null, mapMarkers = [], emergencyMarkers = 
 let dbChargerMarkers = [], dbPinsOn = false;
 let userWaypoints = [];
 let autoChargers = [];
-let _socAdjusted = false; // 到着SOC自動調整フラグ（1回のみ） 
-let userCustomDurations = {}; 
-let userIgnoredChargers = []; 
+let originalRouteTotalKm = 0; // リルート距離ガード用: 初回ルートの総km
+let rejectedChargers = []; // リルートで膨張したwaypoint chargerのblacklist
+let _socAdjusted = false; // 到着SOC自動調整フラグ（1回のみ）
+let userCustomDurations = {};
+let userIgnoredChargers = [];
 let currentAxis = 'time';
 let currentTollInfo = null; // null=未取得, false=取得失敗, {yen,note}=取得済み
 let _tollFetching = false;
@@ -459,6 +461,7 @@ function initApp() {
 
     document.getElementById('calc-btn').addEventListener('click', () => {
         autoChargers = [];
+        rejectedChargers = [];
         userWaypoints = [];
         userCustomDurations = {};
         userIgnoredChargers = [];
@@ -991,7 +994,8 @@ async function runSimulation(segments, elevations, params, onProgress) {
                 });
                 // 先手TEEMOの場合は半径を15kmに拡大（空港経由等で通常7kmでは届かないケース対策）
                 const teemoRadius = _proactiveTEEMO ? 15.0 : 7.0;
-                const _offRouteCandidates = _upcomingSaPa ? [] : chargerDB.filter(c => {
+                // 最短充電モードでは下道充電器(TEEMO/FLASH)へのリルートを禁止（ルート膨張防止）
+                const _offRouteCandidates = (_upcomingSaPa || strategyQuickChg) ? [] : chargerDB.filter(c => {
                     if (c.type === 'sa_pa') return false;
                     // SA/PAが10km以内 → TEEMOへの迂回を抑制（御在所SA等が近い場合）
                     if (c.type === 'teemo' && _nearSaPa) return false;
@@ -1002,6 +1006,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                     const key = `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
                     return dist < radius
                         && !userIgnoredChargers.includes(key)
+                        && !rejectedChargers.includes(key)
                         && parseInt(c.powerKw) >= Math.max(90, minKw)
                         && isValidDirection(c.name, currentTripIsUpbound);
                 });
@@ -1312,6 +1317,22 @@ async function onCalculate() {
 
         // Google Maps の住所から「○○府○○市」形式に短縮
         const legs = res.routes[0].legs;
+
+        // ── ルート距離ガード ──────────────────────────────────────────────────
+        // リルート(TEEMOウェイポイント追加)後に距離が1.5倍超になった場合はそのchargerをblacklist登録して除外
+        const _routeTotalKm = legs.reduce((sum, l) => sum + l.distance.value, 0) / 1000;
+        if (autoChargers.length === 0) {
+            originalRouteTotalKm = _routeTotalKm;
+        } else if (_routeTotalKm > originalRouteTotalKm * 1.5) {
+            const badChg = autoChargers[autoChargers.length - 1];
+            const badKey = badChg.key || `${badChg.lat.toFixed(4)},${badChg.lng.toFixed(4)}`;
+            console.warn(`[RouteGuard] リルート後 ${_routeTotalKm.toFixed(0)}km > 元ルート ${originalRouteTotalKm.toFixed(0)}km×1.5 → ${badChg.name} を除外`);
+            rejectedChargers.push(badKey);
+            autoChargers.pop();
+            return onCalculate();
+        }
+        // ──────────────────────────────────────────────────────────────────────
+
         const startCity = extractCityName(legs[0].start_address);
         const endCity = extractCityName(legs[legs.length - 1].end_address);
         chartStartCity = startCity;
@@ -1954,6 +1975,7 @@ window.retryWithLowerKw = function(newMinKw) {
     const radio = document.querySelector(`input[name="strategy-minkw"][value="${newMinKw}"]`);
     if (radio) radio.checked = true;
     userIgnoredChargers = [];
+    rejectedChargers = [];
     userWaypoints = [];
     autoChargers = [];
     onCalculate();
@@ -1985,6 +2007,7 @@ window.forceChg = function(lat, lng, idx, name, type) {
     // 旧autoChargersをリセット: 古いSA/PAがwaypoint順序で新チャージャーより後ろに並ぶと
     // Google Mapsが北海道方面へ迂回するルートを生成するバグを防ぐ
     autoChargers = [];
+    rejectedChargers = [];
     // origLat/origLng: 充電器DBの実座標（シミュレーション内のallChargerWpsマッチングに使用）
     // lat/lng: ルートパスにスナップした座標（Google Maps waypoint routing に使用）
     userWaypoints.push({ lat: wpLat, lng: wpLng, origLat: found.lat, origLng: found.lng, name: found.name, powerKw: found.powerKw, type: found.type, isSOS: false });
@@ -2482,6 +2505,14 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.3.16</span><span class="cl-date">2026-05-07</span>
+        <ul class="cl-items">
+          <li>【バグ修正】最短充電モードでルートが2000km超に膨張する問題を修正</li>
+          <li>最短充電モードでは下道充電器(TEEMO/FLASH)へのリルートを禁止 → SA/PA専用モードに（ルート膨張の根本防止）</li>
+          <li>ルート距離ガード追加: リルート後の距離が元ルートの1.5倍超になった場合は追加したchargerをblacklistに登録して次回から除外</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.3.15</span><span class="cl-date">2026-05-07</span>
         <ul class="cl-items">
