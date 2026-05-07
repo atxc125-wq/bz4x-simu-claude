@@ -958,9 +958,20 @@ async function runSimulation(segments, elevations, params, onProgress) {
                     && parseInt(c.powerKw) >= 50
                     && isValidDirection(c.name, currentTripIsUpbound)
                 );
+                // SA/PA lookahead: 前方60km以内に到達可能なSA/PAがあればTEEMO迂回をスキップ
+                // （SA/PA間でproactiveTriggerが発火しTEEMOが無駄に選ばれルートが膨張するのを防ぐ）
+                const _upcomingSaPa = !_socTrigger && chargerDB.some(c => {
+                    if (c.type !== 'sa_pa') return false;
+                    const dist = haversine(c.lat, c.lng, s.lat, s.lng);
+                    if (dist > 60) return false;
+                    if (!isValidDirection(c.name, currentTripIsUpbound)) return false;
+                    if (userIgnoredChargers.includes(`${c.lat.toFixed(4)},${c.lng.toFixed(4)}`)) return false;
+                    const socNeeded = (dist * _rate / batteryKwh) * 100 + thresholdSocPct + 5;
+                    return currentSoc >= socNeeded;
+                });
                 // 先手TEEMOの場合は半径を15kmに拡大（空港経由等で通常7kmでは届かないケース対策）
                 const teemoRadius = _proactiveTEEMO ? 15.0 : 7.0;
-                const _offRouteCandidates = chargerDB.filter(c => {
+                const _offRouteCandidates = _upcomingSaPa ? [] : chargerDB.filter(c => {
                     if (c.type === 'sa_pa') return false;
                     // SA/PAが10km以内 → TEEMOへの迂回を抑制（御在所SA等が近い場合）
                     if (c.type === 'teemo' && _nearSaPa) return false;
@@ -1286,11 +1297,25 @@ async function onCalculate() {
         showLoading(routeLabel, '高度プロファイルを取得中...');
 
         // ★ 各Legごとの上り・下りを判定
-        const isUpboundLegs = legs.map(leg => {
-            const startToTokyo = haversine(leg.start_location.lat(), leg.start_location.lng(), 35.68, 139.76);
-            const endToTokyo = haversine(leg.end_location.lat(), leg.end_location.lng(), 35.68, 139.76);
-            return endToTokyo < startToTokyo;
-        });
+        // 短いleg（< 20km: TEEMO迂回等）は前のlegの方向を引き継ぐ（off-highway折り返しによる誤判定を防ぐ）
+        const isUpboundLegs = (() => {
+            const result = [];
+            for (let i = 0; i < legs.length; i++) {
+                const leg = legs[i];
+                const legDistKm = haversine(
+                    leg.start_location.lat(), leg.start_location.lng(),
+                    leg.end_location.lat(), leg.end_location.lng()
+                );
+                if (i > 0 && legDistKm < 20) {
+                    result.push(result[i - 1]);
+                } else {
+                    const startToTokyo = haversine(leg.start_location.lat(), leg.start_location.lng(), 35.68, 139.76);
+                    const endToTokyo = haversine(leg.end_location.lat(), leg.end_location.lng(), 35.68, 139.76);
+                    result.push(endToTokyo < startToTokyo);
+                }
+            }
+            return result;
+        })();
 
         currentDetailedPath = legs.flatMap(l => l.steps.flatMap(s => s.path));
 
