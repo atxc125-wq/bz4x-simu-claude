@@ -722,7 +722,7 @@ function calcQuickChgDuration(socBefore, km, totalKm, routeChargerList,
     if (nextC) {
         const distToNext = nextC.km - km;
         const consumptionPct = (distToNext * _rate / batteryKwh) * 100;
-        const target = Math.min(80, thresholdSocPct + consumptionPct + 5);
+        const target = Math.min(80, thresholdSocPct + consumptionPct + 10);
         // 既に届くSOC → return 0 でスキップを指示（ただし150kW機は最低_minDur確保）
         if (target <= socBefore) return chargerPowerKw >= 150 ? _minDur : 0;
         let t = 1;
