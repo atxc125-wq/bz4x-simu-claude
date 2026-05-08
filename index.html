@@ -132,7 +132,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.17<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.18<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-03</span>
         </div>
@@ -728,16 +728,14 @@ function calcQuickChgDuration(socBefore, km, totalKm, routeChargerList,
         return Math.max(5, t);
     }
 
-    // Case 2: 次の150kW機なし → 充電器の定格出力が維持できなくなるSOCまで（最大30分）
-    // 90kW機: 受入電力が90kWに落ちる70%まで
-    // 150kW機: 車両受入は最大140kWで150kWに届かないため70%を実用上限とする
-    const kneeSOC = (() => {
-        if (chargerPowerKw >= 150) return 70;
-        for (let soc = 40; soc <= 80; soc++) {
-            if (getVehicleAcceptanceKw(soc) <= chargerPowerKw) return soc;
-        }
-        return 80;
-    })();
+    // Case 2: 次の150kW機なし → 充電器の定格出力ブーストウィンドウで充電
+    // 150kW機: 15分固定（最大出力ウィンドウを活かす）
+    if (chargerPowerKw >= 150) return 15;
+    // 90kW機: 受入電力が90kW以下に落ちるSOCまで（最大30分）
+    let kneeSOC = 80;
+    for (let soc = 40; soc <= 80; soc++) {
+        if (getVehicleAcceptanceKw(soc) <= chargerPowerKw) { kneeSOC = soc; break; }
+    }
     const targetSoc = Math.min(80, Math.max(kneeSOC, Math.ceil(socBefore) + 5));
     if (targetSoc <= socBefore) return 5;
     let t = 1;
@@ -1425,7 +1423,7 @@ async function onCalculate() {
                 restIntervalMin: parseInt(document.getElementById('rest-interval').value) || 90,
                 strategyQuickChg: document.getElementById('strategy-quickchg').checked,
                 routeChargerList: document.getElementById('strategy-quickchg').checked
-                    ? buildRouteChargerList(segments, chargerDB, 150, isUpboundLegs, waypointIndexes)
+                    ? buildRouteChargerList(segments, chargerDB.filter(c => c.type === 'sa_pa'), 150, isUpboundLegs, waypointIndexes)
                     : null,
                 targetArrivalSocPct: document.getElementById('target-arrival-soc-enabled').checked
                     ? (parseFloat(document.getElementById('target-arrival-soc').value) || 5)
@@ -2548,6 +2546,13 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.3.18</span><span class="cl-date">2026-05-08</span>
+        <ul class="cl-items">
+          <li>【バグ修正】最短充電モードで全ストップが5分になる問題を修正: routeChargerList をSA/PA専用に絞り込み（TEEMOの150kW機が「次の目標」として混入していた）</li>
+          <li>最短充電モード: 前方に150kW機がない場合、150kW機では15分固定・90kW機はkneeSOCまで（最大30分）充電するよう変更</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.3.17</span><span class="cl-date">2026-05-08</span>
         <ul class="cl-items">
