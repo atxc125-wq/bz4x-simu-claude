@@ -132,7 +132,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.18<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.3.19<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-03</span>
         </div>
@@ -927,6 +927,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
             // 最短充電モードON: まず150kW機を優先。なければminKwフィルタで通常選択
             const saPa = (strategyQuickChg && chargerDB.find(c => parseInt(c.powerKw) >= 150 && _saPaMatch(c)))
                 || chargerDB.find(c => (minKw === 0 || parseInt(c.powerKw) >= minKw) && _saPaMatch(c));
+            const _logTrigger = needRestStop ? '休憩' : currentSoc < thresholdSocPct ? `閾値${thresholdSocPct}%` : _proactiveTrigger ? '先手' : 'SOC不足';
 
             if (saPa) {
                 const chgKey = `${saPa.lat.toFixed(4)},${saPa.lng.toFixed(4)}`;
@@ -937,9 +938,11 @@ async function runSimulation(segments, elevations, params, onProgress) {
                             thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm,
                             { powerKw: saPa.powerKw, name: saPa.name, lat: saPa.lat, lng: saPa.lng, type: 'sa_pa' })
                         : -1;
-                    const _logTrigger = needRestStop ? '休憩' : currentSoc < thresholdSocPct ? `閾値${thresholdSocPct}%` : _proactiveTrigger ? '先手' : '到達不足';
                     if (_quickDur === 0) {
-                        simLog.push({ km: Math.round(km), name: saPa.name, kw: parseInt(saPa.powerKw), soc: Math.round((socKwh/batteryKwh)*100), action: 'skip', reason: 'quickChg: 次の150kW機まで届く' });
+                        const _last = simLog[simLog.length - 1];
+                        if (!_last || _last.name !== saPa.name || _last.action !== 'skip') {
+                            simLog.push({ km: Math.round(km), name: saPa.name, kw: parseInt(saPa.powerKw), soc: Math.round((socKwh/batteryKwh)*100), action: 'skip', reason: 'quickChg: 届く' });
+                        }
                     }
                     if (_quickDur !== 0) {
                         if (onProgress) onProgress(`🔌 ${saPa.name.replace(/^.*?　/, '')} を発見 (${Math.round(km)}km地点)`);
@@ -1049,7 +1052,10 @@ async function runSimulation(segments, elevations, params, onProgress) {
                                 { powerKw: emergencySaPa.powerKw, name: emergencySaPa.name, lat: emergencySaPa.lat, lng: emergencySaPa.lng, type: 'sa_pa' })
                             : -1;
                         if (_quickDur3 === 0) {
-                            simLog.push({ km: Math.round(km), name: emergencySaPa.name, kw: parseInt(emergencySaPa.powerKw), soc: Math.round((socKwh/batteryKwh)*100), action: 'skip', reason: 'quickChg: 次の150kW機まで届く(緊急)' });
+                            const _last3 = simLog[simLog.length - 1];
+                            if (!_last3 || _last3.name !== emergencySaPa.name || _last3.action !== 'skip') {
+                                simLog.push({ km: Math.round(km), name: emergencySaPa.name, kw: parseInt(emergencySaPa.powerKw), soc: Math.round((socKwh/batteryKwh)*100), action: 'skip', reason: 'quickChg: 届く' });
+                            }
                         }
                         if (_quickDur3 !== 0) {
                         if (onProgress) onProgress(`🔌 ${emergencySaPa.name.replace(/^.*?　/, '')} (緊急 ${emergencySaPa.powerKw}kW) を使用 (${Math.round(km)}km地点)`);
@@ -1077,7 +1083,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                             }
                         }
                         stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, km, isUpbound: currentTripIsUpbound, detectedRoad: currentRoadName || '不明' });
-                        simLog.push({ km: Math.round(km), name: emergencySaPa.name, kw: parseInt(emergencySaPa.powerKw), socBefore: Math.round(socBefore), socAfter: Math.round(socAfter), duration, action: 'stop', trigger: '緊急' });
+                        simLog.push({ km: Math.round(km), name: emergencySaPa.name, kw: parseInt(emergencySaPa.powerKw), socBefore: Math.round(socBefore), socAfter: Math.round(socAfter), duration, action: 'stop', trigger: _logTrigger });
                         time += duration; lastChargeTime = time; socKwh = (socAfter / 100) * batteryKwh; lastChargeKm = km;
                         }
                     }
@@ -1736,16 +1742,28 @@ function renderUI() {
         const rows = log.map(e => {
           const nameShort = e.name.replace(/^.*?[　\s]/, '').slice(0, 18);
           if (e.action === 'stop') {
-            const icon = e.trigger === '閾値' + (e.trigger.match(/\d+/)??[''])[0] + '%' || e.trigger === '緊急' ? '🔴' : e.trigger === '休憩' ? '🛌' : '🟡';
+            const icon = e.trigger === '休憩' ? '🛌' : e.trigger && e.trigger.startsWith('閾値') ? '🔴' : '🟡';
             return `<tr><td style="color:#64748b">${e.km}km</td><td>${icon}停</td><td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nameShort}</td><td>${e.kw}kW</td><td>${e.socBefore}→${e.socAfter}%</td><td>${e.duration}分</td><td style="color:#64748b">[${e.trigger}]</td></tr>`;
           } else {
             return `<tr style="opacity:0.5"><td style="color:#64748b">${e.km}km</td><td>⏭スキ</td><td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nameShort}</td><td>${e.kw}kW</td><td>${e.soc}%</td><td>-</td><td style="color:#64748b">[${e.reason}]</td></tr>`;
           }
         }).join('');
+        const _copyLog = () => {
+          const txt = log.map(e => e.action === 'stop'
+            ? `${e.km}km\t停\t${e.name}\t${e.kw}kW\t${e.socBefore}→${e.socAfter}%\t${e.duration}分\t[${e.trigger}]`
+            : `${e.km}km\tスキ\t${e.name}\t${e.kw}kW\t${e.soc}%\t-\t[${e.reason}]`
+          ).join('\n');
+          navigator.clipboard.writeText(txt).then(() => {
+            const btn = document.getElementById('simlog-copy-btn');
+            if (btn) { btn.textContent = 'コピー済'; setTimeout(() => { btn.textContent = 'コピー'; }, 1500); }
+          });
+        };
+        window._copySimLog = _copyLog;
         logRow.innerHTML = `
           <details style="margin-top:4px;">
-            <summary style="cursor:pointer; font-size:11px; color:var(--muted); padding:6px 0; user-select:none;">
-              📋 シミュレーションログ (${log.length}件 — タップで展開)
+            <summary style="cursor:pointer; font-size:11px; color:var(--muted); padding:6px 0; user-select:none; display:flex; align-items:center; gap:8px;">
+              <span>📋 シミュレーションログ (${log.length}件)</span>
+              <button id="simlog-copy-btn" onclick="event.preventDefault(); event.stopPropagation(); _copySimLog();" style="font-size:10px; padding:2px 8px; background:rgba(100,116,139,0.15); color:#94a3b8; border:1px solid rgba(100,116,139,0.3); border-radius:4px; cursor:pointer;">コピー</button>
             </summary>
             <div style="overflow-x:auto; margin-top:6px;">
               <table style="font-size:10px; font-family:monospace; border-collapse:collapse; width:100%; white-space:nowrap;">
@@ -2596,6 +2614,15 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.3.19</span><span class="cl-date">2026-05-08</span>
+        <ul class="cl-items">
+          <li>シミュレーションログのトリガー名を修正: 「緊急」→「SOC不足/先手/閾値XX%/休憩」に変更（Step1・Step3共通化）</li>
+          <li>ログの重複エントリを排除: 同一SA/PAが連続して複数回記録される問題を修正</li>
+          <li>ログに「コピー」ボタンを追加: タブ区切りテキストでクリップボードにコピー</li>
+          <li>最短充電モード: Case1マージンを+5%→+10%に拡大し中間90kW停車を削減</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.3.18</span><span class="cl-date">2026-05-08</span>
         <ul class="cl-items">
