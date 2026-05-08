@@ -424,11 +424,12 @@ const CHARGER_DATA = [
     "address": "長野県中野市一本木593-5",
     "type": "flash",
     "powers": [
+      240,
       180
     ],
     "lat": 36.7591685,
     "lng": 138.3797187,
-    "powerKw": 180
+    "powerKw": 240
   },
   {
     "name": "セカンドストリート松本平田店",
@@ -777,6 +778,7 @@ const CHARGER_DATA = [
     "type": "flash",
     "powers": [
       180,
+      150,
       90
     ],
     "lat": 34.2771722,
@@ -932,11 +934,12 @@ const CHARGER_DATA = [
     "address": "愛媛県今治市吉海町名4520-2",
     "type": "flash",
     "powers": [
+      240,
       180
     ],
     "lat": 34.1274537,
     "lng": 133.0220408,
-    "powerKw": 180
+    "powerKw": 240
   },
   {
     "name": "道の駅 多々羅しまなみ公園",
@@ -1433,11 +1436,12 @@ const CHARGER_DATA = [
     "address": "福島県郡山市三穂田町川田字勝利ヶ岡１－２",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 37.3522815,
     "lng": 140.3221015,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -1493,11 +1497,12 @@ const CHARGER_DATA = [
     "address": "福島県郡山市安積町",
     "type": "sa_pa",
     "powers": [
+      90,
       50
     ],
     "lat": 37.378,
     "lng": 140.265,
-    "powerKw": 50,
+    "powerKw": 90,
     "direction": "down"
   },
   {
@@ -1517,11 +1522,12 @@ const CHARGER_DATA = [
     "address": "福島県伊達郡国見町貝田字神前",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 37.9067665,
     "lng": 140.5787733,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -1634,11 +1640,12 @@ const CHARGER_DATA = [
     "address": "茨城県かすみがうら市中佐谷字愛宕１７２ー１",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 36.1453808,
     "lng": 140.2109687,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -1646,7 +1653,8 @@ const CHARGER_DATA = [
     "address": "栃木県宇都宮市今里町中丸１１４５",
     "type": "sa_pa",
     "powers": [
-      150
+      150,
+      90
     ],
     "lat": 36.6913759,
     "lng": 139.891778,
@@ -1694,11 +1702,12 @@ const CHARGER_DATA = [
     "address": "栃木県那須郡那須町豊原丙４０９２２",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 37.05630379999999,
     "lng": 140.1020095,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -1753,7 +1762,8 @@ const CHARGER_DATA = [
     "address": "群馬県利根郡昭和村川額字箱崎１６５０",
     "type": "sa_pa",
     "powers": [
-      150
+      150,
+      90
     ],
     "lat": 36.6012139,
     "lng": 139.064652,
@@ -1815,11 +1825,12 @@ const CHARGER_DATA = [
     "address": "埼玉県久喜市菖蒲町下栢間字在来",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 36.0385745,
     "lng": 139.5872856,
-    "powerKw": 90
+    "powerKw": 150
   },
   {
     "name": "首都高６号三郷線　八潮ＰＡ上り",
@@ -1971,11 +1982,12 @@ const CHARGER_DATA = [
     "address": "千葉県印旛郡酒々井町墨字花之作１４１９－１",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 35.7127299,
     "lng": 140.2839027,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -2031,11 +2043,12 @@ const CHARGER_DATA = [
     "address": "東京都八王子市石川町９４４－４",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 35.6798578,
     "lng": 139.3745988,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -2043,11 +2056,12 @@ const CHARGER_DATA = [
     "address": "神奈川県横浜市鶴見区大黒ふ頭",
     "type": "emp",
     "powers": [
+      90,
       35
     ],
     "lat": 35.4618365,
     "lng": 139.6793928,
-    "powerKw": 35
+    "powerKw": 90
   },
   {
     "name": "第三京浜道路　保土ヶ谷ＰＡ下り",
@@ -2114,22 +2128,24 @@ const CHARGER_DATA = [
     "address": "神奈川県厚木市関口地先",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 35.49160740000001,
     "lng": 139.3696382,
-    "powerKw": 90
+    "powerKw": 150
   },
   {
     "name": "首都圏中央連絡自動車道　厚木ＰＡ外回り",
     "address": "神奈川県厚木市関口地先",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 35.6660611,
     "lng": 139.7589787,
-    "powerKw": 90
+    "powerKw": 150
   },
   {
     "name": "海老名SA（上り）",
@@ -2162,11 +2178,12 @@ const CHARGER_DATA = [
     "address": "神奈川県足柄上郡中井町松本５７０－３",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 35.3433959,
     "lng": 139.1992883,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -2295,11 +2312,12 @@ const CHARGER_DATA = [
     "address": "富山県魚津市湯上字三ツ穴割８４８",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 36.7963694,
     "lng": 137.4186617,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -2307,7 +2325,8 @@ const CHARGER_DATA = [
     "address": "富山県滑川市栗山字松ヶ窪２９１３ー１０",
     "type": "sa_pa",
     "powers": [
-      150
+      150,
+      90
     ],
     "lat": 36.7703617,
     "lng": 137.399682,
@@ -2367,11 +2386,12 @@ const CHARGER_DATA = [
     "address": "石川県加賀市美岬町尼ゴジ３－２番地外",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 36.3541473,
     "lng": 136.3237711,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -2379,11 +2399,12 @@ const CHARGER_DATA = [
     "address": "福井県南条郡南越前町牧谷３９",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 35.8305943,
     "lng": 136.2014622,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -2636,7 +2657,8 @@ const CHARGER_DATA = [
     "address": "岐阜県郡上市高鷲町鷲見野地内",
     "type": "sa_pa",
     "powers": [
-      150
+      150,
+      90
     ],
     "lat": 35.987762,
     "lng": 136.9111762,
@@ -2940,7 +2962,8 @@ const CHARGER_DATA = [
     "address": "静岡県沼津市",
     "type": "sa_pa",
     "powers": [
-      150
+      150,
+      90
     ],
     "lat": 35.1516,
     "lng": 138.811,
@@ -2952,11 +2975,12 @@ const CHARGER_DATA = [
     "address": "愛知県一宮市丹陽町三ツ井東金浦２７０９",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 35.2778667,
     "lng": 136.8466939,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -2964,7 +2988,8 @@ const CHARGER_DATA = [
     "address": "愛知県春日井市西尾町字白川１００７－１８",
     "type": "sa_pa",
     "powers": [
-      150
+      150,
+      90
     ],
     "lat": 35.3227219,
     "lng": 137.0461392,
@@ -3060,11 +3085,12 @@ const CHARGER_DATA = [
     "address": "三重県津市大里睦合町字南石橋１３８－１７",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 37.4789876,
     "lng": 140.333831,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -3072,11 +3098,12 @@ const CHARGER_DATA = [
     "address": "三重県津市安濃町内多字上豊久野２８０７－２",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 34.7790699,
     "lng": 136.4678766,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -3084,11 +3111,12 @@ const CHARGER_DATA = [
     "address": "三重県四日市市山之一色町１５６９－２",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 35.0187205,
     "lng": 136.5913502,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -3096,7 +3124,8 @@ const CHARGER_DATA = [
     "address": "三重県桑名市長島町松蔭３９３－２",
     "type": "sa_pa",
     "powers": [
-      150
+      150,
+      90
     ],
     "lat": 35.0360476,
     "lng": 136.7309844,
@@ -3169,12 +3198,13 @@ const CHARGER_DATA = [
     "address": "滋賀県長浜市余呉町坂口２６７－１",
     "type": "sa_pa",
     "powers": [
+      150,
       90,
       40
     ],
     "lat": 35.5205814,
     "lng": 136.2167904,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -3411,11 +3441,12 @@ const CHARGER_DATA = [
     "address": "兵庫県三木市加佐１１４２",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 34.816006,
     "lng": 134.9810932,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -3435,7 +3466,8 @@ const CHARGER_DATA = [
     "address": "兵庫県丹波篠山市西木之部字江の田の坪",
     "type": "sa_pa",
     "powers": [
-      150
+      150,
+      90
     ],
     "lat": 35.092317,
     "lng": 135.1683921,
@@ -3676,11 +3708,12 @@ const CHARGER_DATA = [
     "address": "広島県東広島市高屋町小谷",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 34.429514,
     "lng": 132.8386043,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -3700,11 +3733,12 @@ const CHARGER_DATA = [
     "address": "広島県廿日市市上平良広池７６",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 34.3655044,
     "lng": 132.3170406,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -3954,6 +3988,7 @@ const CHARGER_DATA = [
     "type": "sa_pa",
     "powers": [
       150,
+      90,
       50
     ],
     "lat": 33.7374192,
@@ -4003,11 +4038,12 @@ const CHARGER_DATA = [
     "address": "佐賀県佐賀市金立町金立",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 33.3297165,
     "lng": 130.3111647,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -4283,6 +4319,7 @@ const CHARGER_DATA = [
     "type": "flash",
     "powers": [
       180,
+      150,
       90
     ],
     "lat": 34.2771722,
@@ -4802,11 +4839,12 @@ const CHARGER_DATA = [
     "address": "茨城県かすみがうら市中佐谷字愛宕１７２ー１",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 36.1453808,
     "lng": 140.2109687,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -4887,7 +4925,8 @@ const CHARGER_DATA = [
     "address": "群馬県利根郡昭和村川額字箱崎１６５０",
     "type": "sa_pa",
     "powers": [
-      150
+      150,
+      90
     ],
     "lat": 36.6012139,
     "lng": 139.064652,
@@ -4949,11 +4988,12 @@ const CHARGER_DATA = [
     "address": "埼玉県久喜市菖蒲町下栢間字在来",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 36.0385745,
     "lng": 139.5872856,
-    "powerKw": 90
+    "powerKw": 150
   },
   {
     "name": "三芳PA（下り）",
@@ -5057,11 +5097,12 @@ const CHARGER_DATA = [
     "address": "千葉県印旛郡酒々井町墨字花之作１４１９－１",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 35.7127299,
     "lng": 140.2839027,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -5069,11 +5110,12 @@ const CHARGER_DATA = [
     "address": "東京都八王子市石川町９４４－４",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 35.6798578,
     "lng": 139.3745988,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -5251,11 +5293,12 @@ const CHARGER_DATA = [
     "address": "石川県加賀市美岬町尼ゴジ３－２番地外",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 36.3541473,
     "lng": 136.3237711,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -5263,11 +5306,12 @@ const CHARGER_DATA = [
     "address": "福井県南条郡南越前町牧谷３９",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 35.8305943,
     "lng": 136.2014622,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -5446,7 +5490,8 @@ const CHARGER_DATA = [
     "address": "岐阜県郡上市高鷲町鷲見野地内",
     "type": "sa_pa",
     "powers": [
-      150
+      150,
+      90
     ],
     "lat": 35.987762,
     "lng": 136.9111762,
@@ -5458,11 +5503,12 @@ const CHARGER_DATA = [
     "address": "岐阜県養老郡養老町橋爪",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 35.32180719999999,
     "lng": 136.5434105,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -5494,11 +5540,12 @@ const CHARGER_DATA = [
     "address": "静岡県静岡市清水区小河内８８５－１５",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 35.1325772,
     "lng": 138.5124644,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -5519,7 +5566,8 @@ const CHARGER_DATA = [
     "address": "静岡県浜松市浜名区大平３６",
     "type": "sa_pa",
     "powers": [
-      150
+      150,
+      90
     ],
     "lat": 34.8425746,
     "lng": 137.7505505,
@@ -5617,7 +5665,8 @@ const CHARGER_DATA = [
     "address": "愛知県春日井市西尾町字白川１００７－１８",
     "type": "sa_pa",
     "powers": [
-      150
+      150,
+      90
     ],
     "lat": 35.3227219,
     "lng": 137.0461392,
@@ -5677,11 +5726,12 @@ const CHARGER_DATA = [
     "address": "三重県四日市市山之一色町１５６９－２",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 35.0187205,
     "lng": 136.5913502,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -5689,7 +5739,8 @@ const CHARGER_DATA = [
     "address": "三重県桑名市長島町松蔭３９３－２",
     "type": "sa_pa",
     "powers": [
-      150
+      150,
+      90
     ],
     "lat": 35.0360476,
     "lng": 136.7309844,
@@ -5954,11 +6005,12 @@ const CHARGER_DATA = [
     "address": "兵庫県三木市加佐１１４２",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 34.816006,
     "lng": 134.9810932,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -5978,7 +6030,8 @@ const CHARGER_DATA = [
     "address": "兵庫県丹波篠山市西木之部字江の田の坪",
     "type": "sa_pa",
     "powers": [
-      150
+      150,
+      90
     ],
     "lat": 35.092317,
     "lng": 135.1683921,
@@ -6183,11 +6236,12 @@ const CHARGER_DATA = [
     "address": "広島県東広島市高屋町小谷",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 34.429514,
     "lng": 132.8386043,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -6207,11 +6261,12 @@ const CHARGER_DATA = [
     "address": "広島県廿日市市上平良広池７６",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 34.3655044,
     "lng": 132.3170406,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -6231,11 +6286,12 @@ const CHARGER_DATA = [
     "address": "山口県下関市壇之浦町６番１号",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 33.9636208,
     "lng": 130.954206,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -6363,7 +6419,8 @@ const CHARGER_DATA = [
     "address": "福岡県筑紫野市原田１３１８",
     "type": "sa_pa",
     "powers": [
-      150
+      150,
+      90
     ],
     "lat": 33.4427255,
     "lng": 130.5323145,
@@ -6400,11 +6457,12 @@ const CHARGER_DATA = [
     "address": "福岡県八女郡広川町新代字鈴ヶ山１２７８－２",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 33.2532357,
     "lng": 130.5354411,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -6424,11 +6482,12 @@ const CHARGER_DATA = [
     "address": "佐賀県佐賀市金立町金立",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 33.3297165,
     "lng": 130.3111647,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -6814,11 +6873,12 @@ const CHARGER_DATA = [
     "address": "",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 37.906767,
     "lng": 140.578773,
-    "powerKw": 90
+    "powerKw": 150
   },
   {
     "name": "東北自動車道　安達太良ＳＡ上り",
@@ -6836,18 +6896,20 @@ const CHARGER_DATA = [
     "address": "",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 37.056304,
     "lng": 140.10201,
-    "powerKw": 90
+    "powerKw": 150
   },
   {
     "name": "東北自動車道　上河内ＳＡ上り",
     "address": "",
     "type": "sa_pa",
     "powers": [
-      150
+      150,
+      90
     ],
     "lat": 36.691376,
     "lng": 139.891778,
@@ -6858,7 +6920,8 @@ const CHARGER_DATA = [
     "address": "",
     "type": "sa_pa",
     "powers": [
-      150
+      150,
+      90
     ],
     "lat": 36.317191,
     "lng": 139.619237,
@@ -6976,12 +7039,13 @@ const CHARGER_DATA = [
     "address": "神奈川県海老名市大谷南５－１－１",
     "type": "sa_pa",
     "powers": [
+      90,
       50,
       40
     ],
     "lat": 35.4320762,
     "lng": 139.3986583,
-    "powerKw": 50,
+    "powerKw": 90,
     "direction": "down"
   },
   {
@@ -6989,7 +7053,8 @@ const CHARGER_DATA = [
     "address": "山梨県都留市川棚町大八田字米山６８１１－１５５",
     "type": "sa_pa",
     "powers": [
-      150
+      150,
+      90
     ],
     "lat": 35.5516369,
     "lng": 138.9055266,
@@ -7013,11 +7078,12 @@ const CHARGER_DATA = [
     "address": "山梨県上野原市野田尻字天郷７１１－１、７１７－１",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 35.6324165,
     "lng": 139.0638238,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -7049,11 +7115,12 @@ const CHARGER_DATA = [
     "address": "静岡県静岡市清水区小河内８８５－１５",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 35.1325772,
     "lng": 138.5124644,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -7061,12 +7128,13 @@ const CHARGER_DATA = [
     "address": "静岡県浜松市北区三ヶ日町佐久米４７ー１",
     "type": "sa_pa",
     "powers": [
+      150,
       90,
       50
     ],
     "lat": 34.782381,
     "lng": 137.6078149,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -7074,7 +7142,8 @@ const CHARGER_DATA = [
     "address": "静岡県浜松市浜名区大平３６",
     "type": "sa_pa",
     "powers": [
-      150
+      150,
+      90
     ],
     "lat": 34.8425746,
     "lng": 137.7505505,
@@ -7148,11 +7217,12 @@ const CHARGER_DATA = [
     "address": "滋賀県甲賀市土山町南土山１１２２－２０",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 34.914449,
     "lng": 136.2939801,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -7279,7 +7349,8 @@ const CHARGER_DATA = [
     "address": "埼玉県羽生市弥勒字三新田８２４",
     "type": "sa_pa",
     "powers": [
-      150
+      150,
+      90
     ],
     "lat": 36.1806084,
     "lng": 139.5853126,
@@ -7327,11 +7398,12 @@ const CHARGER_DATA = [
     "address": "山梨県上野原市野田尻字天郷７１１－１、７１７－１",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 35.6324165,
     "lng": 139.0638238,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -7351,12 +7423,13 @@ const CHARGER_DATA = [
     "address": "静岡県浜松市北区三ヶ日町佐久米４７ー１",
     "type": "sa_pa",
     "powers": [
+      150,
       90,
       50
     ],
     "lat": 34.782381,
     "lng": 137.6078149,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -7364,11 +7437,12 @@ const CHARGER_DATA = [
     "address": "愛知県岡崎市宮石町六ツ田１０－４",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 35.035105,
     "lng": 137.2221134,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -7400,11 +7474,12 @@ const CHARGER_DATA = [
     "address": "滋賀県甲賀市土山町南土山１１２２－２０",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 34.914449,
     "lng": 136.2939801,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -7424,11 +7499,12 @@ const CHARGER_DATA = [
     "address": "愛知県岡崎市宮石町六ツ田１０－４",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 35.035105,
     "lng": 137.2221134,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -7764,8 +7840,8 @@ const CHARGER_DATA = [
     "powers": [
       150
     ],
-    "lat": 37.0469725,
-    "lng": 140.8718388,
+    "lat": 37.0469683,
+    "lng": 140.8718445,
     "powerKw": 150,
     "direction": "none"
   },
@@ -11161,5 +11237,27 @@ const CHARGER_DATA = [
     "lng": 127.7623518,
     "powerKw": 100,
     "direction": "none"
+  },
+  {
+    "name": "アネスト岩田ターンパイク箱根スカイラウンジ",
+    "address": "神奈川県足柄下郡湯河原町鍛冶屋955-17",
+    "type": "flash",
+    "powers": [
+      240
+    ],
+    "lat": 35.1843551,
+    "lng": 139.0488578,
+    "powerKw": 240
+  },
+  {
+    "name": "※2台共故障中のためご利用いただけません。",
+    "address": "島根県出雲市大社町菱根264-2",
+    "type": "flash",
+    "powers": [
+      240
+    ],
+    "lat": 35.3954444,
+    "lng": 132.710551,
+    "powerKw": 240
   }
 ];
