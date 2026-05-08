@@ -2340,159 +2340,51 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "Electrify America Charging Station (350kW)",
-    "address": "1300 W San Carlos St, San Jose, CA 95126 アメリカ合衆国",
+    "name": "EVgo Charging Station (100kW)",
+    "address": "3 W Chicago Ave, Chicago, IL 60654 アメリカ合衆国",
     "type": "normal",
     "powers": [
-      350
+      100
     ],
-    "lat": 37.3226237,
-    "lng": -121.91358099999998,
-    "powerKw": 350,
+    "lat": 41.8962724,
+    "lng": -87.6283677,
+    "powerKw": 100,
     "direction": "none"
   },
   {
-    "name": "Tesla Supercharger (150kW)",
-    "address": "533 Coleman Ave, San Jose, CA 95110 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 37.339563,
-    "lng": -121.90365999999999,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
-    "name": "EVgo Charging Station (350kW)",
-    "address": "1530 Hamilton Ave, San Jose, CA 95125 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      350
-    ],
-    "lat": 37.2935577,
-    "lng": -121.91034270000002,
-    "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (325kW)",
-    "address": "55 Race St, San Jose, CA 95126 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      325
-    ],
-    "lat": 37.3296328,
-    "lng": -121.9122091,
-    "powerKw": 325,
-    "direction": "none"
-  },
-  {
-    "name": "EV Connect Charging Station (120kW)",
-    "address": "1790 S 10th St, San Jose, CA 95112 アメリカ合衆国",
+    "name": "Evgateway Charging Station (120kW)",
+    "address": "433 W Van Buren St, Chicago, IL 60607 アメリカ合衆国",
     "type": "normal",
     "powers": [
       120
     ],
-    "lat": 37.3140864,
-    "lng": -121.8601304,
-    "powerKw": 120,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (325kW)",
-    "address": "1275 Lincoln Ave, San Jose, CA 95125 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      325
-    ],
-    "lat": 37.305054,
-    "lng": -121.89975399999999,
-    "powerKw": 325,
-    "direction": "none"
-  },
-  {
-    "name": "EvGateway Charging Station (120kW)",
-    "address": "2460 Fontaine Rd, San Jose, CA 95121 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      120
-    ],
-    "lat": 37.317972999999995,
-    "lng": -121.82939940000001,
+    "lat": 41.8766487,
+    "lng": -87.6386927,
     "powerKw": 120,
     "direction": "none"
   },
   {
     "name": "Electrify America Charging Station (350kW)",
-    "address": "760 Newhall Dr, San Jose, CA 95110 アメリカ合衆国",
+    "address": "1200 N Larrabee St, Chicago, IL 60610 アメリカ合衆国",
     "type": "normal",
     "powers": [
       350
     ],
-    "lat": 37.3505062,
-    "lng": -121.92285389999999,
-    "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (325kW)",
-    "address": "909 Story Rd, San Jose, CA 95122 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      325
-    ],
-    "lat": 37.331382,
-    "lng": -121.859045,
-    "powerKw": 325,
-    "direction": "none"
-  },
-  {
-    "name": "Electrify America Charging Station (350kW)",
-    "address": "2300 Alum Rock Ave, San Jose, CA 95116 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      350
-    ],
-    "lat": 37.3580882,
-    "lng": -121.8425895,
+    "lat": 41.9045962,
+    "lng": -87.6433797,
     "powerKw": 350,
     "direction": "none"
   },
   {
     "name": "Electrify America Charging Station (350kW)",
-    "address": "2855 Stevens Creek Blvd, Santa Clara, CA 95050 アメリカ合衆国",
+    "address": "1101 W Jackson Blvd, Chicago, IL 60607 アメリカ合衆国",
     "type": "normal",
     "powers": [
       350
     ],
-    "lat": 37.32660320000001,
-    "lng": -121.94360079999998,
+    "lat": 41.8773061,
+    "lng": -87.6554326,
     "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (325kW)",
-    "address": "2306 Almaden Rd, San Jose, CA 95125 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      325
-    ],
-    "lat": 37.29226,
-    "lng": -121.87849600000001,
-    "powerKw": 325,
-    "direction": "none"
-  },
-  {
-    "name": "Tesla Supercharger (325kW)",
-    "address": "2105 N First St, San Jose, CA 95112 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      325
-    ],
-    "lat": 37.3735772,
-    "lng": -121.9204182,
-    "powerKw": 325,
     "direction": "none"
   }
 ];
