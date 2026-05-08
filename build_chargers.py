@@ -260,11 +260,19 @@ def main():
             old_powers = set(match.get("powers", [match.get("powerKw", 0)]))
             new_powers = set(d.get("powers", []))
             merged = sorted(old_powers | new_powers, reverse=True)
+            changed = False
             if merged != sorted(old_powers, reverse=True):
                 match["powers"] = merged
                 match["powerKw"] = merged[0]
+                changed = True
+            # lat/lng一致で名前が違う場合は長い方（eMPフル名）を優先
+            if d.get("name") and match.get("name") != d["name"] and len(d["name"]) > len(match.get("name", "")):
+                log.info(f"Name updated: '{match['name']}' → '{d['name']}'")
+                match["name"] = d["name"]
+                changed = True
+            if changed:
                 update_count += 1
-                log.info(f"Updated: {match['name']} {sorted(old_powers,reverse=True)} → {merged}")
+                log.info(f"Updated: {match['name']} powers={match['powers']}")
         else:
             new_entries.append(d)
     log.info(f"Updated {update_count} existing entries / New to geocode: {len(new_entries)} (skipped {len(raw_data)-update_count-len(new_entries)} unchanged)")
@@ -321,9 +329,24 @@ def main():
     merged = [m for m in merged if m.get("powerKw", 0) >= 10]
     log.info(f"Filtered out {before - len(merged)} entries with powerKw < 10")
 
-    # 6. 既存データと統合して保存
-    final = existing_data + merged
-    log.info(f"Final dataset: {len(existing_data)} existing + {len(merged)} new = {len(final)} total")
+    # 6. 既存データと統合 → 最終dedup pass（lat/lng・方向が同じ重複を除去）
+    final_raw = existing_data + merged
+    from collections import OrderedDict as _OD
+    _seen = _OD()
+    for c in final_raw:
+        key = (round(c["lat"], 4), round(c["lng"], 4), c.get("direction", ""))
+        if key not in _seen:
+            _seen[key] = c
+        else:
+            prev = _seen[key]
+            all_p = sorted(set(prev.get("powers", [prev.get("powerKw",0)]) + c.get("powers", [c.get("powerKw",0)])), reverse=True)
+            prev["powers"] = all_p
+            prev["powerKw"] = all_p[0]
+            if len(c.get("name","")) > len(prev.get("name","")):
+                prev["name"] = c["name"]
+            log.info(f"Dedup: merged '{c['name']}' into '{prev['name']}'")
+    final = list(_seen.values())
+    log.info(f"Final dataset: {len(existing_data)} existing + {len(merged)} new = {len(final_raw)} → dedup → {len(final)} total")
     with open(out_path, "w", encoding="utf-8") as f:
         f.write("const CHARGER_DATA = ")
         json.dump(final, f, ensure_ascii=False, indent=2)
