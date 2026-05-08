@@ -13,7 +13,13 @@
   --bg: #0f172a; --panel: #1e293b; --border: #334155;
   --accent: #3b82f6; --accent2: #06b6d4;
   --text: #f1f5f9; --muted: #94a3b8;
-  --radius: 12px;
+  --radius: 12px; --card-bg: #0f172a;
+}
+:root.light {
+  --bg: #f1f5f9; --panel: #ffffff; --border: #e2e8f0;
+  --accent: #2563eb; --accent2: #0891b2;
+  --text: #0f172a; --muted: #64748b;
+  --card-bg: #f8fafc;
 }
 body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; margin: 0; }
 
@@ -36,17 +42,17 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', syste
 .input-clear { position: absolute; right: 6px; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 0; line-height: 1; opacity: 0.6; }
 .input-clear:hover { opacity: 1; color: var(--text); }
 label { display: block; font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; font-weight: 600; }
-input, select { width: 100%; background: #0f172a; border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 10px; font-size: 14px; transition: border 0.2s; }
+input, select { width: 100%; background: var(--card-bg); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 10px; font-size: 14px; transition: border 0.2s; }
 input:focus, select:focus { outline: none; border-color: var(--accent2); }
 #calc-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #3b82f6, #06b6d4); color: #fff; border: none; border-radius: 6px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 12px rgba(6, 182, 212, 0.2); }
 #calc-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(6, 182, 212, 0.4); }
 .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px; }
-.stat { background: #0f172a; border-radius: 8px; padding: 10px 4px; text-align: center; border: 1px solid var(--border); }
+.stat { background: var(--card-bg); border-radius: 8px; padding: 10px 4px; text-align: center; border: 1px solid var(--border); }
 .stat .val { font-size: 1.2rem; font-weight: 700; color: var(--accent2); margin-top: 4px; }
 .stat .val .unit { font-size: 0.55em; font-weight: 400; opacity: 0.8; }
 .stat .lbl { font-size: 0.65rem; }
 
-.stop-item { background: #0f172a; border-radius: 8px; padding: 16px; margin-bottom: 12px; border-left: 4px solid #10b981; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.stop-item { background: var(--card-bg); border-radius: 8px; padding: 16px; margin-bottom: 12px; border-left: 4px solid #10b981; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
 .chg-specs { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
 .chg-chip { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
 .chip-kw { background: rgba(6, 182, 212, 0.15); color: var(--accent2); border: 1px solid rgba(6, 182, 212, 0.3); }
@@ -59,17 +65,17 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
 .chip-teemo .te { color: #38bdf8; }
 .poi-tag { display: inline-block; background: rgba(148, 163, 184, 0.1); color: #cbd5e1; font-size: 10px; padding: 3px 8px; border-radius: 12px; margin-right: 6px; margin-top: 8px; }
 
-.alt-charger-btn { background: #1e293b; border: 1px solid var(--border); color: var(--accent2); border-radius: 4px; padding: 6px 10px; font-size: 0.75rem; cursor: pointer; transition: 0.2s; white-space: nowrap; }
-.alt-charger-btn:hover { background: #334155; }
+.alt-charger-btn { background: var(--panel); border: 1px solid var(--border); color: var(--accent2); border-radius: 4px; padding: 6px 10px; font-size: 0.75rem; cursor: pointer; transition: 0.2s; white-space: nowrap; }
+.alt-charger-btn:hover { background: var(--border); }
 .alt-list { display: none; margin-top: 6px; flex-direction: column; gap: 4px; }
-.alt-opt { background: #0b1120; border: 1px solid var(--border); color: #f1f5f9; padding: 8px; font-size: 0.75rem; text-align: left; cursor: pointer; border-radius: 4px; transition: 0.2s; }
+.alt-opt { background: var(--card-bg); border: 1px solid var(--border); color: var(--text); padding: 8px; font-size: 0.75rem; text-align: left; cursor: pointer; border-radius: 4px; transition: 0.2s; }
 .alt-opt:hover { border-color: var(--accent2); background: rgba(6, 182, 212, 0.1); }
-.map-ctx-item { padding: 11px 16px; font-size: 13px; color: #f1f5f9; cursor: pointer; transition: background 0.15s; user-select: none; }
+.map-ctx-item { padding: 11px 16px; font-size: 13px; color: var(--text); cursor: pointer; transition: background 0.15s; user-select: none; }
 .map-ctx-item:hover, .map-ctx-item:active { background: rgba(6, 182, 212, 0.15); }
 
 #dead-alert { display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #fca5a5; padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 0.85rem; font-weight: bold; text-align: center; }
 
-#map { flex: 1.3; background: #1e293b; position: relative; }
+#map { flex: 1.3; background: var(--panel); position: relative; }
 .chart-wrap { padding: 16px 20px; background: var(--panel); flex: 0.7; position: relative; border-top: 1px solid var(--border); display: flex; flex-direction: column; }
 .chart-container { flex: 1; position: relative; min-height: 0; overflow: hidden; }
 #chart-zoom-btns { position: absolute; top: 6px; right: 6px; display: none; flex-direction: column; gap: 4px; z-index: 10; }
@@ -132,9 +138,10 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.4.0<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.0<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
-            <span style="color:var(--muted); font-size:10px;">更新: 2026-05-03</span>
+            <span style="color:var(--muted); font-size:10px;">更新: 2026-05-08</span>
+            <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
     </div>
@@ -272,8 +279,8 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
   </div>
   <div id="right">
     <div id="map"></div>
-    <div id="map-ctx" style="position:fixed; display:none; background:#1e293b; border:1px solid rgba(255,255,255,0.15); border-radius:10px; box-shadow:0 6px 24px rgba(0,0,0,0.6); z-index:9999; overflow:hidden; min-width:170px;">
-        <div id="map-ctx-loc" style="padding:7px 14px 6px; font-size:11px; color:rgba(241,245,249,0.55); border-bottom:1px solid rgba(255,255,255,0.08); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:220px; pointer-events:none;">…</div>
+    <div id="map-ctx" style="position:fixed; display:none; background:var(--panel); border:1px solid rgba(255,255,255,0.15); border-radius:10px; box-shadow:0 6px 24px rgba(0,0,0,0.6); z-index:9999; overflow:hidden; min-width:170px;">
+        <div id="map-ctx-loc" style="padding:7px 14px 6px; font-size:11px; color:var(--muted); border-bottom:1px solid var(--border); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:220px; pointer-events:none;">…</div>
         <div class="map-ctx-item" onclick="setFromMap('origin')">📍 出発地にセット</div>
         <div class="map-ctx-item" style="border-top:1px solid rgba(255,255,255,0.08);" onclick="setFromMap('waypoint')">🔀 経由地にセット</div>
         <div class="map-ctx-item" style="border-top:1px solid rgba(255,255,255,0.08);" onclick="setFromMap('dest')">🏁 目的地にセット</div>
@@ -299,6 +306,12 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
 </div>
 
 <script>
+// テーマ初期化（ちらつき防止のため最初に実行）
+(function() {
+    const t = localStorage.getItem('bz4x-theme');
+    if (t === 'light') document.documentElement.classList.add('light');
+})();
+
 // V2データをV1+TEEMOと重複チェックしながらマージ（150m以内は既存優先でスキップ）
 if (typeof CHARGER_V2_DATA !== 'undefined') {
   const _hav = (a,b,c,d) => { const R=6371,dL=(c-a)*Math.PI/180,dG=(d-b)*Math.PI/180,x=Math.sin(dL/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dG/2)**2; return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x)); };
@@ -333,6 +346,34 @@ let activeApiKey = '';
 Chart.defaults.color = '#94a3b8';
 Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
 
+const DARK_MAP_STYLES = [
+    {elementType:'geometry',stylers:[{color:'#1e293b'}]},
+    {featureType:'water',stylers:[{color:'#0f172a'}]},
+    {featureType:'road',elementType:'geometry',stylers:[{color:'#334155'}]},
+    {featureType:'road',elementType:'labels.text.fill',stylers:[{color:'#94a3b8'}]},
+    {featureType:'poi',elementType:'labels.icon',stylers:[{visibility:'off'}]},
+    {featureType:'poi',elementType:'labels.text.fill',stylers:[{color:'#94a3b8'}]},
+    {featureType:'poi',elementType:'labels.text.stroke',stylers:[{color:'#1e293b'}]}
+];
+const LIGHT_MAP_STYLES = [
+    {featureType:'poi',elementType:'labels.icon',stylers:[{visibility:'off'}]},
+    {featureType:'poi',elementType:'labels.text.fill',stylers:[{color:'#64748b'}]},
+    {featureType:'poi',elementType:'labels.text.stroke',stylers:[{color:'#f1f5f9'}]}
+];
+
+function setTheme(theme) {
+    if (theme === 'light') {
+        document.documentElement.classList.add('light');
+        document.getElementById('theme-toggle').textContent = '☀️';
+        if (googleMap) googleMap.setOptions({ styles: LIGHT_MAP_STYLES });
+    } else {
+        document.documentElement.classList.remove('light');
+        document.getElementById('theme-toggle').textContent = '🌙';
+        if (googleMap) googleMap.setOptions({ styles: DARK_MAP_STYLES });
+    }
+    localStorage.setItem('bz4x-theme', theme);
+}
+
 function initApp() {
     const dbStatusEl = document.getElementById('db-status');
     dbStatusEl.style.cursor = 'pointer';
@@ -344,15 +385,12 @@ function initApp() {
         dbStatusEl.innerHTML = `<span style="color:#ef4444;font-size:11px;font-weight:bold;">⚠️ DB未読み込み (chargers_data.jsを確認)</span>`;
     }
 
+    const _isLight = localStorage.getItem('bz4x-theme') === 'light';
+    document.getElementById('theme-toggle').textContent = _isLight ? '☀️' : '🌙';
+
     googleMap = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 35.6, lng: 139.0 }, zoom: 7,
-        styles: [
-            {elementType:'geometry',stylers:[{color:'#1e293b'}]},{featureType:'water',stylers:[{color:'#0f172a'}]},
-            {featureType:'road',elementType:'geometry',stylers:[{color:'#334155'}]},{featureType:'road',elementType:'labels.text.fill',stylers:[{color:'#94a3b8'}]},
-            {featureType:'poi',elementType:'labels.icon',stylers:[{visibility:'off'}]},
-            {featureType:'poi',elementType:'labels.text.fill',stylers:[{color:'#94a3b8'}]},
-            {featureType:'poi',elementType:'labels.text.stroke',stylers:[{color:'#1e293b'}]}
-        ],
+        styles: _isLight ? LIGHT_MAP_STYLES : DARK_MAP_STYLES,
         disableDefaultUI: true, zoomControl: true
     });
     directionsService = new google.maps.DirectionsService();
@@ -1286,7 +1324,7 @@ function renderCostSummary(tollInfo) {
     const totalNote = (tollInfo === null || tollInfo === undefined) ? '（高速料金は取得中）' : '';
 
     costEl.innerHTML = `
-        <div style="background:#0f172a;border-radius:8px;padding:12px 14px;margin-top:14px;border:1px solid rgba(251,191,36,0.2);">
+        <div style="background:var(--card-bg);border-radius:8px;padding:12px 14px;margin-top:14px;border:1px solid rgba(251,191,36,0.2);">
             <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">💴 コスト試算</div>
             <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
                 <span style="color:var(--muted);">充電スタンド費用</span>
@@ -2619,6 +2657,14 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.0</span><span class="cl-date">2026-05-08</span>
+        <ul class="cl-items">
+          <li>ライト/ダークモード切替ボタンを追加（設定はlocalStorageに保存）</li>
+          <li>全CSSカラーをCSS変数に統一（ハードコードの#0f172a/#1e293b等を廃止）</li>
+          <li>マップスタイルもテーマに連動して切替</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.4.0</span><span class="cl-date">2026-05-08</span>
         <ul class="cl-items">
