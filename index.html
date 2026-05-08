@@ -716,16 +716,18 @@ function calcQuickChgDuration(socBefore, km, totalKm, routeChargerList,
     const chargerPowerKw = parseInt(chargerInfo.powerKw) || 50;
 
     // Case 1: 前方に次の150kW機がある → そこへ届く最小SOCまでだけ充電
+    // 150kW機は最低15分（出力ブーストウィンドウ確保）、90kW機は最低5分
+    const _minDur = chargerPowerKw >= 150 ? 15 : 5;
     const nextC = routeChargerList.find(c => c.km > km + 5);
     if (nextC) {
         const distToNext = nextC.km - km;
         const consumptionPct = (distToNext * _rate / batteryKwh) * 100;
         const target = Math.min(80, thresholdSocPct + consumptionPct + 5);
-        // 既に届くSOC → return 0 でスキップを指示
-        if (target <= socBefore) return 0;
+        // 既に届くSOC → return 0 でスキップを指示（ただし150kW機は最低_minDur確保）
+        if (target <= socBefore) return chargerPowerKw >= 150 ? _minDur : 0;
         let t = 1;
         while (t < 90 && calculateCharging(socBefore, t, chargerInfo) < target) t++;
-        return Math.max(5, t);
+        return Math.max(_minDur, t);
     }
 
     // Case 2: 次の150kW機なし → 充電器の定格出力ブーストウィンドウで充電
