@@ -1268,7 +1268,8 @@ const CHARGER_DATA = [
     "address": "岩手県紫波郡紫波町片寄字堤下５２－２",
     "type": "sa_pa",
     "powers": [
-      90
+      90,
+      50
     ],
     "lat": 39.5152385,
     "lng": 141.1028762,
@@ -1328,7 +1329,8 @@ const CHARGER_DATA = [
     "address": "宮城県柴田郡村田町菅生字新堀２８",
     "type": "sa_pa",
     "powers": [
-      90
+      90,
+      50
     ],
     "lat": 38.167443,
     "lng": 140.7662699,
@@ -1523,7 +1525,8 @@ const CHARGER_DATA = [
     "type": "sa_pa",
     "powers": [
       150,
-      90
+      90,
+      50
     ],
     "lat": 37.9067665,
     "lng": 140.5787733,
@@ -1571,7 +1574,8 @@ const CHARGER_DATA = [
     "address": "茨城県北茨城市中郷町日棚字宝壷１５４０ー１",
     "type": "sa_pa",
     "powers": [
-      90
+      90,
+      50
     ],
     "lat": 36.7575337,
     "lng": 140.692128,
@@ -1606,7 +1610,8 @@ const CHARGER_DATA = [
     "address": "茨城県守谷市野木崎９７－３",
     "type": "sa_pa",
     "powers": [
-      90
+      90,
+      50
     ],
     "lat": 35.9400481,
     "lng": 139.9676284,
@@ -1654,7 +1659,8 @@ const CHARGER_DATA = [
     "type": "sa_pa",
     "powers": [
       150,
-      90
+      90,
+      50
     ],
     "lat": 36.6913759,
     "lng": 139.891778,
@@ -1807,7 +1813,7 @@ const CHARGER_DATA = [
     "powerKw": 40
   },
   {
-    "name": "羽生PA（上り）",
+    "name": "東北自動車道　羽生ＰＡ上り",
     "address": "埼玉県羽生市弥勒字三新田８２４",
     "type": "sa_pa",
     "powers": [
@@ -1845,15 +1851,16 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "東北自動車道　蓮田ＳＡ下り",
-    "address": "埼玉県蓮田市黒浜３４６９",
+    "name": "蓮田SA（下り）",
+    "address": "埼玉県蓮田市 東北自動車道",
     "type": "sa_pa",
     "powers": [
+      90,
       50
     ],
     "lat": 36.0007902,
     "lng": 139.6668657,
-    "powerKw": 50,
+    "powerKw": 90,
     "direction": "down"
   },
   {
@@ -1861,7 +1868,8 @@ const CHARGER_DATA = [
     "address": "埼玉県蓮田市川島３７０",
     "type": "sa_pa",
     "powers": [
-      90
+      90,
+      50
     ],
     "lat": 35.977982,
     "lng": 139.6660407,
@@ -1869,7 +1877,7 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "三芳PA（上り）",
+    "name": "関越自動車道　三芳ＰＡ上り",
     "address": "埼玉県入間郡三芳町上富大字上富２２０４",
     "type": "sa_pa",
     "powers": [
@@ -2446,7 +2454,7 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
-    "name": "双葉SA（上り）",
+    "name": "中央自動車道　双葉ＳＡ上り",
     "address": "山梨県甲斐市龍地２３９５",
     "type": "sa_pa",
     "powers": [
@@ -2471,16 +2479,17 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "談合坂SA（上り）",
+    "name": "中央自動車道　談合坂ＳＡ上り",
     "address": "山梨県上野原市野田尻字天郷７１１－１、７１７－１",
     "type": "sa_pa",
     "powers": [
+      150,
       90,
       50
     ],
     "lat": 35.6324165,
     "lng": 139.0638238,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -2520,7 +2529,7 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
-    "name": "駒ヶ岳SA（上り）",
+    "name": "中央自動車道　駒ヶ岳ＳＡ上り",
     "address": "長野県駒ヶ根市赤穂南割１５－２０４",
     "type": "sa_pa",
     "powers": [
@@ -2704,7 +2713,7 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "NEOPASA清水（上り）",
+    "name": "新東名高速道路　清水ＰＡ上り",
     "address": "静岡県静岡市清水区小河内８８５－１５",
     "type": "sa_pa",
     "powers": [
@@ -2717,20 +2726,21 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "浜名湖SA（上り）",
+    "name": "東名高速道路　浜名湖ＳＡ上り",
     "address": "静岡県浜松市北区三ヶ日町佐久米４７ー１",
     "type": "sa_pa",
     "powers": [
+      150,
       90,
       50
     ],
     "lat": 34.782381,
     "lng": 137.6078149,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
-    "name": "NEOPASA浜松（上り）",
+    "name": "新東名高速道路　浜松ＳＡ上り",
     "address": "静岡県浜松市浜名区大平３６",
     "type": "sa_pa",
     "powers": [
@@ -2756,7 +2766,7 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "富士川SA（上り）",
+    "name": "東名高速道路　富士川ＳＡ上り",
     "address": "静岡県富士市木島",
     "type": "sa_pa",
     "powers": [
@@ -2805,7 +2815,7 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
-    "name": "足柄SA（下り）",
+    "name": "東名高速道路　足柄ＳＡ下り",
     "address": "静岡県御殿場市深沢字前沢１８０１－１",
     "type": "sa_pa",
     "powers": [
@@ -2854,7 +2864,7 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
-    "name": "NEOPASA岡崎（上り）",
+    "name": "新東名高速道路　岡崎ＳＡ上り",
     "address": "愛知県岡崎市宮石町六ツ田１０－４",
     "type": "sa_pa",
     "powers": [
@@ -3044,7 +3054,7 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
-    "name": "長篠設楽原PA（上り）",
+    "name": "新東名高速道路　長篠設楽原ＰＡ上り",
     "address": "愛知県新城市富永字住居田３３－３",
     "type": "sa_pa",
     "powers": [
@@ -3181,7 +3191,7 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
-    "name": "草津PA（下り）",
+    "name": "名神高速道路　草津ＰＡ下り",
     "address": "滋賀県大津市月輪５－８－９",
     "type": "sa_pa",
     "powers": [
@@ -3208,16 +3218,17 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "土山SA（上り）",
+    "name": "新名神高速道路　土山ＳＡ上り",
     "address": "滋賀県甲賀市土山町南土山１１２２－２０",
     "type": "sa_pa",
     "powers": [
+      150,
       90,
       50
     ],
     "lat": 34.914449,
     "lng": 136.2939801,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -3233,7 +3244,7 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
-    "name": "多賀SA（上り）",
+    "name": "名神高速道路　多賀ＳＡ上り",
     "address": "滋賀県犬上郡多賀町大字敏満寺",
     "type": "sa_pa",
     "powers": [
@@ -3246,7 +3257,7 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "桂川PA（下り）",
+    "name": "名神高速道路　桂川ＰＡ下り",
     "address": "京都府京都市南区久世東土川町４６８－１",
     "type": "sa_pa",
     "powers": [
@@ -4472,43 +4483,6 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "岩手山SA（下り）",
-    "address": "岩手県八幡平市平笠第２地割１－４７",
-    "type": "sa_pa",
-    "powers": [
-      50
-    ],
-    "lat": 39.91500569999999,
-    "lng": 141.0464619,
-    "powerKw": 50,
-    "direction": "down"
-  },
-  {
-    "name": "前沢SA（下り）",
-    "address": "岩手県奥州市前沢区裏新田２９－１３",
-    "type": "sa_pa",
-    "powers": [
-      50
-    ],
-    "lat": 39.067441,
-    "lng": 141.1028169,
-    "powerKw": 50,
-    "direction": "down"
-  },
-  {
-    "name": "紫波SA（下り）",
-    "address": "岩手県紫波郡紫波町片寄字堤下５２－２",
-    "type": "sa_pa",
-    "powers": [
-      90,
-      50
-    ],
-    "lat": 39.5152385,
-    "lng": 141.1028762,
-    "powerKw": 90,
-    "direction": "down"
-  },
-  {
     "name": "秋田自動車道　錦秋湖ＳＡ上り",
     "address": "岩手県和賀郡西和賀町本内第４６地割",
     "type": "sa_pa",
@@ -4533,31 +4507,6 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "長者原SA（下り）",
-    "address": "宮城県大崎市古川川熊字長者原２４－６１",
-    "type": "sa_pa",
-    "powers": [
-      50
-    ],
-    "lat": 38.6370556,
-    "lng": 140.9623857,
-    "powerKw": 50,
-    "direction": "down"
-  },
-  {
-    "name": "菅生PA（下り）",
-    "address": "宮城県柴田郡村田町菅生字新堀２８",
-    "type": "sa_pa",
-    "powers": [
-      90,
-      50
-    ],
-    "lat": 38.167443,
-    "lng": 140.7662699,
-    "powerKw": 90,
-    "direction": "down"
-  },
-  {
     "name": "三陸自動車道　春日ＰＡ上り",
     "address": "宮城県宮城郡利府町春日字筆沢５－３",
     "type": "sa_pa",
@@ -4568,30 +4517,6 @@ const CHARGER_DATA = [
     "lng": 141.0090065,
     "powerKw": 50,
     "direction": "up"
-  },
-  {
-    "name": "鶴巣PA（下り）",
-    "address": "宮城県黒川郡大和町鶴巣北目大崎字勝負沢３４－１",
-    "type": "sa_pa",
-    "powers": [
-      50
-    ],
-    "lat": 38.408978,
-    "lng": 140.9143574,
-    "powerKw": 50,
-    "direction": "down"
-  },
-  {
-    "name": "花輪SA（下り）",
-    "address": "秋田県鹿角市花輪字張渡１１ー２４",
-    "type": "sa_pa",
-    "powers": [
-      50
-    ],
-    "lat": 40.18398,
-    "lng": 140.8014789,
-    "powerKw": 50,
-    "direction": "down"
   },
   {
     "name": "秋田自動車道　西仙北ＳＡ上り",
@@ -4690,7 +4615,7 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
-    "name": "南相馬鹿島SA（下り）",
+    "name": "常磐自動車道　南相馬鹿島ＳＡ下り",
     "address": "福島県南相馬市鹿島区小山田",
     "type": "sa_pa",
     "powers": [
@@ -4699,31 +4624,6 @@ const CHARGER_DATA = [
     ],
     "lat": 37.7146971,
     "lng": 140.9213842,
-    "powerKw": 90,
-    "direction": "down"
-  },
-  {
-    "name": "安達太良SA（下り）",
-    "address": "福島県本宮市本宮天ケ２２１",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 37.5156689,
-    "lng": 140.3821625,
-    "powerKw": 90,
-    "direction": "down"
-  },
-  {
-    "name": "国見SA（下り）",
-    "address": "福島県伊達郡国見町貝田字神前",
-    "type": "sa_pa",
-    "powers": [
-      90,
-      50
-    ],
-    "lat": 37.9067665,
-    "lng": 140.5787733,
     "powerKw": 90,
     "direction": "down"
   },
@@ -4764,30 +4664,6 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "中郷SA（下り）",
-    "address": "茨城県北茨城市中郷町日棚字宝壷１５４０ー１",
-    "type": "sa_pa",
-    "powers": [
-      90,
-      50
-    ],
-    "lat": 36.7575337,
-    "lng": 140.692128,
-    "powerKw": 90,
-    "direction": "down"
-  },
-  {
-    "name": "北関東自動車道　笠間ＰＡ東行き",
-    "address": "茨城県笠間市上加賀田１９１６",
-    "type": "sa_pa",
-    "powers": [
-      40
-    ],
-    "lat": 36.3440909,
-    "lng": 140.2550488,
-    "powerKw": 40
-  },
-  {
     "name": "常磐自動車道　友部ＳＡ上り",
     "address": "茨城県笠間市長兎路梶山久保１０５９－６",
     "type": "sa_pa",
@@ -4798,41 +4674,6 @@ const CHARGER_DATA = [
     "lng": 140.3424715,
     "powerKw": 90,
     "direction": "up"
-  },
-  {
-    "name": "守谷SA（上り）",
-    "address": "茨城県守谷市野木崎９７－３",
-    "type": "sa_pa",
-    "powers": [
-      90,
-      50
-    ],
-    "lat": 35.9400481,
-    "lng": 139.9676284,
-    "powerKw": 90,
-    "direction": "up"
-  },
-  {
-    "name": "首都圏中央連絡自動車道　坂東ＰＡ内回り",
-    "address": "茨城県坂東市弓田字真那板倉４６１１－２",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 36.0833546,
-    "lng": 139.903003,
-    "powerKw": 90
-  },
-  {
-    "name": "首都圏中央連絡自動車道　江戸崎ＰＡ内回り",
-    "address": "茨城県稲敷市蒲ケ山字水砂",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 35.971536,
-    "lng": 140.2760557,
-    "powerKw": 90
   },
   {
     "name": "常磐自動車道　千代田ＰＡ上り",
@@ -4846,19 +4687,6 @@ const CHARGER_DATA = [
     "lng": 140.2109687,
     "powerKw": 150,
     "direction": "up"
-  },
-  {
-    "name": "上河内SA（下り）",
-    "address": "栃木県宇都宮市今里町中丸１１４５",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      50
-    ],
-    "lat": 36.6913759,
-    "lng": 139.891778,
-    "powerKw": 150,
-    "direction": "down"
   },
   {
     "name": "東北自動車道　都賀西方ＰＡ上り",
@@ -4884,17 +4712,6 @@ const CHARGER_DATA = [
     "lng": 139.6192374,
     "powerKw": 150,
     "direction": "up"
-  },
-  {
-    "name": "北関東自動車道　壬生ＰＡ西行き",
-    "address": "栃木県下都賀郡壬生町国谷字台畑１８６８－１",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 36.454659,
-    "lng": 139.8067055,
-    "powerKw": 90
   },
   {
     "name": "那須高原SA（上り）",
@@ -4959,18 +4776,7 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
-    "name": "首都圏中央連絡自動車道　狭山ＰＡ内回り",
-    "address": "埼玉県狭山市笹井２４８２－３",
-    "type": "sa_pa",
-    "powers": [
-      40
-    ],
-    "lat": 35.8516328,
-    "lng": 139.3674259,
-    "powerKw": 40
-  },
-  {
-    "name": "羽生PA（下り）",
+    "name": "東北自動車道　羽生ＰＡ下り",
     "address": "埼玉県羽生市弥勒字三新田８２４",
     "type": "sa_pa",
     "powers": [
@@ -4984,19 +4790,7 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
-    "name": "首都圏中央連絡自動車道　菖蒲ＰＡ外回り",
-    "address": "埼玉県久喜市菖蒲町下栢間字在来",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      90
-    ],
-    "lat": 36.0385745,
-    "lng": 139.5872856,
-    "powerKw": 150
-  },
-  {
-    "name": "三芳PA（下り）",
+    "name": "関越自動車道　三芳ＰＡ下り",
     "address": "埼玉県入間郡三芳町上富大字上富２２０４",
     "type": "sa_pa",
     "powers": [
@@ -5131,7 +4925,7 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "海老名SA（下り）",
+    "name": "東名高速道路　海老名ＳＡ下り",
     "address": "神奈川県海老名市大谷南５－１－１",
     "type": "sa_pa",
     "powers": [
@@ -5339,7 +5133,7 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
-    "name": "中央自動車道　谷村ＰＡ上り",
+    "name": "中央自動車道　八ヶ岳ＰＡ上り",
     "address": "山梨県都留市川棚町大八田字米山６８１１－１５５",
     "type": "sa_pa",
     "powers": [
@@ -5352,7 +5146,7 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "双葉SA（下り）",
+    "name": "中央自動車道　双葉ＳＡ下り",
     "address": "山梨県甲斐市龍地２３９５",
     "type": "sa_pa",
     "powers": [
@@ -5377,16 +5171,17 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
-    "name": "談合坂SA（下り）",
+    "name": "中央自動車道　談合坂ＳＡ下り",
     "address": "山梨県上野原市野田尻字天郷７１１－１、７１７－１",
     "type": "sa_pa",
     "powers": [
+      150,
       90,
       50
     ],
     "lat": 35.6324165,
     "lng": 139.0638238,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -5426,7 +5221,7 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "駒ヶ岳SA（下り）",
+    "name": "中央自動車道　駒ヶ岳ＳＡ下り",
     "address": "長野県駒ヶ根市赤穂南割１５－２０４",
     "type": "sa_pa",
     "powers": [
@@ -5475,17 +5270,6 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
-    "name": "東海環状自動車道　美濃加茂ＳＡ内回り",
-    "address": "岐阜県美濃加茂市蜂屋町上蜂屋２５６４",
-    "type": "sa_pa",
-    "powers": [
-      40
-    ],
-    "lat": 35.4728225,
-    "lng": 137.0247312,
-    "powerKw": 40
-  },
-  {
     "name": "東海北陸自動車道　ひるがの高原ＳＡ上り",
     "address": "岐阜県郡上市高鷲町鷲見野地内",
     "type": "sa_pa",
@@ -5524,18 +5308,6 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "新東名高速道路　静岡ＳＡ上り",
-    "address": "静岡県静岡市葵区飯間１２５８",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 34.9685274,
-    "lng": 138.2911149,
-    "powerKw": 90,
-    "direction": "up"
-  },
-  {
     "name": "新東名高速道路　清水ＰＡ下り",
     "address": "静岡県静岡市清水区小河内８８５－１５",
     "type": "sa_pa",
@@ -5549,16 +5321,17 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
-    "name": "浜名湖SA（下り）",
+    "name": "東名高速道路　浜名湖ＳＡ下り",
     "address": "静岡県浜松市北区三ヶ日町佐久米４７ー１",
     "type": "sa_pa",
     "powers": [
+      150,
       90,
       50
     ],
     "lat": 34.782381,
     "lng": 137.6078149,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -5573,19 +5346,6 @@ const CHARGER_DATA = [
     "lng": 137.7505505,
     "powerKw": 150,
     "direction": "down"
-  },
-  {
-    "name": "東名高速道路　富士川ＳＡ上り",
-    "address": "静岡県富士市木島",
-    "type": "sa_pa",
-    "powers": [
-      90,
-      50
-    ],
-    "lat": 35.1604759,
-    "lng": 138.6180106,
-    "powerKw": 90,
-    "direction": "up"
   },
   {
     "name": "東名高速道路　遠州豊田ＰＡ上り",
@@ -5612,18 +5372,6 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "東名高速道路　足柄ＳＡ下り",
-    "address": "静岡県御殿場市深沢字前沢１８０１－１",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 35.3144976,
-    "lng": 138.9636088,
-    "powerKw": 90,
-    "direction": "down"
-  },
-  {
     "name": "東名高速道路　牧之原ＳＡ上り",
     "address": "静岡県牧之原市静谷２５５９－３",
     "type": "sa_pa",
@@ -5633,19 +5381,6 @@ const CHARGER_DATA = [
     "lat": 34.7611026,
     "lng": 138.1585858,
     "powerKw": 50,
-    "direction": "up"
-  },
-  {
-    "name": "岡崎SA（上り）",
-    "address": "愛知県岡崎市宮石町六ツ田１０－４",
-    "type": "sa_pa",
-    "powers": [
-      90,
-      50
-    ],
-    "lat": 35.035105,
-    "lng": 137.2221134,
-    "powerKw": 90,
     "direction": "up"
   },
   {
@@ -5686,17 +5421,6 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
-    "name": "東海環状自動車道　鞍ヶ池ＰＡ内回り",
-    "address": "愛知県豊田市矢並町法沢",
-    "type": "sa_pa",
-    "powers": [
-      40
-    ],
-    "lat": 35.0954866,
-    "lng": 137.2225312,
-    "powerKw": 40
-  },
-  {
     "name": "東名高速道路　豊田上郷ＳＡ上り",
     "address": "愛知県豊田市永覚町上長根６－２６３",
     "type": "sa_pa",
@@ -5709,7 +5433,7 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "長篠設楽原PA（下り）",
+    "name": "新東名高速道路　長篠設楽原ＰＡ下り",
     "address": "愛知県新城市富永字住居田３３－３",
     "type": "sa_pa",
     "powers": [
@@ -5796,18 +5520,6 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "名神高速道路　草津ＰＡ下り",
-    "address": "滋賀県大津市月輪５－８－９",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 34.9781065,
-    "lng": 135.9483209,
-    "powerKw": 90,
-    "direction": "down"
-  },
-  {
     "name": "北陸自動車道　賤ヶ岳ＳＡ下り",
     "address": "滋賀県長浜市余呉町坂口２６７－１",
     "type": "sa_pa",
@@ -5820,16 +5532,17 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
-    "name": "土山SA（下り）",
+    "name": "新名神高速道路　土山ＳＡ下り",
     "address": "滋賀県甲賀市土山町南土山１１２２－２０",
     "type": "sa_pa",
     "powers": [
+      150,
       90,
       50
     ],
     "lat": 34.914449,
     "lng": 136.2939801,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -5928,17 +5641,6 @@ const CHARGER_DATA = [
     "lng": 135.5278878,
     "powerKw": 90,
     "direction": "down"
-  },
-  {
-    "name": "阪神高速道路　泉大津ＰＡ（海側）",
-    "address": "大阪府泉大津市なぎさ町６ー１",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 34.5085469,
-    "lng": 135.3955027,
-    "powerKw": 90
   },
   {
     "name": "山陽自動車道　淡河ＰＡ上り",
@@ -6695,32 +6397,6 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
-    "name": "蓮田SA（下り）",
-    "address": "埼玉県蓮田市 東北自動車道",
-    "type": "sa_pa",
-    "powers": [
-      90,
-      50
-    ],
-    "lat": 36.0007902,
-    "lng": 139.6668657,
-    "powerKw": 90,
-    "direction": "down"
-  },
-  {
-    "name": "蓮田SA（上り）",
-    "address": "埼玉県蓮田市 東北自動車道",
-    "type": "sa_pa",
-    "powers": [
-      90,
-      50
-    ],
-    "lat": 35.977982,
-    "lng": 139.6660407,
-    "powerKw": 90,
-    "direction": "up"
-  },
-  {
     "name": "都賀西方PA（下り）",
     "address": "栃木県栃木市都賀町 東北自動車道",
     "type": "sa_pa",
@@ -6928,17 +6604,6 @@ const CHARGER_DATA = [
     "powerKw": 150
   },
   {
-    "name": "メイプルゴルフクラブ伊勢崎",
-    "address": "群馬県伊勢崎市波志江町2239−15",
-    "type": "flash",
-    "powers": [
-      240
-    ],
-    "lat": 36.3495392,
-    "lng": 139.1912478,
-    "powerKw": 240
-  },
-  {
     "name": "株式会社えちごホールディングス",
     "address": "新潟県三条市善久寺3007番地1",
     "type": "flash",
@@ -6961,18 +6626,6 @@ const CHARGER_DATA = [
     "powerKw": 180
   },
   {
-    "name": "常磐自動車道　南相馬鹿島ＳＡ下り",
-    "address": "福島県南相馬市鹿島区小山田",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 37.7146971,
-    "lng": 140.9213842,
-    "powerKw": 90,
-    "direction": "down"
-  },
-  {
     "name": "常磐自動車道　中郷ＳＡ上り",
     "address": "茨城県北茨城市中郷町日棚字宝壷１５４０ー１",
     "type": "sa_pa",
@@ -6985,7 +6638,7 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "守谷SA（下り）",
+    "name": "常磐自動車道　守谷ＳＡ下り",
     "address": "茨城県守谷市野木崎９７－３",
     "type": "sa_pa",
     "powers": [
@@ -6998,107 +6651,6 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
-    "name": "関越自動車道　高坂ＳＡ下り",
-    "address": "埼玉県東松山市大字田木字立野４－５",
-    "type": "sa_pa",
-    "powers": [
-      40
-    ],
-    "lat": 35.9854412,
-    "lng": 139.3835031,
-    "powerKw": 40,
-    "direction": "down"
-  },
-  {
-    "name": "東北自動車道　羽生ＰＡ上り",
-    "address": "埼玉県羽生市弥勒字三新田８２４",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      90
-    ],
-    "lat": 36.1806084,
-    "lng": 139.5853126,
-    "powerKw": 150,
-    "direction": "up"
-  },
-  {
-    "name": "関越自動車道　三芳ＰＡ下り",
-    "address": "埼玉県入間郡三芳町上富大字上富２２０４",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 35.8422931,
-    "lng": 139.5044141,
-    "powerKw": 90,
-    "direction": "down"
-  },
-  {
-    "name": "東名高速道路　海老名ＳＡ下り",
-    "address": "神奈川県海老名市大谷南５－１－１",
-    "type": "sa_pa",
-    "powers": [
-      90,
-      50,
-      40
-    ],
-    "lat": 35.4320762,
-    "lng": 139.3986583,
-    "powerKw": 90,
-    "direction": "down"
-  },
-  {
-    "name": "中央自動車道　八ヶ岳ＰＡ上り",
-    "address": "山梨県都留市川棚町大八田字米山６８１１－１５５",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      90
-    ],
-    "lat": 35.5516369,
-    "lng": 138.9055266,
-    "powerKw": 150,
-    "direction": "up"
-  },
-  {
-    "name": "中央自動車道　双葉ＳＡ下り",
-    "address": "山梨県甲斐市龍地２３９５",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 35.6796562,
-    "lng": 138.5118692,
-    "powerKw": 90,
-    "direction": "down"
-  },
-  {
-    "name": "中央自動車道　談合坂ＳＡ上り",
-    "address": "山梨県上野原市野田尻字天郷７１１－１、７１７－１",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      90
-    ],
-    "lat": 35.6324165,
-    "lng": 139.0638238,
-    "powerKw": 150,
-    "direction": "up"
-  },
-  {
-    "name": "中央自動車道　駒ヶ岳ＳＡ上り",
-    "address": "長野県駒ヶ根市赤穂南割１５－２０４",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 35.7123092,
-    "lng": 137.9086686,
-    "powerKw": 90,
-    "direction": "up"
-  },
-  {
     "name": "新東名高速道路　静岡ＳＡ下り",
     "address": "静岡県静岡市葵区飯間１２５８",
     "type": "sa_pa",
@@ -7109,46 +6661,6 @@ const CHARGER_DATA = [
     "lng": 138.2911149,
     "powerKw": 90,
     "direction": "down"
-  },
-  {
-    "name": "新東名高速道路　清水ＰＡ上り",
-    "address": "静岡県静岡市清水区小河内８８５－１５",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      90
-    ],
-    "lat": 35.1325772,
-    "lng": 138.5124644,
-    "powerKw": 150,
-    "direction": "up"
-  },
-  {
-    "name": "東名高速道路　浜名湖ＳＡ下り",
-    "address": "静岡県浜松市北区三ヶ日町佐久米４７ー１",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      90,
-      50
-    ],
-    "lat": 34.782381,
-    "lng": 137.6078149,
-    "powerKw": 150,
-    "direction": "down"
-  },
-  {
-    "name": "新東名高速道路　浜松ＳＡ上り",
-    "address": "静岡県浜松市浜名区大平３６",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      90
-    ],
-    "lat": 34.8425746,
-    "lng": 137.7505505,
-    "powerKw": 150,
-    "direction": "up"
   },
   {
     "name": "東名高速道路　富士川ＳＡ下り",
@@ -7176,29 +6688,18 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "岡崎SA（下り）",
+    "name": "新東名高速道路　岡崎ＳＡ下り",
     "address": "愛知県岡崎市宮石町六ツ田１０－４",
     "type": "sa_pa",
     "powers": [
+      150,
       90,
       50
     ],
     "lat": 35.035105,
     "lng": 137.2221134,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
-  },
-  {
-    "name": "新東名高速道路　長篠設楽原ＰＡ上り",
-    "address": "愛知県新城市富永字住居田３３－３",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 34.9254682,
-    "lng": 137.5121227,
-    "powerKw": 90,
-    "direction": "up"
   },
   {
     "name": "名神高速道路　草津ＰＡ上り（第１ＰＡ）",
@@ -7211,56 +6712,6 @@ const CHARGER_DATA = [
     "lng": 135.9483209,
     "powerKw": 90,
     "direction": "up"
-  },
-  {
-    "name": "新名神高速道路　土山ＳＡ下り",
-    "address": "滋賀県甲賀市土山町南土山１１２２－２０",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      90
-    ],
-    "lat": 34.914449,
-    "lng": 136.2939801,
-    "powerKw": 150,
-    "direction": "down"
-  },
-  {
-    "name": "名神高速道路　多賀ＳＡ上り",
-    "address": "滋賀県犬上郡多賀町大字敏満寺",
-    "type": "sa_pa",
-    "powers": [
-      90,
-      50
-    ],
-    "lat": 35.2197564,
-    "lng": 136.2846531,
-    "powerKw": 90,
-    "direction": "up"
-  },
-  {
-    "name": "名神高速道路　桂川ＰＡ下り",
-    "address": "京都府京都市南区久世東土川町４６８－１",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 34.9435872,
-    "lng": 135.7220873,
-    "powerKw": 90,
-    "direction": "down"
-  },
-  {
-    "name": "佐野SA（下り）",
-    "address": "栃木県佐野市 東北自動車道",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 36.3171905,
-    "lng": 139.6192374,
-    "powerKw": 90,
-    "direction": "down"
   },
   {
     "name": "那須高原SA（下り）",
@@ -7299,7 +6750,7 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
-    "name": "箱根ターンパイクスカイラウンジ",
+    "name": "アネスト岩田ターンパイク箱根スカイラウンジ",
     "address": "神奈川県足柄下郡湯河原町鍛冶屋955-17",
     "type": "flash",
     "powers": [
@@ -7319,193 +6770,6 @@ const CHARGER_DATA = [
     "lat": 36.2864109,
     "lng": 137.3634494,
     "powerKw": 240
-  },
-  {
-    "name": "常磐自動車道　守谷ＳＡ下り",
-    "address": "茨城県守谷市野木崎９７－３",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 35.9400481,
-    "lng": 139.9676284,
-    "powerKw": 90,
-    "direction": "down"
-  },
-  {
-    "name": "関越自動車道　高坂ＳＡ上り",
-    "address": "埼玉県東松山市大字田木字立野４－５",
-    "type": "sa_pa",
-    "powers": [
-      40
-    ],
-    "lat": 35.9854412,
-    "lng": 139.3835031,
-    "powerKw": 40,
-    "direction": "up"
-  },
-  {
-    "name": "東北自動車道　羽生ＰＡ下り",
-    "address": "埼玉県羽生市弥勒字三新田８２４",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      90
-    ],
-    "lat": 36.1806084,
-    "lng": 139.5853126,
-    "powerKw": 150,
-    "direction": "down"
-  },
-  {
-    "name": "関越自動車道　三芳ＰＡ上り",
-    "address": "埼玉県入間郡三芳町上富大字上富２２０４",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 35.8422931,
-    "lng": 139.5044141,
-    "powerKw": 90,
-    "direction": "up"
-  },
-  {
-    "name": "東名高速道路　海老名ＳＡ上り",
-    "address": "神奈川県海老名市大谷南５－１－１",
-    "type": "sa_pa",
-    "powers": [
-      50
-    ],
-    "lat": 35.4320762,
-    "lng": 139.3986583,
-    "powerKw": 50,
-    "direction": "up"
-  },
-  {
-    "name": "中央自動車道　双葉ＳＡ上り",
-    "address": "山梨県甲斐市龍地２３９５",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 35.6796562,
-    "lng": 138.5118692,
-    "powerKw": 90,
-    "direction": "up"
-  },
-  {
-    "name": "中央自動車道　談合坂ＳＡ下り",
-    "address": "山梨県上野原市野田尻字天郷７１１－１、７１７－１",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      90
-    ],
-    "lat": 35.6324165,
-    "lng": 139.0638238,
-    "powerKw": 150,
-    "direction": "down"
-  },
-  {
-    "name": "中央自動車道　駒ヶ岳ＳＡ下り",
-    "address": "長野県駒ヶ根市赤穂南割１５－２０４",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 35.7123092,
-    "lng": 137.9086686,
-    "powerKw": 90,
-    "direction": "down"
-  },
-  {
-    "name": "東名高速道路　浜名湖ＳＡ上り",
-    "address": "静岡県浜松市北区三ヶ日町佐久米４７ー１",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      90,
-      50
-    ],
-    "lat": 34.782381,
-    "lng": 137.6078149,
-    "powerKw": 150,
-    "direction": "up"
-  },
-  {
-    "name": "新東名高速道路　岡崎ＳＡ上り",
-    "address": "愛知県岡崎市宮石町六ツ田１０－４",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      90
-    ],
-    "lat": 35.035105,
-    "lng": 137.2221134,
-    "powerKw": 150,
-    "direction": "up"
-  },
-  {
-    "name": "新東名高速道路　長篠設楽原ＰＡ下り",
-    "address": "愛知県新城市富永字住居田３３－３",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 34.9254682,
-    "lng": 137.5121227,
-    "powerKw": 90,
-    "direction": "down"
-  },
-  {
-    "name": "名神高速道路　草津ＰＡ上り（第２ＰＡ）",
-    "address": "滋賀県大津市月輪５－８－９",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 34.9781065,
-    "lng": 135.9483209,
-    "powerKw": 90,
-    "direction": "up"
-  },
-  {
-    "name": "新名神高速道路　土山ＳＡ上り",
-    "address": "滋賀県甲賀市土山町南土山１１２２－２０",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      90
-    ],
-    "lat": 34.914449,
-    "lng": 136.2939801,
-    "powerKw": 150,
-    "direction": "up"
-  },
-  {
-    "name": "名神高速道路　多賀ＳＡ下り",
-    "address": "滋賀県犬上郡多賀町大字敏満寺",
-    "type": "sa_pa",
-    "powers": [
-      50
-    ],
-    "lat": 35.2197564,
-    "lng": 136.2846531,
-    "powerKw": 50,
-    "direction": "down"
-  },
-  {
-    "name": "新東名高速道路　岡崎ＳＡ下り",
-    "address": "愛知県岡崎市宮石町六ツ田１０－４",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      90
-    ],
-    "lat": 35.035105,
-    "lng": 137.2221134,
-    "powerKw": 150,
-    "direction": "down"
   },
   {
     "name": "旭川トヨタ　タムザ神居店　No.1 (100kW)",
@@ -7703,33 +6967,7 @@ const CHARGER_DATA = [
     "direction": "none"
   },
   {
-    "name": "ネッツトヨタ仙台　日の出店　No.2 (180kW)",
-    "address": "宮城県仙台市宮城野区日の出町２丁目１‐１",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      180
-    ],
-    "lat": 38.2689818,
-    "lng": 140.9307422,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
     "name": "ネッツトヨタ仙台　泉バイパス店　No.1 (180kW)",
-    "address": "宮城県仙台市泉区市名坂字寺下３４－１",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      180
-    ],
-    "lat": 38.3236491,
-    "lng": 140.8949235,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
-    "name": "ネッツトヨタ仙台　泉バイパス店　No.2 (180kW)",
     "address": "宮城県仙台市泉区市名坂字寺下３４－１",
     "type": "teemo",
     "network": "teemo",
@@ -7911,19 +7149,6 @@ const CHARGER_DATA = [
     "direction": "none"
   },
   {
-    "name": "ネッツトヨタ福島　福島丸子店　No.2 (180kW)",
-    "address": "福島県福島市丸子字中ノ町12",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      180
-    ],
-    "lat": 37.7884373,
-    "lng": 140.486983,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
     "name": "ネッツトヨタ福島　オンリー鎌田 (150kW)",
     "address": "福島県福島市鎌田字下田１８ー２",
     "type": "teemo",
@@ -7989,19 +7214,6 @@ const CHARGER_DATA = [
     "direction": "none"
   },
   {
-    "name": "トヨタカローラ南茨城　阿見荒川沖店　No.2 (180kW)",
-    "address": "茨城県稲敷郡阿見町本郷1-20",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      180
-    ],
-    "lat": 36.0237195,
-    "lng": 140.1771931,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
     "name": "ネッツトヨタ茨城　マイネ平須 (150kW)",
     "address": "茨城県水戸市平須町1828-35",
     "type": "teemo",
@@ -8029,19 +7241,6 @@ const CHARGER_DATA = [
   },
   {
     "name": "ネッツトヨタ水戸　内原バイパス店　No.1 (180kW)",
-    "address": "茨城県水戸市内原１－１５１",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      180
-    ],
-    "lat": 36.3734365,
-    "lng": 140.352178,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
-    "name": "ネッツトヨタ水戸　内原バイパス店　No.2 (180kW)",
     "address": "茨城県水戸市内原１－１５１",
     "type": "teemo",
     "network": "teemo",
@@ -8094,19 +7293,6 @@ const CHARGER_DATA = [
   },
   {
     "name": "栃木トヨタ　足利店　No.1 (120kW)",
-    "address": "栃木県足利市山川町７５９－１",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      120
-    ],
-    "lat": 36.3272809,
-    "lng": 139.4779837,
-    "powerKw": 120,
-    "direction": "none"
-  },
-  {
-    "name": "栃木トヨタ　足利店　No.2 (120kW)",
     "address": "栃木県足利市山川町７５９－１",
     "type": "teemo",
     "network": "teemo",
@@ -8483,33 +7669,7 @@ const CHARGER_DATA = [
     "direction": "none"
   },
   {
-    "name": "トヨタモビリティ東京　本社　No.2 (180kW)",
-    "address": "東京都港区芝浦４丁目８−３ トヨタ芝浦ビル",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      180
-    ],
-    "lat": 35.6392732,
-    "lng": 139.7455506,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
     "name": "トヨタモビリティ東京　虎ノ門店　No.1 (180kW)",
-    "address": "東京都港区虎ノ門１丁目２番１３号",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      180
-    ],
-    "lat": 35.6691126,
-    "lng": 139.7479787,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
-    "name": "トヨタモビリティ東京　虎ノ門店　No.2 (180kW)",
     "address": "東京都港区虎ノ門１丁目２番１３号",
     "type": "teemo",
     "network": "teemo",
@@ -9016,19 +8176,6 @@ const CHARGER_DATA = [
     "direction": "none"
   },
   {
-    "name": "トヨタカローラ山梨　甲斐アルプス店　No.2 (180kW)",
-    "address": "山梨県甲斐市下今井１０５５",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      180
-    ],
-    "lat": 35.6817048,
-    "lng": 138.486544,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
     "name": "長野トヨタ　GRGarage松本 (150kW)",
     "address": "長野県松本市宮田5-3",
     "type": "teemo",
@@ -9393,19 +8540,6 @@ const CHARGER_DATA = [
     "direction": "none"
   },
   {
-    "name": "トヨタカローラ愛知　野並店　No.2 (180kW)",
-    "address": "愛知県名古屋市天白区野並二丁目２４番地",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      180
-    ],
-    "lat": 35.1036814,
-    "lng": 136.9531557,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
     "name": "トヨタカローラ愛知　稲沢店　No.1 (100kW)",
     "address": "愛知県稲沢市小池三丁目１１番２２号",
     "type": "teemo",
@@ -9446,19 +8580,6 @@ const CHARGER_DATA = [
   },
   {
     "name": "トヨタカローラ名古屋　千種都通店　No.1 (100kW)",
-    "address": "愛知県名古屋市千種区神田町１番１９号",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      100
-    ],
-    "lat": 35.1769828,
-    "lng": 136.9396499,
-    "powerKw": 100,
-    "direction": "none"
-  },
-  {
-    "name": "トヨタカローラ名古屋　千種都通店　No.2 (100kW)",
     "address": "愛知県名古屋市千種区神田町１番１９号",
     "type": "teemo",
     "network": "teemo",
@@ -9588,19 +8709,6 @@ const CHARGER_DATA = [
     "direction": "none"
   },
   {
-    "name": "ネッツトヨタ三重　四日市店　No.2 (100kW)",
-    "address": "三重県四日市市富士町4-5",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      100
-    ],
-    "lat": 34.9886525,
-    "lng": 136.6383335,
-    "powerKw": 100,
-    "direction": "none"
-  },
-  {
     "name": "ネッツトヨタ三重　四日市南店　No.1 (90kW)",
     "address": "三重県四日市市日永西５丁目２０－６",
     "type": "teemo",
@@ -9614,33 +8722,7 @@ const CHARGER_DATA = [
     "direction": "none"
   },
   {
-    "name": "ネッツトヨタ三重　四日市南店　No.2 (90kW)",
-    "address": "三重県四日市市日永西５丁目２０－６",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      90
-    ],
-    "lat": 34.9426191,
-    "lng": 136.5981282,
-    "powerKw": 90,
-    "direction": "none"
-  },
-  {
     "name": "三重トヨタ　レクサス松阪　No.1 (120kW)",
-    "address": "三重県松阪市高町２４８番地の１",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      120
-    ],
-    "lat": 34.5812246,
-    "lng": 136.5483322,
-    "powerKw": 120,
-    "direction": "none"
-  },
-  {
-    "name": "三重トヨタ　レクサス松阪　No.2 (120kW)",
     "address": "三重県松阪市高町２４８番地の１",
     "type": "teemo",
     "network": "teemo",
@@ -9680,19 +8762,6 @@ const CHARGER_DATA = [
   },
   {
     "name": "トヨタカローラ滋賀　近江八幡店　No.1 (90kW)",
-    "address": "滋賀県近江八幡市鷹飼町北３丁目１６番地２",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      90
-    ],
-    "lat": 35.1315344,
-    "lng": 136.1030863,
-    "powerKw": 90,
-    "direction": "none"
-  },
-  {
-    "name": "トヨタカローラ滋賀　近江八幡店　No.2 (90kW)",
     "address": "滋賀県近江八幡市鷹飼町北３丁目１６番地２",
     "type": "teemo",
     "network": "teemo",
@@ -9783,33 +8852,7 @@ const CHARGER_DATA = [
     "direction": "none"
   },
   {
-    "name": "ネッツトヨタヤサカ　松井山手店　No.2 (90kW)",
-    "address": "京都府京田辺市山手中央4-3",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      90
-    ],
-    "lat": 34.8336639,
-    "lng": 135.7249512,
-    "powerKw": 90,
-    "direction": "none"
-  },
-  {
     "name": "京都トヨタ　レクサス北大路　No.1 (100kW)",
-    "address": "京都府京都市北区紫野花ノ坊町15番地",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      100
-    ],
-    "lat": 35.0405256,
-    "lng": 135.738059,
-    "powerKw": 100,
-    "direction": "none"
-  },
-  {
-    "name": "京都トヨタ　レクサス北大路　No.2 (100kW)",
     "address": "京都府京都市北区紫野花ノ坊町15番地",
     "type": "teemo",
     "network": "teemo",
@@ -10121,33 +9164,7 @@ const CHARGER_DATA = [
     "direction": "none"
   },
   {
-    "name": "トヨタカローラ神戸　三田店　No.2 (180kW)",
-    "address": "兵庫県三田市福島３丁目１番地",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      180
-    ],
-    "lat": 34.9095782,
-    "lng": 135.210262,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
     "name": "ネッツトヨタ神戸　ネッツテラス尼崎　No.1 (180kW)",
-    "address": "兵庫県尼崎市名神町１丁目１８－２５",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      180
-    ],
-    "lat": 34.7428567,
-    "lng": 135.4150006,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
-    "name": "ネッツトヨタ神戸　ネッツテラス尼崎　No.2 (180kW)",
     "address": "兵庫県尼崎市名神町１丁目１８－２５",
     "type": "teemo",
     "network": "teemo",
@@ -10186,59 +9203,7 @@ const CHARGER_DATA = [
     "direction": "none"
   },
   {
-    "name": "神戸トヨペット　レクサス芦屋②　No.2 (100kW)",
-    "address": "兵庫県芦屋市業平町６番１４号",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      100
-    ],
-    "lat": 34.7323123,
-    "lng": 135.3050877,
-    "powerKw": 100,
-    "direction": "none"
-  },
-  {
-    "name": "神戸トヨペット　レクサス芦屋①　No.1 (100kW)",
-    "address": "兵庫県芦屋市業平町６番１４号",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      100
-    ],
-    "lat": 34.7323123,
-    "lng": 135.3050877,
-    "powerKw": 100,
-    "direction": "none"
-  },
-  {
-    "name": "神戸トヨペット　レクサス芦屋①　No.2 (100kW)",
-    "address": "兵庫県芦屋市業平町６番１４号",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      100
-    ],
-    "lat": 34.7323123,
-    "lng": 135.3050877,
-    "powerKw": 100,
-    "direction": "none"
-  },
-  {
     "name": "奈良トヨタ　田原本店　No.1 (90kW)",
-    "address": "奈良県磯城郡田原本町唐古296",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      90
-    ],
-    "lat": 34.5755268,
-    "lng": 135.7976492,
-    "powerKw": 90,
-    "direction": "none"
-  },
-  {
-    "name": "奈良トヨタ　田原本店　No.2 (90kW)",
     "address": "奈良県磯城郡田原本町唐古296",
     "type": "teemo",
     "network": "teemo",
@@ -10485,33 +9450,7 @@ const CHARGER_DATA = [
     "direction": "none"
   },
   {
-    "name": "広島トヨペット　廿日市店　No.2 (180kW)",
-    "address": "広島県廿日市市串戸１丁目８－１８",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      180
-    ],
-    "lat": 34.3471832,
-    "lng": 132.3283787,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
     "name": "広島トヨペット　CLiP HIROSHIMA　No.1 (180kW)",
-    "address": "広島県広島市中区東千田町１丁目１－１８",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      180
-    ],
-    "lat": 34.3824844,
-    "lng": 132.4591743,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
-    "name": "広島トヨペット　CLiP HIROSHIMA　No.2 (180kW)",
     "address": "広島県広島市中区東千田町１丁目１－１８",
     "type": "teemo",
     "network": "teemo",
@@ -10667,33 +9606,7 @@ const CHARGER_DATA = [
     "direction": "none"
   },
   {
-    "name": "トヨタカローラ愛媛　中央通店　No.2 (180kW)",
-    "address": "愛媛県松山市中央１丁目１６−５",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      180
-    ],
-    "lat": 33.854963,
-    "lng": 132.7501074,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
     "name": "ネッツトヨタ愛媛　だんだんＰＡＲＫ　No.1 (120kW)",
-    "address": "愛媛県松山市空港通２丁目６−３３",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      120
-    ],
-    "lat": 33.8279937,
-    "lng": 132.7402221,
-    "powerKw": 120,
-    "direction": "none"
-  },
-  {
-    "name": "ネッツトヨタ愛媛　だんだんＰＡＲＫ　No.2 (120kW)",
     "address": "愛媛県松山市空港通２丁目６−３３",
     "type": "teemo",
     "network": "teemo",
@@ -10745,33 +9658,7 @@ const CHARGER_DATA = [
     "direction": "none"
   },
   {
-    "name": "福岡トヨタ　北九州本店　No.2 (180kW)",
-    "address": "福岡県北九州市小倉北区貴船町２−２",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      180
-    ],
-    "lat": 33.8715604,
-    "lng": 130.8727115,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
     "name": "福岡トヨタ　久留米本店　No.1 (180kW)",
-    "address": "福岡県久留米市天神町２−３８",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      180
-    ],
-    "lat": 33.3103602,
-    "lng": 130.5231919,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
-    "name": "福岡トヨタ　久留米本店　No.2 (180kW)",
     "address": "福岡県久留米市天神町２−３８",
     "type": "teemo",
     "network": "teemo",
@@ -10888,19 +9775,6 @@ const CHARGER_DATA = [
     "direction": "none"
   },
   {
-    "name": "トヨタカローラ福岡　福重店　No.2 (90kW)",
-    "address": "福岡県福岡市西区福重２丁目４－１６",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      90
-    ],
-    "lat": 33.5680043,
-    "lng": 130.3192843,
-    "powerKw": 90,
-    "direction": "none"
-  },
-  {
     "name": "ネッツトヨタ北九州　八幡本店　No.1 (100kW)",
     "address": "福岡県北九州市八幡西区皇后崎町１４番６",
     "type": "teemo",
@@ -10915,19 +9789,6 @@ const CHARGER_DATA = [
   },
   {
     "name": "ネッツトヨタ西日本　ユーロード百年パーク店　No.1 (120kW)",
-    "address": "福岡県久留米市百年公園２−６",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      120
-    ],
-    "lat": 33.3221274,
-    "lng": 130.5315165,
-    "powerKw": 120,
-    "direction": "none"
-  },
-  {
-    "name": "ネッツトヨタ西日本　ユーロード百年パーク店　No.2 (120kW)",
     "address": "福岡県久留米市百年公園２−６",
     "type": "teemo",
     "network": "teemo",
@@ -11096,19 +9957,6 @@ const CHARGER_DATA = [
     "direction": "none"
   },
   {
-    "name": "トヨタカローラ大分　大分東店　No.2 (90kW)",
-    "address": "大分県大分市乙津町１番１０号",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      90
-    ],
-    "lat": 33.2415374,
-    "lng": 131.6729218,
-    "powerKw": 90,
-    "direction": "none"
-  },
-  {
     "name": "ネッツトヨタ大分　ネスタ本店 (150kW)",
     "address": "大分県大分市三佐一丁目２番２３号",
     "type": "teemo",
@@ -11200,19 +10048,6 @@ const CHARGER_DATA = [
     "direction": "none"
   },
   {
-    "name": "トヨタカローラ鹿児島　POLDER Terrace　No.2 (180kW)",
-    "address": "鹿児島県鹿児島市東開町５－４０",
-    "type": "teemo",
-    "network": "teemo",
-    "powers": [
-      180
-    ],
-    "lat": 31.5380115,
-    "lng": 130.5372291,
-    "powerKw": 180,
-    "direction": "none"
-  },
-  {
     "name": "ネッツトヨタ鹿児島　城南本店 (150kW)",
     "address": "鹿児島県鹿児島市城南町8番19号",
     "type": "teemo",
@@ -11237,17 +10072,6 @@ const CHARGER_DATA = [
     "lng": 127.7623518,
     "powerKw": 100,
     "direction": "none"
-  },
-  {
-    "name": "アネスト岩田ターンパイク箱根スカイラウンジ",
-    "address": "神奈川県足柄下郡湯河原町鍛冶屋955-17",
-    "type": "flash",
-    "powers": [
-      240
-    ],
-    "lat": 35.1843551,
-    "lng": 139.0488578,
-    "powerKw": 240
   },
   {
     "name": "※2台共故障中のためご利用いただけません。",
