@@ -925,8 +925,10 @@ async function runSimulation(segments, elevations, params, onProgress) {
                     && roadMatchesCharger(currentRoadName, c.name);
             };
             // 最短充電モードON: まず150kW機を優先。なければminKwフィルタで通常選択
-            const saPa = (strategyQuickChg && chargerDB.find(c => parseInt(c.powerKw) >= 150 && _saPaMatch(c)))
-                || chargerDB.find(c => (minKw === 0 || parseInt(c.powerKw) >= minKw) && _saPaMatch(c));
+            // quickChgモードは150kW機のみ対象（90kW以下へのフォールバックなし）
+            const saPa = strategyQuickChg
+                ? chargerDB.find(c => parseInt(c.powerKw) >= 150 && _saPaMatch(c))
+                : chargerDB.find(c => (minKw === 0 || parseInt(c.powerKw) >= minKw) && _saPaMatch(c));
             const _logTrigger = needRestStop ? '休憩' : currentSoc < thresholdSocPct ? `閾値${thresholdSocPct}%` : _proactiveTrigger ? '先手' : 'SOC不足';
 
             if (saPa) {
@@ -1036,6 +1038,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                     const eKey = c => `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
                     const emergencySaPa = chargerDB.find(c =>
                         c.type === 'sa_pa'
+                        && (!strategyQuickChg || parseInt(c.powerKw) >= 150)
                         && haversine(c.lat, c.lng, s.lat, s.lng) < 8.0
                         && !userIgnoredChargers.includes(eKey(c))
                         && isValidDirection(c.name, currentTripIsUpbound)
