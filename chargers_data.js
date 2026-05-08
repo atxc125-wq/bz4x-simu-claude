@@ -3651,11 +3651,12 @@ const CHARGER_DATA = [
     "address": "広島県福山市津之郷町津之郷３３４－１",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 34.4920055,
     "lng": 133.3077331,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "up"
   },
   {
@@ -6157,11 +6158,12 @@ const CHARGER_DATA = [
     "address": "広島県福山市津之郷町津之郷３３４－１",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 34.4920055,
     "lng": 133.3077331,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {

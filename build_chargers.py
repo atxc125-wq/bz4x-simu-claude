@@ -103,10 +103,10 @@ def scrape_emp():
                         if lines[j]: name = lines[j]; break
                     if not name or len(addr) < 5: continue
                     powers = []
-                    for j in range(i+1, min(len(lines), i+50)):
+                    for j in range(i+1, min(len(lines), i+200)):
                         if "【所在地" in lines[j]: break
                         kw = parse_power_kw(lines[j])
-                        if kw: powers.append(kw)
+                        if kw and kw not in powers: powers.append(kw)
                     is_hw = any(x in (name + addr) for x in ["SA", "PA", "サービスエリア", "パーキングエリア", "高速", "自動車道"])
                     out.append({"name": name, "address": addr, "type": "sa_pa" if is_hw else "emp", "powers": powers or [50]})
         except Exception as e:
@@ -214,14 +214,14 @@ def load_existing(path):
         log.warning(f"Could not load existing data: {e}")
     return []
 
-def is_duplicate(entry, existing, dist_km=1.5):
-    """名前または位置が既存データと重複しているか判定"""
+def find_duplicate(entry, existing, dist_km=1.5):
+    """既存データと重複するエントリを返す（なければNone）"""
     entry_name = entry.get("name", "")
     entry_is_up   = "上り" in entry_name
     entry_is_down = "下り" in entry_name
     for e in existing:
         if e.get("name") == entry_name:
-            return True
+            return e
         if e.get("lat") and entry.get("lat"):
             if haversine_km(e["lat"], e["lng"], entry["lat"], entry["lng"]) < dist_km:
                 # 上り/下りが逆向きのペアは同座標でも別施設 → 重複扱いしない
@@ -230,8 +230,11 @@ def is_duplicate(entry, existing, dist_km=1.5):
                 e_is_down = "下り" in e_name
                 if (entry_is_up and e_is_down) or (entry_is_down and e_is_up):
                     continue
-                return True
-    return False
+                return e
+    return None
+
+def is_duplicate(entry, existing, dist_km=1.5):
+    return find_duplicate(entry, existing, dist_km) is not None
 
 def main():
     log.info("=== BZ4X Charger Data Building Start ===")
@@ -248,9 +251,23 @@ def main():
     raw_data = flash_data + emp_data + SA_PA_SEED
     log.info(f"Scraped: Flash={len(flash_data)}, EMP={len(emp_data)}, Seed={len(SA_PA_SEED)}")
 
-    # 既存データと重複しない新規エントリのみジオコード
-    new_entries = [d for d in raw_data if not is_duplicate(d, existing_data)]
-    log.info(f"New entries to geocode: {len(new_entries)} (skipped {len(raw_data)-len(new_entries)} duplicates)")
+    # 既存エントリのpowersを最新スクレイピング結果でアップデート（150kW追加等に対応）
+    update_count = 0
+    new_entries = []
+    for d in raw_data:
+        match = find_duplicate(d, existing_data)
+        if match:
+            old_powers = set(match.get("powers", [match.get("powerKw", 0)]))
+            new_powers = set(d.get("powers", []))
+            merged = sorted(old_powers | new_powers, reverse=True)
+            if merged != sorted(old_powers, reverse=True):
+                match["powers"] = merged
+                match["powerKw"] = merged[0]
+                update_count += 1
+                log.info(f"Updated: {match['name']} {sorted(old_powers,reverse=True)} → {merged}")
+        else:
+            new_entries.append(d)
+    log.info(f"Updated {update_count} existing entries / New to geocode: {len(new_entries)} (skipped {len(raw_data)-update_count-len(new_entries)} unchanged)")
     total = len(new_entries)
 
     # 2. ジオコーディング（進捗表示付き）
