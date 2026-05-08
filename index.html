@@ -267,6 +267,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
         </div>
         <div id="gmaps-share-row" style="margin-top:12px;"></div>
         <div id="stop-list" style="margin-top:8px"></div>
+        <div id="sim-log-row" style="margin-top:12px;"></div>
     </div>
   </div>
   <div id="right">
@@ -750,7 +751,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
     const { batteryKwh, startSocPct, thresholdSocPct, tripDate, startHour, waypointIndexes, isUpboundLegs, allChargerWps, expertMode, cityEff, hwyEff, manualTemp, altCorrection, preconTempThreshold = 15, preconDest = false, strategyMinKw = 0, strategyBoost15 = false, strategyRest = false, restIntervalMin = 90, strategyQuickChg = false, routeChargerList = null, targetArrivalSocPct = thresholdSocPct } = params;
     const minKw = strategyMinKw;
     let socKwh = (startSocPct / 100) * batteryKwh, km = 0, time = 0;
-    const profile = [], stops = [];
+    const profile = [], stops = [], simLog = [];
     let lastChargeKm = -999, lastWeatherKm = -999, curBaseTemp = 15, lastWeatherElev = 0;
     let lastLocalTemp = 15;
     let startElev = null; // 出発地標高（玄人モード標高補正の基準）
@@ -936,6 +937,10 @@ async function runSimulation(segments, elevations, params, onProgress) {
                             thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm,
                             { powerKw: saPa.powerKw, name: saPa.name, lat: saPa.lat, lng: saPa.lng, type: 'sa_pa' })
                         : -1;
+                    const _logTrigger = needRestStop ? '休憩' : currentSoc < thresholdSocPct ? `閾値${thresholdSocPct}%` : _proactiveTrigger ? '先手' : '到達不足';
+                    if (_quickDur === 0) {
+                        simLog.push({ km: Math.round(km), name: saPa.name, kw: parseInt(saPa.powerKw), soc: Math.round((socKwh/batteryKwh)*100), action: 'skip', reason: 'quickChg: 次の150kW機まで届く' });
+                    }
                     if (_quickDur !== 0) {
                         if (onProgress) onProgress(`🔌 ${saPa.name.replace(/^.*?　/, '')} を発見 (${Math.round(km)}km地点)`);
                         const isRestStop = needRestStop;
@@ -964,6 +969,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                             }
                         }
                         stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, km, isUpbound: currentTripIsUpbound, detectedRoad: currentRoadName || '不明' });
+                        simLog.push({ km: Math.round(km), name: saPa.name, kw: parseInt(saPa.powerKw), socBefore: Math.round(socBefore), socAfter: Math.round(socAfter), duration, action: 'stop', trigger: _logTrigger });
                         time += duration;
                         lastChargeTime = time;
                         socKwh = (socAfter / 100) * batteryKwh;
@@ -1042,6 +1048,9 @@ async function runSimulation(segments, elevations, params, onProgress) {
                                 thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm,
                                 { powerKw: emergencySaPa.powerKw, name: emergencySaPa.name, lat: emergencySaPa.lat, lng: emergencySaPa.lng, type: 'sa_pa' })
                             : -1;
+                        if (_quickDur3 === 0) {
+                            simLog.push({ km: Math.round(km), name: emergencySaPa.name, kw: parseInt(emergencySaPa.powerKw), soc: Math.round((socKwh/batteryKwh)*100), action: 'skip', reason: 'quickChg: 次の150kW機まで届く(緊急)' });
+                        }
                         if (_quickDur3 !== 0) {
                         if (onProgress) onProgress(`🔌 ${emergencySaPa.name.replace(/^.*?　/, '')} (緊急 ${emergencySaPa.powerKw}kW) を使用 (${Math.round(km)}km地点)`);
                         const defaultDur = (strategyBoost15 && parseInt(emergencySaPa.powerKw) >= 150) ? 15 : 30;
@@ -1068,6 +1077,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                             }
                         }
                         stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, km, isUpbound: currentTripIsUpbound, detectedRoad: currentRoadName || '不明' });
+                        simLog.push({ km: Math.round(km), name: emergencySaPa.name, kw: parseInt(emergencySaPa.powerKw), socBefore: Math.round(socBefore), socAfter: Math.round(socAfter), duration, action: 'stop', trigger: '緊急' });
                         time += duration; lastChargeTime = time; socKwh = (socAfter / 100) * batteryKwh; lastChargeKm = km;
                         }
                     }
@@ -1095,7 +1105,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
     }
 
     const avgTemp = tempCount > 0 ? tempSum / tempCount : 15;
-    return { profile, stops, arrivalSoc: isDead ? 0 : (socKwh/batteryKwh)*100, eta: time, isDead, deadKm: km, deadLocation, warningLocation, warningKm, avgTemp, totalKm, hwyKm, startSocPct };
+    return { profile, stops, simLog, arrivalSoc: isDead ? 0 : (socKwh/batteryKwh)*100, eta: time, isDead, deadKm: km, deadLocation, warningLocation, warningKm, avgTemp, totalKm, hwyKm, startSocPct };
 }
 
 function showLoading(msg, sub) {
@@ -1717,6 +1727,42 @@ function renderUI() {
           </button>
         </div>
       `;
+    }
+
+    { const logRow = document.getElementById('sim-log-row');
+      const log = currentSim.simLog || [];
+      if (log.length === 0) { logRow.innerHTML = ''; }
+      else {
+        const rows = log.map(e => {
+          const nameShort = e.name.replace(/^.*?[　\s]/, '').slice(0, 18);
+          if (e.action === 'stop') {
+            const icon = e.trigger === '閾値' + (e.trigger.match(/\d+/)??[''])[0] + '%' || e.trigger === '緊急' ? '🔴' : e.trigger === '休憩' ? '🛌' : '🟡';
+            return `<tr><td style="color:#64748b">${e.km}km</td><td>${icon}停</td><td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nameShort}</td><td>${e.kw}kW</td><td>${e.socBefore}→${e.socAfter}%</td><td>${e.duration}分</td><td style="color:#64748b">[${e.trigger}]</td></tr>`;
+          } else {
+            return `<tr style="opacity:0.5"><td style="color:#64748b">${e.km}km</td><td>⏭スキ</td><td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nameShort}</td><td>${e.kw}kW</td><td>${e.soc}%</td><td>-</td><td style="color:#64748b">[${e.reason}]</td></tr>`;
+          }
+        }).join('');
+        logRow.innerHTML = `
+          <details style="margin-top:4px;">
+            <summary style="cursor:pointer; font-size:11px; color:var(--muted); padding:6px 0; user-select:none;">
+              📋 シミュレーションログ (${log.length}件 — タップで展開)
+            </summary>
+            <div style="overflow-x:auto; margin-top:6px;">
+              <table style="font-size:10px; font-family:monospace; border-collapse:collapse; width:100%; white-space:nowrap;">
+                <thead><tr style="color:#64748b; border-bottom:1px solid #334155;">
+                  <th style="padding:3px 6px;text-align:left">地点</th>
+                  <th style="padding:3px 6px;text-align:left">判断</th>
+                  <th style="padding:3px 6px;text-align:left">名前</th>
+                  <th style="padding:3px 6px;text-align:left">kW</th>
+                  <th style="padding:3px 6px;text-align:left">SOC</th>
+                  <th style="padding:3px 6px;text-align:left">時間</th>
+                  <th style="padding:3px 6px;text-align:left">トリガー</th>
+                </tr></thead>
+                <tbody>${rows}</tbody>
+              </table>
+            </div>
+          </details>`;
+      }
     }
 
     updateMapDrawing();
