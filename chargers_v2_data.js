@@ -1176,18 +1176,6 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "e-Mobility Power 充電スタンド (90kW)",
-    "address": "日本、〒803-0845 福岡県北九州市小倉北区上到津４丁目１２−３",
-    "type": "normal",
-    "powers": [
-      90
-    ],
-    "lat": 33.871190299999995,
-    "lng": 130.8454296,
-    "powerKw": 90,
-    "direction": "none"
-  },
-  {
     "name": "Tesla充電スタンド (250kW)",
     "address": "日本、〒805-0071 福岡県北九州市八幡東区東田４丁目１−１",
     "type": "normal",
@@ -1197,6 +1185,18 @@ const CHARGER_V2_DATA = [
     "lat": 33.874463,
     "lng": 130.810478,
     "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "e-Mobility Power 充電スタンド (90kW)",
+    "address": "日本、〒803-0845 福岡県北九州市小倉北区上到津４丁目１２−３",
+    "type": "normal",
+    "powers": [
+      90
+    ],
+    "lat": 33.871190299999995,
+    "lng": 130.8454296,
+    "powerKw": 90,
     "direction": "none"
   },
   {

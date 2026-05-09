@@ -10293,6 +10293,45 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
+    "name": "浜名湖SA（下り）",
+    "address": "静岡県浜松市西区 東名高速道路",
+    "type": "sa_pa",
+    "powers": [
+      90,
+      50
+    ],
+    "lat": 34.7819756,
+    "lng": 137.6091969,
+    "powerKw": 90,
+    "direction": "down"
+  },
+  {
+    "name": "双葉SA（下り）",
+    "address": "山梨県甲斐市 中央自動車道",
+    "type": "sa_pa",
+    "powers": [
+      90,
+      50
+    ],
+    "lat": 35.6804823,
+    "lng": 138.5099942,
+    "powerKw": 90,
+    "direction": "down"
+  },
+  {
+    "name": "三芳PA（下り）",
+    "address": "埼玉県三芳町 関越自動車道",
+    "type": "sa_pa",
+    "powers": [
+      90,
+      50
+    ],
+    "lat": 35.8413609,
+    "lng": 139.5026405,
+    "powerKw": 90,
+    "direction": "down"
+  },
+  {
     "name": "ネッツトヨタ仙台　日の出店　No.2 (180kW)",
     "address": "宮城県仙台市宮城野区日の出町２丁目１‐１",
     "type": "teemo",
