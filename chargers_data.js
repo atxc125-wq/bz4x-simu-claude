@@ -2878,33 +2878,6 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "NEOPASA岡崎（下り）",
-    "address": "愛知県岡崎市宮石町六ツ田",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      90,
-      50
-    ],
-    "lat": 35.0342,
-    "lng": 137.2218,
-    "powerKw": 150,
-    "direction": "down"
-  },
-  {
-    "name": "NEOPASA浜松（下り）",
-    "address": "静岡県浜松市浜名区",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      90
-    ],
-    "lat": 34.842,
-    "lng": 137.75,
-    "powerKw": 150,
-    "direction": "down"
-  },
-  {
     "name": "新東名高速道路　遠州森町ＰＡ下り",
     "address": "静岡県周智郡森町",
     "type": "sa_pa",
@@ -2927,45 +2900,6 @@ const CHARGER_DATA = [
     "lng": 138.0362,
     "powerKw": 90,
     "direction": "up"
-  },
-  {
-    "name": "NEOPASA静岡（下り）",
-    "address": "静岡県静岡市葵区飯間",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      90
-    ],
-    "lat": 34.968,
-    "lng": 138.2906,
-    "powerKw": 150,
-    "direction": "down"
-  },
-  {
-    "name": "NEOPASA清水（下り）",
-    "address": "静岡県静岡市清水区小河内",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      90
-    ],
-    "lat": 35.132,
-    "lng": 138.512,
-    "powerKw": 150,
-    "direction": "down"
-  },
-  {
-    "name": "富士川SA（下り）",
-    "address": "静岡県富士市木島",
-    "type": "sa_pa",
-    "powers": [
-      90,
-      50
-    ],
-    "lat": 35.16,
-    "lng": 138.6175,
-    "powerKw": 90,
-    "direction": "down"
   },
   {
     "name": "新東名高速道路　駿河湾沼津ＳＡ下り",
@@ -4701,31 +4635,6 @@ const CHARGER_DATA = [
     "direction": "up"
   },
   {
-    "name": "佐野SA（上り）",
-    "address": "栃木県佐野市黒袴町字東山１０１０",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      90
-    ],
-    "lat": 36.3171905,
-    "lng": 139.6192374,
-    "powerKw": 150,
-    "direction": "up"
-  },
-  {
-    "name": "那須高原SA（上り）",
-    "address": "栃木県那須郡那須町豊原丙４０９２２",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 37.05630379999999,
-    "lng": 140.1020095,
-    "powerKw": 90,
-    "direction": "up"
-  },
-  {
     "name": "上信越自動車道　横川ＳＡ下り",
     "address": "群馬県安中市松井田町横川字大林９５０番地２",
     "type": "sa_pa",
@@ -6409,18 +6318,6 @@ const CHARGER_DATA = [
     "direction": "down"
   },
   {
-    "name": "安積PA（上り）",
-    "address": "福島県郡山市安積町 東北自動車道",
-    "type": "sa_pa",
-    "powers": [
-      50
-    ],
-    "lat": 37.3528024,
-    "lng": 140.3225135,
-    "powerKw": 50,
-    "direction": "up"
-  },
-  {
     "name": "古川SA（下り）",
     "address": "宮城県大崎市古川 東北自動車道",
     "type": "sa_pa",
@@ -6655,11 +6552,12 @@ const CHARGER_DATA = [
     "address": "静岡県静岡市葵区飯間１２５８",
     "type": "sa_pa",
     "powers": [
+      150,
       90
     ],
     "lat": 34.9685274,
     "lng": 138.2911149,
-    "powerKw": 90,
+    "powerKw": 150,
     "direction": "down"
   },
   {
@@ -6712,30 +6610,6 @@ const CHARGER_DATA = [
     "lng": 135.9483209,
     "powerKw": 90,
     "direction": "up"
-  },
-  {
-    "name": "那須高原SA（下り）",
-    "address": "栃木県那須郡那須町 東北自動車道",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 37.0569644,
-    "lng": 140.0996659,
-    "powerKw": 90,
-    "direction": "down"
-  },
-  {
-    "name": "安積PA（下り）",
-    "address": "福島県郡山市安積町 東北自動車道",
-    "type": "sa_pa",
-    "powers": [
-      50
-    ],
-    "lat": 37.3528024,
-    "lng": 140.3225135,
-    "powerKw": 50,
-    "direction": "down"
   },
   {
     "name": "阿武隈高原SA（下り）",
@@ -10105,190 +9979,6 @@ const CHARGER_DATA = [
     ],
     "lat": 34.9796354,
     "lng": 138.2936312,
-    "powerKw": 90,
-    "direction": "up"
-  },
-  {
-    "name": "足柄SA（下り）",
-    "address": "静岡県小山町須走 東名高速道路",
-    "type": "sa_pa",
-    "powers": [
-      50
-    ],
-    "lat": 35.3133615,
-    "lng": 138.9670812,
-    "powerKw": 50,
-    "direction": "down"
-  },
-  {
-    "name": "浜名湖SA（上り）",
-    "address": "静岡県浜松市西区 東名高速道路",
-    "type": "sa_pa",
-    "powers": [
-      90,
-      50
-    ],
-    "lat": 34.7819756,
-    "lng": 137.6091969,
-    "powerKw": 90,
-    "direction": "up"
-  },
-  {
-    "name": "NEOPASA浜松（上り）",
-    "address": "静岡県浜松市浜北区 新東名高速道路",
-    "type": "sa_pa",
-    "powers": [
-      150,
-      90
-    ],
-    "lat": 34.8432099,
-    "lng": 137.750512,
-    "powerKw": 150,
-    "direction": "up"
-  },
-  {
-    "name": "上河内SA（下り）",
-    "address": "栃木県宇都宮市上河内 東北自動車道",
-    "type": "sa_pa",
-    "powers": [
-      50
-    ],
-    "lat": 36.6890613,
-    "lng": 139.8892134,
-    "powerKw": 50,
-    "direction": "down"
-  },
-  {
-    "name": "安達太良SA（下り）",
-    "address": "福島県本宮市 東北自動車道",
-    "type": "sa_pa",
-    "powers": [
-      90
-    ],
-    "lat": 37.5155782,
-    "lng": 140.3804299,
-    "powerKw": 90,
-    "direction": "down"
-  },
-  {
-    "name": "国見SA（下り）",
-    "address": "福島県伊達郡国見町 東北自動車道",
-    "type": "sa_pa",
-    "powers": [
-      50
-    ],
-    "lat": 37.9076491,
-    "lng": 140.5779869,
-    "powerKw": 50,
-    "direction": "down"
-  },
-  {
-    "name": "菅生PA（下り）",
-    "address": "宮城県柴田郡村田町 東北自動車道",
-    "type": "sa_pa",
-    "powers": [
-      50
-    ],
-    "lat": 38.1682453,
-    "lng": 140.7656641,
-    "powerKw": 50,
-    "direction": "down"
-  },
-  {
-    "name": "鶴巣PA（下り）",
-    "address": "宮城県黒川郡大和町 東北自動車道",
-    "type": "sa_pa",
-    "powers": [
-      50
-    ],
-    "lat": 38.4124226,
-    "lng": 140.9148814,
-    "powerKw": 50,
-    "direction": "down"
-  },
-  {
-    "name": "長者原SA（下り）",
-    "address": "宮城県大崎市古川 東北自動車道",
-    "type": "sa_pa",
-    "powers": [
-      50
-    ],
-    "lat": 38.6375397,
-    "lng": 140.9596937,
-    "powerKw": 50,
-    "direction": "down"
-  },
-  {
-    "name": "前沢SA（下り）",
-    "address": "岩手県奥州市前沢 東北自動車道",
-    "type": "sa_pa",
-    "powers": [
-      50
-    ],
-    "lat": 39.0671589,
-    "lng": 141.1000986,
-    "powerKw": 50,
-    "direction": "down"
-  },
-  {
-    "name": "紫波SA（下り）",
-    "address": "岩手県紫波郡紫波町 東北自動車道",
-    "type": "sa_pa",
-    "powers": [
-      50
-    ],
-    "lat": 39.514918,
-    "lng": 141.1016903,
-    "powerKw": 50,
-    "direction": "down"
-  },
-  {
-    "name": "岩手山SA（下り）",
-    "address": "岩手県八幡平市 東北自動車道",
-    "type": "sa_pa",
-    "powers": [
-      50
-    ],
-    "lat": 39.9138708,
-    "lng": 141.0463607,
-    "powerKw": 50,
-    "direction": "down"
-  },
-  {
-    "name": "花輪SA（下り）",
-    "address": "秋田県鹿角市花輪 東北自動車道",
-    "type": "sa_pa",
-    "powers": [
-      50
-    ],
-    "lat": 40.1868346,
-    "lng": 140.8034163,
-    "powerKw": 50,
-    "direction": "down"
-  },
-  {
-    "name": "双葉SA（上り）",
-    "address": "山梨県甲斐市 中央自動車道",
-    "type": "sa_pa",
-    "powers": [
-      90,
-      50
-    ],
-    "lat": 35.6804823,
-    "lng": 138.5099942,
-    "powerKw": 90,
-    "direction": "up"
-  },
-  {
-    "name": "三芳PA（上り）",
-    "address": "埼玉県三芳町 関越自動車道",
-    "type": "sa_pa",
-    "powers": [
-      90,
-      50
-    ],
-    "lat": 35.8413609,
-    "lng": 139.5026405,
     "powerKw": 90,
     "direction": "up"
   },
