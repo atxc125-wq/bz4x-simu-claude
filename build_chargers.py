@@ -347,6 +347,50 @@ def main():
             log.info(f"Dedup: merged '{c['name']}' into '{prev['name']}'")
     final = list(_seen.values())
     log.info(f"Final dataset: {len(existing_data)} existing + {len(merged)} new = {len(final_raw)} → dedup → {len(final)} total")
+
+    # 7. 短名エントリ dedup
+    #    「XXX（下り）」のように道路名を含まない短名エントリで、
+    #    500m以内に同方向の長名エントリ（自動車道/高速道路含む）があれば除去。
+    #    短名の方が kW が高い場合は長名エントリを先にアップグレードしてから除去。
+    log.info("Short-name dedup: removing short-name SA/PA entries shadowed by long-name entries...")
+
+    def _is_short_sa_name(name):
+        return ('自動車道' not in name and '高速道路' not in name and '国道' not in name
+                and ('（下り）' in name or '（上り）' in name))
+
+    def _dir_from_sa_name(name):
+        if '（下り）' in name or '下線' in name: return 'down'
+        if '（上り）' in name or '上線' in name: return 'up'
+        return None
+
+    short_remove = set()
+    for i, c in enumerate(final):
+        if c.get('type') != 'sa_pa' or not _is_short_sa_name(c.get('name', '')):
+            continue
+        c_dir = _dir_from_sa_name(c['name'])
+        for j, other in enumerate(final):
+            if i == j or other.get('type') != 'sa_pa' or _is_short_sa_name(other.get('name', '')):
+                continue
+            dist = haversine_km(c['lat'], c['lng'], other['lat'], other['lng'])
+            if dist < 0.5:
+                o_dir = other.get('direction') or _dir_from_sa_name(other.get('name', ''))
+                if c_dir is None or o_dir is None or c_dir == o_dir:
+                    if int(c.get('powerKw', 0)) > int(other.get('powerKw', 0)):
+                        merged_p = sorted(set(
+                            other.get('powers', [other.get('powerKw', 0)]) +
+                            c.get('powers', [c.get('powerKw', 0)])
+                        ), reverse=True)
+                        other['powers'] = merged_p
+                        other['powerKw'] = merged_p[0]
+                        log.info(f"  Upgraded: '{other['name']}' → {other['powerKw']}kW (from '{c['name']}')")
+                    short_remove.add(i)
+                    log.info(f"  Remove: '{c['name']}' ({c['powerKw']}kW, {c_dir}) → kept '{other['name']}' ({other['powerKw']}kW) {dist*1000:.0f}m")
+                    break
+
+    before_short = len(final)
+    final = [c for i, c in enumerate(final) if i not in short_remove]
+    log.info(f"Short-name dedup: removed {len(short_remove)} entries ({before_short} → {len(final)})")
+
     with open(out_path, "w", encoding="utf-8") as f:
         f.write("const CHARGER_DATA = ")
         json.dump(final, f, ensure_ascii=False, indent=2)
