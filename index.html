@@ -274,7 +274,6 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
         </div>
         <div id="gmaps-share-row" style="margin-top:12px;"></div>
         <div id="stop-list" style="margin-top:8px"></div>
-        <div id="sim-log-row" style="margin-top:12px;"></div>
     </div>
   </div>
   <div id="right">
@@ -301,6 +300,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             </div>
             <canvas id="combo-chart"></canvas>
         </div>
+        <div id="sim-log-row" style="margin-top:8px;"></div>
     </div>
   </div>
 </div>
@@ -604,9 +604,12 @@ function extractRoadName(htmlInstr) {
 
 // 高速道路名の末尾（"高速道路","自動車道","高速"）を除いた固有部分を返す
 // 例: "新東名高速道路" → "新東名", "東名高速" → "東名", "北陸自動車道" → "北陸"
+// "E4東北自動車道" → "東北" (Google Mapsが返すEナンバー形式も正規化)
 function extractHighwayCore(name) {
     if (!name) return null;
-    return name.replace(/高速道路$/, '').replace(/自動車道$/, '').replace(/高速$/, '').replace(/道路$/, '');
+    let core = name.replace(/高速道路$/, '').replace(/自動車道$/, '').replace(/高速$/, '').replace(/道路$/, '');
+    core = core.replace(/^[A-Za-z]\d+/, ''); // E4東北 → 東北
+    return core;
 }
 
 function shortHighway(name) {
