@@ -138,7 +138,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.2<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.3<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-08</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
@@ -300,8 +300,8 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             </div>
             <canvas id="combo-chart"></canvas>
         </div>
-        <div id="sim-log-row" style="margin-top:8px;"></div>
     </div>
+    <div id="sim-log-row" style="padding:6px 20px 10px; background:var(--panel); border-top:1px solid var(--border);"></div>
   </div>
 </div>
 
@@ -1058,6 +1058,8 @@ async function runSimulation(segments, elevations, params, onProgress) {
                     if (c.type === 'teemo' && _nearSaPa) return false;
                     // 高速上 + 緊急でも先手でもない → TEEMO除外
                     if (c.type === 'teemo' && onOrNearHighway && !_socTrigger && !_proactiveTEEMO) return false;
+                    // 高速上ではTEEMO/FLASH以外（eMP等一般道充電器）へのリルートを禁止
+                    if (onOrNearHighway && c.type !== 'teemo' && c.type !== 'flash') return false;
                     const dist = haversine(c.lat, c.lng, s.lat, s.lng);
                     const radius = c.type === 'teemo' ? teemoRadius : 7.0;
                     const key = `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
@@ -2662,6 +2664,13 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.3</span><span class="cl-date">2026-05-09</span>
+        <ul class="cl-items">
+          <li>【電欠バグ修正】高速道路上でeMP等の一般道充電器にリルートされる問題を修正（onOrNearHighway時はTEEMO/FLASH以外をStep2候補から除外）</li>
+          <li>【表示修正】シミュレーションログがPC画面で表示されない問題を修正（chart-wrap外に移動）</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.2</span><span class="cl-date">2026-05-09</span>
         <ul class="cl-items">
