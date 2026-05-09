@@ -138,7 +138,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.3<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.4<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-08</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
@@ -791,10 +791,11 @@ function calcQuickChgDuration(socBefore, km, totalKm, routeChargerList,
 
 // ★ 引数を1つのparamsオブジェクトに集約（エラー防止）
 async function runSimulation(segments, elevations, params, onProgress) {
-    const { batteryKwh, startSocPct, thresholdSocPct, tripDate, startHour, waypointIndexes, isUpboundLegs, allChargerWps, expertMode, cityEff, hwyEff, manualTemp, altCorrection, preconTempThreshold = 15, preconDest = false, strategyMinKw = 0, strategyBoost15 = false, strategyRest = false, restIntervalMin = 90, strategyQuickChg = false, routeChargerList = null, targetArrivalSocPct = thresholdSocPct } = params;
+    const { batteryKwh, startSocPct, thresholdSocPct, tripDate, startHour, waypointIndexes, isUpboundLegs, allChargerWps, expertMode, cityEff, hwyEff, manualTemp, altCorrection, preconTempThreshold = 15, preconDest = false, strategyMinKw = 0, strategyBoost15 = false, strategyRest = false, restIntervalMin = 90, strategyQuickChg = false, routeChargerList = null, targetArrivalSocPct = thresholdSocPct, originName = '出発地', destName = '目的地' } = params;
     const minKw = strategyMinKw;
     let socKwh = (startSocPct / 100) * batteryKwh, km = 0, time = 0;
     const profile = [], stops = [], simLog = [];
+    simLog.push({ km: 0, name: originName, soc: startSocPct, action: 'depart' });
     let lastChargeKm = -999, lastWeatherKm = -999, curBaseTemp = 15, lastWeatherElev = 0;
     let lastLocalTemp = 15;
     let startElev = null; // 出発地標高（玄人モード標高補正の基準）
@@ -868,6 +869,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                 }
                 
                 stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, km, isUpbound: isUpboundLegs[currentLegIdx-1], detectedRoad: hit.type === 'sa_pa' ? (currentRoadName || '不明') : null });
+                simLog.push({ km: Math.round(km), name: hit.name, kw: parseInt(hit.powerKw), socBefore: Math.round(socBefore), socAfter: Math.round(socAfter), duration, action: 'stop', trigger: hit.isSOS ? '緊急' : '先手' });
                 time += duration;
                 lastChargeTime = time;
                 socKwh = (socAfter / 100) * batteryKwh;
@@ -1161,6 +1163,8 @@ async function runSimulation(segments, elevations, params, onProgress) {
     }
 
     const avgTemp = tempCount > 0 ? tempSum / tempCount : 15;
+    const _arrivalSoc = isDead ? 0 : Math.round((socKwh/batteryKwh)*100);
+    simLog.push({ km: Math.round(totalKm), name: destName, soc: _arrivalSoc, action: isDead ? 'dead' : 'arrive' });
     return { profile, stops, simLog, arrivalSoc: isDead ? 0 : (socKwh/batteryKwh)*100, eta: time, isDead, deadKm: km, deadLocation, warningLocation, warningKm, avgTemp, totalKm, hwyKm, startSocPct };
 }
 
@@ -1495,7 +1499,9 @@ async function onCalculate() {
                     : null,
                 targetArrivalSocPct: document.getElementById('target-arrival-soc-enabled').checked
                     ? (parseFloat(document.getElementById('target-arrival-soc').value) || 5)
-                    : parseFloat(document.getElementById('threshold-soc').value)
+                    : parseFloat(document.getElementById('threshold-soc').value),
+                originName: document.getElementById('origin').value.trim() || '出発地',
+                destName: document.getElementById('dest').value.trim() || '目的地'
             };
 
             const result = await runSimulation(segments, elevations, params, onProgress);
@@ -1787,11 +1793,18 @@ function renderUI() {
 
     { const logRow = document.getElementById('sim-log-row');
       const log = currentSim.simLog || [];
-      if (log.length === 0) { logRow.innerHTML = ''; }
+      const stopCount = (log || []).filter(e => e.action === 'stop').length;
+      if (stopCount === 0 && log.length <= 2) { logRow.innerHTML = ''; }
       else {
         const rows = log.map(e => {
           const nameShort = e.name.replace(/^.*?[　\s]/, '').slice(0, 18);
-          if (e.action === 'stop') {
+          if (e.action === 'depart') {
+            return `<tr style="opacity:0.65"><td style="color:#64748b">0km</td><td>🚀出発</td><td colspan="4" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.name}</td><td style="color:#64748b">SOC ${e.soc}%</td></tr>`;
+          } else if (e.action === 'arrive') {
+            return `<tr style="opacity:0.65"><td style="color:#64748b">${e.km}km</td><td>🏁到着</td><td colspan="4" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.name}</td><td style="color:#64748b">SOC ${e.soc}%</td></tr>`;
+          } else if (e.action === 'dead') {
+            return `<tr style="opacity:0.65"><td style="color:#ef4444">${e.km}km</td><td>💀電欠</td><td colspan="4" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.name}</td><td style="color:#ef4444">SOC 0%</td></tr>`;
+          } else if (e.action === 'stop') {
             const icon = e.trigger === '休憩' ? '🛌' : e.trigger && e.trigger.startsWith('閾値') ? '🔴' : '🟡';
             return `<tr><td style="color:#64748b">${e.km}km</td><td>${icon}停</td><td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nameShort}</td><td>${e.kw}kW</td><td>${e.socBefore}→${e.socAfter}%</td><td>${e.duration}分</td><td style="color:#64748b">[${e.trigger}]</td></tr>`;
           } else {
@@ -1799,10 +1812,13 @@ function renderUI() {
           }
         }).join('');
         const _copyLog = () => {
-          const txt = log.map(e => e.action === 'stop'
-            ? `${e.km}km\t停\t${e.name}\t${e.kw}kW\t${e.socBefore}→${e.socAfter}%\t${e.duration}分\t[${e.trigger}]`
-            : `${e.km}km\tスキ\t${e.name}\t${e.kw}kW\t${e.soc}%\t-\t[${e.reason}]`
-          ).join('\n');
+          const txt = log.map(e => {
+            if (e.action === 'depart') return `0km\t出発\t${e.name}\t\t\t\tSOC ${e.soc}%`;
+            if (e.action === 'arrive') return `${e.km}km\t到着\t${e.name}\t\t\t\tSOC ${e.soc}%`;
+            if (e.action === 'dead')   return `${e.km}km\t電欠\t${e.name}\t\t\t\tSOC 0%`;
+            if (e.action === 'stop')   return `${e.km}km\t停\t${e.name}\t${e.kw}kW\t${e.socBefore}→${e.socAfter}%\t${e.duration}分\t[${e.trigger}]`;
+            return `${e.km}km\tスキ\t${e.name}\t${e.kw}kW\t${e.soc}%\t-\t[${e.reason}]`;
+          }).join('\n');
           navigator.clipboard.writeText(txt).then(() => {
             const btn = document.getElementById('simlog-copy-btn');
             if (btn) { btn.textContent = 'コピー済'; setTimeout(() => { btn.textContent = 'コピー'; }, 1500); }
@@ -1812,7 +1828,7 @@ function renderUI() {
         logRow.innerHTML = `
           <details style="margin-top:4px;">
             <summary style="cursor:pointer; font-size:11px; color:var(--muted); padding:6px 0; user-select:none; display:flex; align-items:center; gap:8px;">
-              <span>📋 シミュレーションログ (${log.length}件)</span>
+              <span>📋 シミュレーションログ (${stopCount}停車)</span>
               <button id="simlog-copy-btn" onclick="event.preventDefault(); event.stopPropagation(); _copySimLog();" style="font-size:10px; padding:2px 8px; background:rgba(100,116,139,0.15); color:#94a3b8; border:1px solid rgba(100,116,139,0.3); border-radius:4px; cursor:pointer;">コピー</button>
             </summary>
             <div style="overflow-x:auto; margin-top:6px;">
@@ -2664,6 +2680,13 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.4</span><span class="cl-date">2026-05-09</span>
+        <ul class="cl-items">
+          <li>【ログ改善】TEEMO/FLASH充電がシミュレーションログに記録されない問題を修正</li>
+          <li>【ログ改善】ログの先頭・末尾に出発地・目的地（到着SOC）を表示。電欠時は💀で強調</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.3</span><span class="cl-date">2026-05-09</span>
         <ul class="cl-items">
