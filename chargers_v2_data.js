@@ -768,18 +768,6 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "EV充電スタンド (150kW)",
-    "address": "日本、〒601-8205 京都府京都市南区久世殿城町４５３−２",
-    "type": "normal",
-    "powers": [
-      150
-    ],
-    "lat": 34.95672580000001,
-    "lng": 135.71752189999998,
-    "powerKw": 150,
-    "direction": "none"
-  },
-  {
     "name": "e-Mobility Power 充電スタンド (150kW)",
     "address": "日本、〒615-0072 京都府京都市右京区山ノ内池尻町８−２",
     "type": "normal",
@@ -2340,51 +2328,471 @@ const CHARGER_V2_DATA = [
     "direction": "none"
   },
   {
-    "name": "EVgo Charging Station (100kW)",
-    "address": "3 W Chicago Ave, Chicago, IL 60654 アメリカ合衆国",
+    "name": "EV Connect Charging Station (180kW)",
+    "address": "52530 US-97, La Pine, OR 97739 アメリカ合衆国",
     "type": "normal",
     "powers": [
-      100
+      180
     ],
-    "lat": 41.8962724,
-    "lng": -87.6283677,
-    "powerKw": 100,
+    "lat": 43.708369499999996,
+    "lng": -121.4738788,
+    "powerKw": 180,
     "direction": "none"
   },
   {
-    "name": "Evgateway Charging Station (120kW)",
-    "address": "433 W Van Buren St, Chicago, IL 60607 アメリカ合衆国",
+    "name": "EVCS Charging Station (175kW)",
+    "address": "483 SW 5th St St, Madras, OR 97741 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      175
+    ],
+    "lat": 44.62885620000001,
+    "lng": -121.1290044,
+    "powerKw": 175,
+    "direction": "none"
+  },
+  {
+    "name": "EVCS Charging Station (175kW)",
+    "address": "101 Olson Rd, Boardman, OR 97818 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      175
+    ],
+    "lat": 45.84137380000001,
+    "lng": -119.68344739999999,
+    "powerKw": 175,
+    "direction": "none"
+  },
+  {
+    "name": "EVCS Charging Station (175kW)",
+    "address": "607 Columbia St, Hood River, OR 97031 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      175
+    ],
+    "lat": 45.710301099999995,
+    "lng": -121.5166195,
+    "powerKw": 175,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "20120 Pinebrook Blvd, Bend, OR 97702 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 44.022560999999996,
+    "lng": -121.31674499999998,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Rivian Adventure Network (300kW)",
+    "address": "19860 7th St, Bend, OR 97703 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      300
+    ],
+    "lat": 44.1472749,
+    "lng": -121.33143140000001,
+    "powerKw": 300,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "3025 Lancaster Dr NE, Salem, OR 97305 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 44.9655019,
+    "lng": -122.9853072,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "77522 OR-207, Hermiston, OR 97838 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 45.7870826,
+    "lng": -119.32209929999998,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "80 NE Cedar St, Madras, OR 97741 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 44.6442457,
+    "lng": -121.12885279999999,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Rivian Adventure Network (300kW)",
+    "address": "1400 W 6th St, The Dalles, OR 97058 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      300
+    ],
+    "lat": 45.60759300000001,
+    "lng": -121.20484499999999,
+    "powerKw": 300,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "40 Washington St W, Huntington, OR 97907 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 44.351245899999995,
+    "lng": -117.2684351,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Pilot EV Charging Station (350kW)",
+    "address": "109450 US-97, Chemult, OR 97731 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 43.215758699999995,
+    "lng": -121.7830671,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Rivian Adventure Network (300kW)",
+    "address": "215 NW Cherry Ln, Madras, OR 97741 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      300
+    ],
+    "lat": 44.664265,
+    "lng": -121.1388335,
+    "powerKw": 300,
+    "direction": "none"
+  },
+  {
+    "name": "EVgo Charging Station (350kW)",
+    "address": "800 John Long Rd, Oakland, OR 97462 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 43.53914470000001,
+    "lng": -123.28816289999997,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "2700 Wasco St, Hood River, OR 97031 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 45.7116559,
+    "lng": -121.5399624,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (325kW)",
+    "address": "US-95 #909, Jordan Valley, OR 97910 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      325
+    ],
+    "lat": 42.97473900000001,
+    "lng": -117.057574,
+    "powerKw": 325,
+    "direction": "none"
+  },
+  {
+    "name": "Loves Charging Station (200kW)",
+    "address": "115 Harrison Ave, Buena Vista, CO 81211 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      200
+    ],
+    "lat": 38.8505429,
+    "lng": -106.1395635,
+    "powerKw": 200,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (150kW)",
+    "address": "6250 US Hwy 285, Poncha Springs, CO 81242 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 38.511461,
+    "lng": -106.076183,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Rivian Adventure Network - Rivian Only (300kW)",
+    "address": "232 G St, Salida, CO 81201 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      300
+    ],
+    "lat": 38.5365239,
+    "lng": -105.99449759999999,
+    "powerKw": 300,
+    "direction": "none"
+  },
+  {
+    "name": "ChargePoint Charging Station (200kW)",
+    "address": "144A Co Rd 105, Salida, CO 81201 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      200
+    ],
+    "lat": 38.523565999999995,
+    "lng": -105.98391799999999,
+    "powerKw": 200,
+    "direction": "none"
+  },
+  {
+    "name": "ChargePoint Charging Station (200kW)",
+    "address": "202 E Tomichi Ave, Gunnison, CO 81230 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      200
+    ],
+    "lat": 38.544888,
+    "lng": -106.9251,
+    "powerKw": 200,
+    "direction": "none"
+  },
+  {
+    "name": "ChargePoint Charging Station (200kW)",
+    "address": "901 Main St, Fairplay, CO 80440 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      200
+    ],
+    "lat": 39.221542,
+    "lng": -105.997163,
+    "powerKw": 200,
+    "direction": "none"
+  },
+  {
+    "name": "Pilot EV Charging Station (350kW)",
+    "address": "2115 S Hwy 395, Stanfield, OR 97875 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 45.766349399999996,
+    "lng": -119.20515180000001,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "Blink Charging Station (180kW)",
+    "address": "3100 Ryan Dr SE, Salem, OR 97301 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      180
+    ],
+    "lat": 44.919429699999995,
+    "lng": -122.99803779999999,
+    "powerKw": 180,
+    "direction": "none"
+  },
+  {
+    "name": "PowerPump Charging Station (180kW)",
+    "address": "615 State St, Lyle, WA 98635 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      180
+    ],
+    "lat": 45.6932968,
+    "lng": -121.28337669999999,
+    "powerKw": 180,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "Tesla Store, 2755 Mission St SE, Salem, OR 97301 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 44.9212455,
+    "lng": -123.0065365,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "SpringHill Suites Marriott, 551 SW Industrial Way, Bend, OR 97702 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 44.049444,
+    "lng": -121.3155656,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "Electrify America Charging Station (350kW)",
+    "address": "11619 Island Ave, Island City, OR 97850 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      350
+    ],
+    "lat": 45.336580399999995,
+    "lng": -118.05942239999997,
+    "powerKw": 350,
+    "direction": "none"
+  },
+  {
+    "name": "ChargePoint Charging Station (125kW)",
+    "address": "20350 Empire Ave, Bend, OR 97703 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      125
+    ],
+    "lat": 44.091792999999996,
+    "lng": -121.3064,
+    "powerKw": 125,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (150kW)",
+    "address": "1 Sunridge Ln, Baker City, OR 97814 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 44.782882,
+    "lng": -117.81230599999998,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "Anchor Way #504, Hood River, OR 97031 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 45.713865,
+    "lng": -121.515862,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "SW Odem Medo Rd #1565, Redmond, OR 97756 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 44.252773999999995,
+    "lng": -121.18570599999998,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "2249 Cascade Ave, Hood River, OR 97031 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 45.7096109,
+    "lng": -121.53459659999999,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (150kW)",
+    "address": "46510 Wildhorse Blvd, Pendleton, OR 97801 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 45.64655,
+    "lng": -118.68198,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (150kW)",
+    "address": "61535 S Hwy 97, Bend, OR 97702 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 44.03563,
+    "lng": -121.308473,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (250kW)",
+    "address": "3790 Center St NE, Salem, OR 97301 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      250
+    ],
+    "lat": 44.938942999999995,
+    "lng": -122.98790899999999,
+    "powerKw": 250,
+    "direction": "none"
+  },
+  {
+    "name": "Tesla Supercharger (150kW)",
+    "address": "2114 W 6th St, The Dalles, OR 97058 アメリカ合衆国",
+    "type": "normal",
+    "powers": [
+      150
+    ],
+    "lat": 45.611940999999995,
+    "lng": -121.208249,
+    "powerKw": 150,
+    "direction": "none"
+  },
+  {
+    "name": "OpConnect Charging Station (120kW)",
+    "address": "104 Mill St, Grass Valley, OR 97039 アメリカ合衆国",
     "type": "normal",
     "powers": [
       120
     ],
-    "lat": 41.8766487,
-    "lng": -87.6386927,
+    "lat": 45.3607221,
+    "lng": -120.7849393,
     "powerKw": 120,
     "direction": "none"
   },
   {
-    "name": "Electrify America Charging Station (350kW)",
-    "address": "1200 N Larrabee St, Chicago, IL 60610 アメリカ合衆国",
+    "name": "Tesla Supercharger (250kW)",
+    "address": "625 N Arrowleaf Trail, Sisters, OR 97759 アメリカ合衆国",
     "type": "normal",
     "powers": [
-      350
+      250
     ],
-    "lat": 41.9045962,
-    "lng": -87.6433797,
-    "powerKw": 350,
-    "direction": "none"
-  },
-  {
-    "name": "Electrify America Charging Station (350kW)",
-    "address": "1101 W Jackson Blvd, Chicago, IL 60607 アメリカ合衆国",
-    "type": "normal",
-    "powers": [
-      350
-    ],
-    "lat": 41.8773061,
-    "lng": -87.6554326,
-    "powerKw": 350,
+    "lat": 44.296203999999996,
+    "lng": -121.5613,
+    "powerKw": 250,
     "direction": "none"
   }
 ];
