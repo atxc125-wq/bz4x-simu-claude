@@ -138,7 +138,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.7<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.8<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-08</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
@@ -805,6 +805,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
     let lastChargeTime = 0;
     let totalDrivingKwh = 0, totalDrivingKm = 0; // 最短充電モード用: 実走行消費レート
     let lastHighwayKm = -999; // JCT通過中のgraceperiod用: 最後に高速名が確認されたkm
+    let restTriggerSoc = -1; // 休憩トリガー時点のSOCスナップショット
     let tempSum = 0, tempCount = 0;
     const totalKm = segments.reduce((sum, s) => sum + s.distKm, 0);
     const hwyKm   = segments.reduce((sum, s) => s.roadName ? sum + s.distKm : sum, 0);
@@ -936,221 +937,216 @@ async function runSimulation(segments, elevations, params, onProgress) {
             break; 
         }
 
-        // 自動サーチ: 2段階検索
-        // Step1: 同方向の高速SA/PAをインライン充電（Google Maps waypoint追加なし → 謎のUターン回避）
-        // Step2: SA/PAが無い場合のみFLASH/TEEMO等の下道充電器をwaypointとしてリルート
+        // ── 自動充電サーチ（SOCティア式 v2.5.8） ────────────────────
         const continuousDrivingMin = time - lastChargeTime;
         if (currentRoadName) lastHighwayKm = km;
-        const onOrNearHighway = currentRoadName || (km - lastHighwayKm < 60); // JCT grace 60km（仙台付近の乗継等でも高速判定を維持）
-        // 目的地まで届くSOCがあれば充電不要（ただし休憩は別途判定）
-        const kmToGoal = totalKm - km;
+        const onOrNearHighway = currentRoadName || (km - lastHighwayKm < 60);
         const _rate = totalDrivingKm > 10 ? totalDrivingKwh / totalDrivingKm : batteryKwh / (6.5 * 100);
-        const enoughForDest = currentSoc >= (kmToGoal * _rate / batteryKwh) * 100 + targetArrivalSocPct + 5;
-        // 休憩: SOC関係なく連続運転時間だけで判定（!enoughForDestは不要）
+
+        // SOCティア閾値
+        const step1Soc = thresholdSocPct + 10;           // 高速: SA/PA 90kW+を探す
+        const step2Soc = thresholdSocPct;                 // 高速: SA/PA 50kW+にフォールバック
+        const step3Soc = Math.max(5, thresholdSocPct - 5); // 緊急: オフルート含む
+
+        // 休憩トリガー: 発火時点のSOCをスナップショット
         const needRestStop = strategyRest && continuousDrivingMin >= restIntervalMin && (km - lastChargeKm) > 30;
-        // 目的地まで届かない + SOC35%以下 → SAがあればそこで、なければTEEMOを先手で探す
-        const _proactiveTrigger = !enoughForDest && currentSoc < 35;
-        if ((!enoughForDest || needRestStop) && (currentSoc < thresholdSocPct + 10 || needRestStop || _proactiveTrigger) && (km - lastChargeKm) > (needRestStop ? 30 : 50)) {
-            // デバッグ: 近隣SA/PAの道路名マッチング状況をログ出力
+        if (!needRestStop) {
+            restTriggerSoc = -1;
+        } else if (restTriggerSoc < 0) {
+            restTriggerSoc = currentSoc;
+        }
+
+        const _minInterval = needRestStop ? 30 : 50;
+        const _chargeNeeded = onOrNearHighway ? currentSoc < step1Soc : currentSoc < thresholdSocPct + 5;
+
+        if ((_chargeNeeded || needRestStop) && (km - lastChargeKm) > _minInterval) {
             const nearCandidates = chargerDB.filter(c => c.type === 'sa_pa' && haversine(c.lat, c.lng, s.lat, s.lng) < 5.0);
             if (nearCandidates.length > 0) {
                 console.log(`[ChargerSearch] km=${km.toFixed(1)} SOC=${currentSoc.toFixed(0)}% road="${currentRoadName}" isUpbound=${currentTripIsUpbound}`);
                 nearCandidates.forEach(c => {
                     const dist = haversine(c.lat, c.lng, s.lat, s.lng);
-                    const dirOk = isValidDirection(c.name, currentTripIsUpbound);
-                    const roadOk = roadMatchesCharger(currentRoadName, c.name);
-                    console.log(`  → ${c.name} | dist=${dist.toFixed(2)}km | dir=${dirOk} | road=${roadOk}`);
+                    console.log(`  → ${c.name} | dist=${dist.toFixed(2)}km | dir=${isValidDirection(c.name, currentTripIsUpbound)} | road=${roadMatchesCharger(currentRoadName, c.name)}`);
                 });
             }
 
-            const _saPaMatch = c => {
-                if (c.type !== 'sa_pa') return false;
-                const dist = haversine(c.lat, c.lng, s.lat, s.lng);
-                // 休憩時は8km以内まで拡大（SA/PAが路線から若干離れていても休憩可能）
-                const _radius = needRestStop ? 8.0 : 3.0;
-                return dist < _radius
-                    && !userIgnoredChargers.includes(`${c.lat.toFixed(4)},${c.lng.toFixed(4)}`)
-                    && isValidDirection(c.name, currentTripIsUpbound)
-                    && roadMatchesCharger(currentRoadName, c.name);
-            };
-            // 最短充電モードON: まず150kW機を優先。なければminKwフィルタで通常選択
-            // quickChgモード: 前方に150kW機があれば150kW機のみ対象、なければ通常フォールバック
-            const _no150kWAhead = !routeChargerList || !routeChargerList.some(c => c.km > km + 5);
-            const saPa = strategyQuickChg
-                ? (chargerDB.find(c => parseInt(c.powerKw) >= 150 && _saPaMatch(c))
-                   || (_no150kWAhead && chargerDB.find(c => (minKw === 0 || parseInt(c.powerKw) >= minKw) && _saPaMatch(c))))
-                : chargerDB.find(c => (minKw === 0 || parseInt(c.powerKw) >= minKw) && _saPaMatch(c));
-            const _logTrigger = needRestStop ? '休憩' : currentSoc < thresholdSocPct ? `閾値${thresholdSocPct}%` : _proactiveTrigger ? '先手' : 'SOC不足';
+            if (onOrNearHighway) {
+                // ══ 高速モード ══════════════════════════════════════════
+                // 休憩: トリガーから10%未満SOC低下→90kW、10%以上→50kW
+                const _restMinKw = (restTriggerSoc >= 0 && currentSoc > restTriggerSoc - 10) ? 90 : 50;
+                const _saPaMinKw  = needRestStop ? _restMinKw : currentSoc < step2Soc ? 50 : 90;
+                const _saPaRadius = needRestStop ? 8.0 : currentSoc < step2Soc ? 8.0 : 3.0;
 
-            if (saPa) {
-                const chgKey = `${saPa.lat.toFixed(4)},${saPa.lng.toFixed(4)}`;
-                if (!stops.some(st => `${st.charger.lat.toFixed(4)},${st.charger.lng.toFixed(4)}` === chgKey)) {
-                    // 最短充電モード: 次の150kW機まで届くSOCがあり休憩不要 → このSA/PAをスキップ
-                    const _quickDur = (!needRestStop && strategyQuickChg && routeChargerList && !userCustomDurations[chgKey])
-                        ? calcQuickChgDuration((socKwh / batteryKwh) * 100, km, totalKm, routeChargerList,
-                            thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm,
-                            { powerKw: saPa.powerKw, name: saPa.name, lat: saPa.lat, lng: saPa.lng, type: 'sa_pa' })
-                        : -1;
-                    if (_quickDur === 0) {
-                        const _last = simLog[simLog.length - 1];
-                        if (!_last || _last.name !== saPa.name || _last.action !== 'skip') {
-                            simLog.push({ km: Math.round(km), name: saPa.name, kw: parseInt(saPa.powerKw), soc: Math.round((socKwh/batteryKwh)*100), action: 'skip', reason: 'quickChg: 届く' });
+                const _saPaBaseMatch = c => {
+                    if (c.type !== 'sa_pa') return false;
+                    const dist = haversine(c.lat, c.lng, s.lat, s.lng);
+                    return dist < _saPaRadius
+                        && !userIgnoredChargers.includes(`${c.lat.toFixed(4)},${c.lng.toFixed(4)}`)
+                        && isValidDirection(c.name, currentTripIsUpbound)
+                        && roadMatchesCharger(currentRoadName, c.name);
+                };
+                const _no150kWAhead = !routeChargerList || !routeChargerList.some(c => c.km > km + 5);
+                const saPa = strategyQuickChg
+                    ? (chargerDB.find(c => parseInt(c.powerKw) >= 150 && _saPaBaseMatch(c))
+                       || (_no150kWAhead && chargerDB.find(c => parseInt(c.powerKw) >= _saPaMinKw && _saPaBaseMatch(c))))
+                    : chargerDB.find(c => parseInt(c.powerKw) >= _saPaMinKw && _saPaBaseMatch(c));
+
+                const _logTrigger = needRestStop ? '休憩'
+                                  : currentSoc < step3Soc ? `緊急${step3Soc}%`
+                                  : currentSoc < step2Soc ? `閾値${thresholdSocPct}%`
+                                  : `先手${step1Soc}%`;
+
+                if (saPa) {
+                    const chgKey = `${saPa.lat.toFixed(4)},${saPa.lng.toFixed(4)}`;
+                    if (!stops.some(st => `${st.charger.lat.toFixed(4)},${st.charger.lng.toFixed(4)}` === chgKey)) {
+                        const _quickDur = (!needRestStop && strategyQuickChg && routeChargerList && !userCustomDurations[chgKey])
+                            ? calcQuickChgDuration((socKwh / batteryKwh) * 100, km, totalKm, routeChargerList,
+                                thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm,
+                                { powerKw: saPa.powerKw, name: saPa.name, lat: saPa.lat, lng: saPa.lng, type: 'sa_pa' })
+                            : -1;
+                        if (_quickDur === 0) {
+                            const _last = simLog[simLog.length - 1];
+                            if (!_last || _last.name !== saPa.name || _last.action !== 'skip') {
+                                simLog.push({ km: Math.round(km), name: saPa.name, kw: parseInt(saPa.powerKw), soc: Math.round((socKwh/batteryKwh)*100), action: 'skip', reason: 'quickChg: 届く' });
+                            }
+                        }
+                        if (_quickDur !== 0) {
+                            if (onProgress) onProgress(`🔌 ${saPa.name.replace(/^.*?　/, '')} を発見 (${Math.round(km)}km地点)`);
+                            const defaultDur = needRestStop ? 15 : (strategyBoost15 && parseInt(saPa.powerKw) >= 150) ? 15 : 30;
+                            let duration = (_quickDur > 0) ? Math.min(userCustomDurations[chgKey] || defaultDur, _quickDur)
+                                                           : userCustomDurations[chgKey] || defaultDur;
+                            if (localTemp <= preconTempThreshold && parseInt(saPa.powerKw) >= 90) {
+                                socKwh = Math.max(0.1, socKwh - 3);
+                                const preconStartT = time - 30;
+                                for (let j = profile.length - 1; j >= 0 && profile[j].time >= preconStartT; j--) {
+                                    const preconElapsed = profile[j].time - preconStartT;
+                                    profile[j].soc = Math.max(0, profile[j].soc - (preconElapsed / 30) * (3 / batteryKwh) * 100);
+                                    profile[j].precon = true;
+                                }
+                            }
+                            const socBefore = (socKwh / batteryKwh) * 100;
+                            const chargerInfo = { name: saPa.name, lat: saPa.lat, lng: saPa.lng, powerKw: saPa.powerKw, type: 'sa_pa' };
+                            const socAfter = calculateCharging(socBefore, duration, chargerInfo);
+                            for (let t = 1; t <= duration; t++) {
+                                const tempSoc = calculateCharging(socBefore, t, chargerInfo);
+                                if (t % 5 === 0 || t === duration) {
+                                    const avgKw = ((tempSoc - (t<=5?socBefore:calculateCharging(socBefore,t-5,chargerInfo))) / 100) * batteryKwh * 60 / Math.min(t,5);
+                                    profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev, chargingKw: avgKw });
+                                }
+                            }
+                            stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, km, isUpbound: currentTripIsUpbound, detectedRoad: currentRoadName || '不明' });
+                            simLog.push({ km: Math.round(km), name: saPa.name, kw: parseInt(saPa.powerKw), socBefore: Math.round(socBefore), socAfter: Math.round(socAfter), duration, action: 'stop', trigger: _logTrigger });
+                            time += duration;
+                            lastChargeTime = time;
+                            socKwh = (socAfter / 100) * batteryKwh;
+                            lastChargeKm = km;
                         }
                     }
-                    if (_quickDur !== 0) {
-                        if (onProgress) onProgress(`🔌 ${saPa.name.replace(/^.*?　/, '')} を発見 (${Math.round(km)}km地点)`);
-                        const isRestStop = needRestStop;
-                        const defaultDur = isRestStop ? 15 : (strategyBoost15 && parseInt(saPa.powerKw) >= 150) ? 15 : 30;
-                        let duration = (_quickDur > 0) ? Math.min(userCustomDurations[chgKey] || defaultDur, _quickDur)
-                                                       : userCustomDurations[chgKey] || defaultDur;
-                        // プレコン: 閾値以下 + 90kW以上 → 到着30分前から3kWh追加消費（常時有効）
-                        if (localTemp <= preconTempThreshold && parseInt(saPa.powerKw) >= 90) {
-                            socKwh = Math.max(0.1, socKwh - 3);
-                            const preconStartT = time - 30;
-                            for (let j = profile.length - 1; j >= 0 && profile[j].time >= preconStartT; j--) {
-                                // preconElapsed: プレコン開始からの経過分 → 時間が進むほどSOC低下が大きい
-                                const preconElapsed = profile[j].time - preconStartT;
-                                profile[j].soc = Math.max(0, profile[j].soc - (preconElapsed / 30) * (3 / batteryKwh) * 100);
-                                profile[j].precon = true;
+                } else if (currentSoc < step3Soc) {
+                    // ── Step3: 緊急オフルート（TEEMO/FLASH 50kW+ 15km以内） ──
+                    const _step3Cands = chargerDB.filter(c => {
+                        if (c.type === 'sa_pa') return false;
+                        const dist = haversine(c.lat, c.lng, s.lat, s.lng);
+                        const key = `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
+                        return dist < 15.0
+                            && parseInt(c.powerKw) >= 50
+                            && !userIgnoredChargers.includes(key)
+                            && !rejectedChargers.includes(key)
+                            && isValidDirection(c.name, currentTripIsUpbound);
+                    });
+                    const offRoute3 = _step3Cands.reduce((best, c) => {
+                        const d = haversine(c.lat, c.lng, s.lat, s.lng);
+                        return (!best || d < haversine(best.lat, best.lng, s.lat, s.lng)) ? c : best;
+                    }, null);
+                    if (offRoute3) {
+                        const key = `${offRoute3.lat.toFixed(4)},${offRoute3.lng.toFixed(4)}`;
+                        if (!allChargerWps.some(ac => (ac.key || `${ac.lat.toFixed(4)},${ac.lng.toFixed(4)}`) === key)) {
+                            autoChargers.push({ ...offRoute3, key });
+                            return { requestReroute: true };
+                        }
+                    } else {
+                        // 最後の砦: 近傍SA/PA（道路名一致・8km以内）
+                        const eKey = c => `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
+                        const emergencySaPa = chargerDB.find(c =>
+                            c.type === 'sa_pa'
+                            && (!strategyQuickChg || parseInt(c.powerKw) >= 150 || _no150kWAhead)
+                            && haversine(c.lat, c.lng, s.lat, s.lng) < 8.0
+                            && !userIgnoredChargers.includes(eKey(c))
+                            && isValidDirection(c.name, currentTripIsUpbound)
+                            && roadMatchesCharger(currentRoadName, c.name)
+                            && !stops.some(st => `${st.charger.lat.toFixed(4)},${st.charger.lng.toFixed(4)}` === eKey(c))
+                            && (minKw === 0 || parseInt(c.powerKw) >= minKw)
+                        );
+                        if (emergencySaPa) {
+                            const chgKey = eKey(emergencySaPa);
+                            const _quickDur3 = (!needRestStop && strategyQuickChg && routeChargerList && !userCustomDurations[chgKey])
+                                ? calcQuickChgDuration((socKwh / batteryKwh) * 100, km, totalKm, routeChargerList,
+                                    thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm,
+                                    { powerKw: emergencySaPa.powerKw, name: emergencySaPa.name, lat: emergencySaPa.lat, lng: emergencySaPa.lng, type: 'sa_pa' })
+                                : -1;
+                            if (_quickDur3 === 0) {
+                                const _last3 = simLog[simLog.length - 1];
+                                if (!_last3 || _last3.name !== emergencySaPa.name || _last3.action !== 'skip') {
+                                    simLog.push({ km: Math.round(km), name: emergencySaPa.name, kw: parseInt(emergencySaPa.powerKw), soc: Math.round((socKwh/batteryKwh)*100), action: 'skip', reason: 'quickChg: 届く' });
+                                }
+                            }
+                            if (_quickDur3 !== 0) {
+                                if (onProgress) onProgress(`🔌 ${emergencySaPa.name.replace(/^.*?　/, '')} (緊急 ${emergencySaPa.powerKw}kW) を使用 (${Math.round(km)}km地点)`);
+                                const defaultDur = (strategyBoost15 && parseInt(emergencySaPa.powerKw) >= 150) ? 15 : 30;
+                                let duration = (_quickDur3 > 0) ? Math.min(userCustomDurations[chgKey] || defaultDur, _quickDur3)
+                                                                : userCustomDurations[chgKey] || defaultDur;
+                                if (localTemp <= preconTempThreshold && parseInt(emergencySaPa.powerKw) >= 90) {
+                                    socKwh = Math.max(0.1, socKwh - 3);
+                                    const preconStartT = time - 30;
+                                    for (let j = profile.length - 1; j >= 0 && profile[j].time >= preconStartT; j--) {
+                                        const preconElapsed = profile[j].time - preconStartT;
+                                        profile[j].soc = Math.max(0, profile[j].soc - (preconElapsed / 30) * (3 / batteryKwh) * 100);
+                                        profile[j].precon = true;
+                                    }
+                                }
+                                const socBefore = (socKwh / batteryKwh) * 100;
+                                const chargerInfo = { name: emergencySaPa.name, lat: emergencySaPa.lat, lng: emergencySaPa.lng, powerKw: emergencySaPa.powerKw, type: 'sa_pa' };
+                                const socAfter = calculateCharging(socBefore, duration, chargerInfo);
+                                for (let t = 1; t <= duration; t++) {
+                                    const tempSoc = calculateCharging(socBefore, t, chargerInfo);
+                                    if (t % 5 === 0 || t === duration) {
+                                        const avgKw = ((tempSoc - (t<=5?socBefore:calculateCharging(socBefore,t-5,chargerInfo))) / 100) * batteryKwh * 60 / Math.min(t,5);
+                                        profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev, chargingKw: avgKw });
+                                    }
+                                }
+                                stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, km, isUpbound: currentTripIsUpbound, detectedRoad: currentRoadName || '不明' });
+                                simLog.push({ km: Math.round(km), name: emergencySaPa.name, kw: parseInt(emergencySaPa.powerKw), socBefore: Math.round(socBefore), socAfter: Math.round(socAfter), duration, action: 'stop', trigger: '緊急' });
+                                time += duration; lastChargeTime = time; socKwh = (socAfter / 100) * batteryKwh; lastChargeKm = km;
                             }
                         }
-                        const socBefore = (socKwh / batteryKwh) * 100;
-                        const chargerInfo = { name: saPa.name, lat: saPa.lat, lng: saPa.lng, powerKw: saPa.powerKw, type: 'sa_pa' };
-                        const socAfter = calculateCharging(socBefore, duration, chargerInfo);
-                        for (let t = 1; t <= duration; t++) {
-                            const tempSoc = calculateCharging(socBefore, t, chargerInfo);
-                            if (t % 5 === 0 || t === duration) {
-                                const avgKw = ((tempSoc - (t<=5?socBefore:calculateCharging(socBefore,t-5,chargerInfo))) / 100) * batteryKwh * 60 / Math.min(t,5);
-                                profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev, chargingKw: avgKw });
-                            }
-                        }
-                        stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, km, isUpbound: currentTripIsUpbound, detectedRoad: currentRoadName || '不明' });
-                        simLog.push({ km: Math.round(km), name: saPa.name, kw: parseInt(saPa.powerKw), socBefore: Math.round(socBefore), socAfter: Math.round(socAfter), duration, action: 'stop', trigger: _logTrigger });
-                        time += duration;
-                        lastChargeTime = time;
-                        socKwh = (socAfter / 100) * batteryKwh;
-                        lastChargeKm = km;
                     }
                 }
             } else {
-                // Step2: 下道の90kW以上急速充電器にリルート
-                // 高速上でも、SOC不足(緊急 or 先手)の場合はTEEMOも使う。
-                // ただし同方向SA/PAが10km以内にある場合はTEEMOを除外（Kuwana修正）。
-                const _socTrigger = currentSoc < thresholdSocPct + 10;
-                const _proactiveTEEMO = !enoughForDest && currentSoc < 35;
-                const _nearSaPa = chargerDB.some(c =>
-                    c.type === 'sa_pa'
-                    && haversine(c.lat, c.lng, s.lat, s.lng) < 10.0
-                    && parseInt(c.powerKw) >= 50
-                    && isValidDirection(c.name, currentTripIsUpbound)
-                );
-                // SA/PA lookahead: 前方60km以内に到達可能なSA/PAがあればTEEMO迂回をスキップ
-                // （SA/PA間でproactiveTriggerが発火しTEEMOが無駄に選ばれルートが膨張するのを防ぐ）
-                const _upcomingSaPa = !_socTrigger && chargerDB.some(c => {
-                    if (c.type !== 'sa_pa') return false;
-                    const dist = haversine(c.lat, c.lng, s.lat, s.lng);
-                    if (dist > 60) return false;
-                    if (!isValidDirection(c.name, currentTripIsUpbound)) return false;
-                    if (userIgnoredChargers.includes(`${c.lat.toFixed(4)},${c.lng.toFixed(4)}`)) return false;
-                    const socNeeded = (dist * _rate / batteryKwh) * 100 + thresholdSocPct + 5;
-                    return currentSoc >= socNeeded;
-                });
-                // 先手TEEMOの場合は半径を15kmに拡大（空港経由等で通常7kmでは届かないケース対策）
-                const teemoRadius = _proactiveTEEMO ? 15.0 : 7.0;
-                // 60km以内にSOCが届くSA/PAが存在するか（socTriggerに関わらずチェック）
-                const _anySaPaReachable = chargerDB.some(c => {
-                    if (c.type !== 'sa_pa') return false;
-                    const dist = haversine(c.lat, c.lng, s.lat, s.lng);
-                    if (dist > 60) return false;
-                    if (!isValidDirection(c.name, currentTripIsUpbound)) return false;
-                    if (userIgnoredChargers.includes(`${c.lat.toFixed(4)},${c.lng.toFixed(4)}`)) return false;
-                    return currentSoc >= (dist * _rate / batteryKwh) * 100 + thresholdSocPct;
-                });
-                // 最短充電モードでは下道充電器(TEEMO/FLASH)へのリルートを禁止（ルート膨張防止）
-                const _offRouteCandidates = (_upcomingSaPa || strategyQuickChg) ? [] : chargerDB.filter(c => {
+                // ══ 一般道モード ════════════════════════════════════════
+                // Step1: FLASH/TEEMO 90kW+ 7km以内
+                // Step2: 任意kW 15km以内（SOC < step3Socのみ）
+                const _genFilter = (minKwReq, radius) => chargerDB.filter(c => {
                     if (c.type === 'sa_pa') return false;
-                    // SA/PAが10km以内 → TEEMOへの迂回を抑制（御在所SA等が近い場合）
-                    if (c.type === 'teemo' && _nearSaPa) return false;
-                    // 高速上 + 届くSA/PAあり + 先手でもない → TEEMO除外（!_socTrigger→_anySaPaReachableに置換）
-                    if (c.type === 'teemo' && onOrNearHighway && _anySaPaReachable && !_proactiveTEEMO) return false;
-                    // 高速上ではTEEMO/FLASH以外（eMP等一般道充電器）へのリルートを禁止
-                    if (onOrNearHighway && c.type !== 'teemo' && c.type !== 'flash') return false;
                     const dist = haversine(c.lat, c.lng, s.lat, s.lng);
-                    const radius = c.type === 'teemo' ? teemoRadius : 7.0;
                     const key = `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
                     return dist < radius
+                        && parseInt(c.powerKw) >= minKwReq
                         && !userIgnoredChargers.includes(key)
                         && !rejectedChargers.includes(key)
-                        && parseInt(c.powerKw) >= Math.max(90, minKw)
                         && isValidDirection(c.name, currentTripIsUpbound);
                 });
-                // 最近傍を選ぶ
-                const offRoute = _offRouteCandidates.reduce((best, c) => {
+                const _nearest = arr => arr.reduce((best, c) => {
                     const d = haversine(c.lat, c.lng, s.lat, s.lng);
                     return (!best || d < haversine(best.lat, best.lng, s.lat, s.lng)) ? c : best;
                 }, null);
+
+                const offRoute = _nearest(_genFilter(Math.max(90, minKw), 7.0))
+                              || (currentSoc < step3Soc ? _nearest(_genFilter(Math.max(1, minKw), 15.0)) : null);
+
                 if (offRoute) {
                     const key = `${offRoute.lat.toFixed(4)},${offRoute.lng.toFixed(4)}`;
                     if (!allChargerWps.some(ac => (ac.key || `${ac.lat.toFixed(4)},${ac.lng.toFixed(4)}`) === key)) {
                         autoChargers.push({ ...offRoute, key });
                         return { requestReroute: true };
-                    }
-                } else {
-                    // Step3: 緊急フォールバック — 同道路名・方向一致・8km以内のSA/PA（異高速への誤飛び込み防止）
-                    const eKey = c => `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
-                    const emergencySaPa = chargerDB.find(c =>
-                        c.type === 'sa_pa'
-                        && (!strategyQuickChg || parseInt(c.powerKw) >= 150 || _no150kWAhead)
-                        && haversine(c.lat, c.lng, s.lat, s.lng) < 8.0
-                        && !userIgnoredChargers.includes(eKey(c))
-                        && isValidDirection(c.name, currentTripIsUpbound)
-                        && roadMatchesCharger(currentRoadName, c.name)
-                        && !stops.some(st => `${st.charger.lat.toFixed(4)},${st.charger.lng.toFixed(4)}` === eKey(c))
-                        && (minKw === 0 || parseInt(c.powerKw) >= minKw)
-                    );
-                    if (emergencySaPa) {
-                        const chgKey = eKey(emergencySaPa);
-                        // 最短充電モード: 次の150kW機まで届くSOCがあれば緊急停車もスキップ（休憩は除外）
-                        const _quickDur3 = (!needRestStop && strategyQuickChg && routeChargerList && !userCustomDurations[chgKey])
-                            ? calcQuickChgDuration((socKwh / batteryKwh) * 100, km, totalKm, routeChargerList,
-                                thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm,
-                                { powerKw: emergencySaPa.powerKw, name: emergencySaPa.name, lat: emergencySaPa.lat, lng: emergencySaPa.lng, type: 'sa_pa' })
-                            : -1;
-                        if (_quickDur3 === 0) {
-                            const _last3 = simLog[simLog.length - 1];
-                            if (!_last3 || _last3.name !== emergencySaPa.name || _last3.action !== 'skip') {
-                                simLog.push({ km: Math.round(km), name: emergencySaPa.name, kw: parseInt(emergencySaPa.powerKw), soc: Math.round((socKwh/batteryKwh)*100), action: 'skip', reason: 'quickChg: 届く' });
-                            }
-                        }
-                        if (_quickDur3 !== 0) {
-                        if (onProgress) onProgress(`🔌 ${emergencySaPa.name.replace(/^.*?　/, '')} (緊急 ${emergencySaPa.powerKw}kW) を使用 (${Math.round(km)}km地点)`);
-                        const defaultDur = (strategyBoost15 && parseInt(emergencySaPa.powerKw) >= 150) ? 15 : 30;
-                        let duration = (_quickDur3 > 0) ? Math.min(userCustomDurations[chgKey] || defaultDur, _quickDur3)
-                                                        : userCustomDurations[chgKey] || defaultDur;
-                        // プレコン（常時有効）
-                        if (localTemp <= preconTempThreshold && parseInt(emergencySaPa.powerKw) >= 90) {
-                            socKwh = Math.max(0.1, socKwh - 3);
-                            const preconStartT = time - 30;
-                            for (let j = profile.length - 1; j >= 0 && profile[j].time >= preconStartT; j--) {
-                                const preconElapsed = profile[j].time - preconStartT;
-                                profile[j].soc = Math.max(0, profile[j].soc - (preconElapsed / 30) * (3 / batteryKwh) * 100);
-                                profile[j].precon = true;
-                            }
-                        }
-                        const socBefore = (socKwh / batteryKwh) * 100;
-                        const chargerInfo = { name: emergencySaPa.name, lat: emergencySaPa.lat, lng: emergencySaPa.lng, powerKw: emergencySaPa.powerKw, type: 'sa_pa' };
-                        const socAfter = calculateCharging(socBefore, duration, chargerInfo);
-                        for (let t = 1; t <= duration; t++) {
-                            const tempSoc = calculateCharging(socBefore, t, chargerInfo);
-                            if (t % 5 === 0 || t === duration) {
-                                const avgKw = ((tempSoc - (t<=5?socBefore:calculateCharging(socBefore,t-5,chargerInfo))) / 100) * batteryKwh * 60 / Math.min(t,5);
-                                profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev, chargingKw: avgKw });
-                            }
-                        }
-                        stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, km, isUpbound: currentTripIsUpbound, detectedRoad: currentRoadName || '不明' });
-                        simLog.push({ km: Math.round(km), name: emergencySaPa.name, kw: parseInt(emergencySaPa.powerKw), socBefore: Math.round(socBefore), socAfter: Math.round(socAfter), duration, action: 'stop', trigger: _logTrigger });
-                        time += duration; lastChargeTime = time; socKwh = (socAfter / 100) * batteryKwh; lastChargeKm = km;
-                        }
                     }
                 }
             }
@@ -2719,6 +2715,12 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.8</span><span class="cl-date">2026-05-10</span>
+        <ul class="cl-items">
+          <li>【充電ロジック全面刷新】SOCティア式に移行: 高速はStep1(threshold+10%→SA/PA 90kW+/3km), Step2(threshold%→SA/PA 50kW+/8km), Step3(max(5,threshold-5)%→緊急TEEMO/FLASH 50kW+/15km)。一般道はStep1(threshold+5%→FLASH/TEEMO 90kW+/7km), Step2(step3Soc以下→任意kW/15km)。休憩はトリガー時SOCをスナップショットし10%降下まで90kW+、以降50kW+に切替。enoughForDest・_proactiveTrigger・_proactiveTEEMO等を廃止しシンプル化</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.7</span><span class="cl-date">2026-05-10</span>
         <ul class="cl-items">
