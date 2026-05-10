@@ -972,8 +972,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
 
             // ── SA/PA検索（高速/一般道問わず常に実施） ───────────────
             // road name未検出でもSA/PAを優先。roadMatchesCharger(null,*)=trueなので誤選択なし。
-            {
-                // 休憩: トリガーから10%未満SOC低下→90kW、10%以上→50kW
+            // 休憩: トリガーから10%未満SOC低下→90kW、10%以上→50kW
                 const _restMinKw = (restTriggerSoc >= 0 && currentSoc > restTriggerSoc - 10) ? 90 : 50;
                 const _saPaMinKw  = needRestStop ? _restMinKw : currentSoc < step2Soc ? 50 : 90;
                 const _saPaRadius = needRestStop ? 8.0 : currentSoc < step2Soc ? 8.0 : 3.0;
@@ -1122,7 +1121,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                         }
                     }
                 }
-            } else if (!onOrNearHighway) {
+            else if (!onOrNearHighway) {
                 // ══ 一般道モード（SA/PA未発見時のみ） ════════════════════
                 // Step1: FLASH/TEEMO 90kW+ 7km以内
                 // Step2: 任意kW 15km以内（SOC < step3Socのみ）
