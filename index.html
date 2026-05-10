@@ -138,7 +138,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.8<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.9<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-08</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
@@ -611,6 +611,7 @@ function extractHighwayCore(name) {
     if (!name) return null;
     let core = name.replace(/高速道路$/, '').replace(/自動車道$/, '').replace(/高速$/, '').replace(/道路$/, '');
     core = core.replace(/^[A-Za-z]\d+/, ''); // E4東北 → 東北
+    core = core.replace(/縦貫$/, '');         // 東北縦貫 → 東北（Google Maps正式名称吸収）
     return core;
 }
 
@@ -957,7 +958,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
         }
 
         const _minInterval = needRestStop ? 30 : 50;
-        const _chargeNeeded = onOrNearHighway ? currentSoc < step1Soc : currentSoc < thresholdSocPct + 5;
+        const _chargeNeeded = currentSoc < step1Soc; // 高速/一般道問わず常にstep1で発火
 
         if ((_chargeNeeded || needRestStop) && (km - lastChargeKm) > _minInterval) {
             const nearCandidates = chargerDB.filter(c => c.type === 'sa_pa' && haversine(c.lat, c.lng, s.lat, s.lng) < 5.0);
@@ -969,8 +970,9 @@ async function runSimulation(segments, elevations, params, onProgress) {
                 });
             }
 
-            if (onOrNearHighway) {
-                // ══ 高速モード ══════════════════════════════════════════
+            // ── SA/PA検索（高速/一般道問わず常に実施） ───────────────
+            // road name未検出でもSA/PAを優先。roadMatchesCharger(null,*)=trueなので誤選択なし。
+            {
                 // 休憩: トリガーから10%未満SOC低下→90kW、10%以上→50kW
                 const _restMinKw = (restTriggerSoc >= 0 && currentSoc > restTriggerSoc - 10) ? 90 : 50;
                 const _saPaMinKw  = needRestStop ? _restMinKw : currentSoc < step2Soc ? 50 : 90;
@@ -1120,8 +1122,8 @@ async function runSimulation(segments, elevations, params, onProgress) {
                         }
                     }
                 }
-            } else {
-                // ══ 一般道モード ════════════════════════════════════════
+            } else if (!onOrNearHighway) {
+                // ══ 一般道モード（SA/PA未発見時のみ） ════════════════════
                 // Step1: FLASH/TEEMO 90kW+ 7km以内
                 // Step2: 任意kW 15km以内（SOC < step3Socのみ）
                 const _genFilter = (minKwReq, radius) => chargerDB.filter(c => {
@@ -2715,6 +2717,12 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.9</span><span class="cl-date">2026-05-10</span>
+        <ul class="cl-items">
+          <li>【東北道/常磐道SA/PA未検出バグ修正】GoogleMapsが「東北縦貫自動車道」を返す場合にextractHighwayCoreが"東北縦貫"を返しSA/PA名の"東北"と不一致になる問題を修正（「縦貫」を除去して正規化）。あわせてSA/PA検索をonOrNearHighway判定の外に移動しroad name未検出ルートでも常にSA/PAを優先探索するよう変更</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.8</span><span class="cl-date">2026-05-10</span>
         <ul class="cl-items">
