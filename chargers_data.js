@@ -6324,8 +6324,8 @@ const CHARGER_DATA = [
     "powers": [
       90
     ],
-    "lat": 38.5826477,
-    "lng": 140.9420148,
+    "lat": 38.484,
+    "lng": 140.968,
     "powerKw": 90,
     "direction": "down"
   },

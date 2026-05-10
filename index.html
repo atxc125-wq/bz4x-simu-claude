@@ -138,7 +138,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.9<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.10<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-08</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
@@ -938,7 +938,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
             break; 
         }
 
-        // ── 自動充電サーチ（SOCティア式 v2.5.8） ────────────────────
+        // ── 自動充電サーチ（SOCティア式 v2.5.10） ───────────────────
         const continuousDrivingMin = time - lastChargeTime;
         if (currentRoadName) lastHighwayKm = km;
         const onOrNearHighway = currentRoadName || (km - lastHighwayKm < 60);
@@ -958,7 +958,28 @@ async function runSimulation(segments, elevations, params, onProgress) {
         }
 
         const _minInterval = needRestStop ? 30 : 50;
-        const _chargeNeeded = currentSoc < step1Soc; // 高速/一般道問わず常にstep1で発火
+
+        // 前方に90kW+SA/PAがない場合の先手トリガー（電欠防止）
+        const _kmCanTravel = _rate > 0 ? (currentSoc - thresholdSocPct) / 100 * batteryKwh / _rate : 999;
+        const _visitedSet = new Set(stops.map(st => `${st.charger.lat.toFixed(4)},${st.charger.lng.toFixed(4)}`));
+        const _no90kWBeyond = currentSoc < step1Soc + 20 && !chargerDB.some(c => {
+            if (c.type !== 'sa_pa' || parseInt(c.powerKw) < 90) return false;
+            const key = `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
+            if (_visitedSet.has(key)) return false;
+            const dist = haversine(c.lat, c.lng, s.lat, s.lng);
+            return dist > 5 && dist < _kmCanTravel
+                && isValidDirection(c.name, currentTripIsUpbound)
+                && roadMatchesCharger(currentRoadName, c.name);
+        });
+        const _nearSaPaUnreachable = _no90kWBeyond
+            && _kmCanTravel < totalKm - km
+            && chargerDB.some(c =>
+                c.type === 'sa_pa'
+                && haversine(c.lat, c.lng, s.lat, s.lng) < 3.0
+                && isValidDirection(c.name, currentTripIsUpbound)
+                && roadMatchesCharger(currentRoadName, c.name)
+            );
+        const _chargeNeeded = currentSoc < step1Soc || _nearSaPaUnreachable;
 
         if ((_chargeNeeded || needRestStop) && (km - lastChargeKm) > _minInterval) {
             const nearCandidates = chargerDB.filter(c => c.type === 'sa_pa' && haversine(c.lat, c.lng, s.lat, s.lng) < 5.0);
@@ -974,7 +995,10 @@ async function runSimulation(segments, elevations, params, onProgress) {
             // road name未検出でもSA/PAを優先。roadMatchesCharger(null,*)=trueなので誤選択なし。
             // 休憩: トリガーから10%未満SOC低下→90kW、10%以上→50kW
                 const _restMinKw = (restTriggerSoc >= 0 && currentSoc > restTriggerSoc - 10) ? 90 : 50;
-                const _saPaMinKw  = needRestStop ? _restMinKw : currentSoc < step2Soc ? 50 : 90;
+                const _saPaMinKw  = needRestStop ? _restMinKw
+                    : currentSoc < step2Soc ? 50
+                    : _nearSaPaUnreachable ? 50  // 先手: 前方90kW+なし → 50kW+を許可
+                    : 90;
                 const _saPaRadius = needRestStop ? 8.0 : currentSoc < step2Soc ? 8.0 : 3.0;
 
                 const _saPaBaseMatch = c => {
@@ -994,6 +1018,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                 const _logTrigger = needRestStop ? '休憩'
                                   : currentSoc < step3Soc ? `緊急${step3Soc}%`
                                   : currentSoc < step2Soc ? `閾値${thresholdSocPct}%`
+                                  : _nearSaPaUnreachable ? '前方SA無し先手'
                                   : `先手${step1Soc}%`;
 
                 if (saPa) {
@@ -2716,6 +2741,12 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.10</span><span class="cl-date">2026-05-10</span>
+        <ul class="cl-items">
+          <li>【前方SA/PA無し先手トリガー追加】走行可能距離内に未訪問の90kW+ SA/PAが存在しない場合、目的地未到達の前提で近傍SA/PAで即時充電する「前方SA無し先手」トリガーを実装（東京→青森で紫波SA・岩手山SAを確実に捕捉し電欠を防止）。50kW+ SA/PAも許容してフォールバック</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.9</span><span class="cl-date">2026-05-10</span>
         <ul class="cl-items">
