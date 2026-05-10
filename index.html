@@ -138,7 +138,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.5<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.6<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-08</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
@@ -329,6 +329,7 @@ let userWaypoints = [];
 let autoChargers = [];
 let originalRouteTotalKm = 0; // リルート距離ガード用: 初回ルートの総km
 let rejectedChargers = []; // リルートで膨張したwaypoint chargerのblacklist
+let _prunedTEEMOs = new Set(); // 不要TEEMO停車の除去を一度だけ試みるセット
 let _socAdjusted = false; // 到着SOC自動調整フラグ（1回のみ）
 let userCustomDurations = {};
 let userIgnoredChargers = [];
@@ -504,6 +505,7 @@ function initApp() {
     document.getElementById('calc-btn').addEventListener('click', () => {
         autoChargers = [];
         rejectedChargers = [];
+        _prunedTEEMOs = new Set();
         userWaypoints = [];
         userCustomDurations = {};
         userIgnoredChargers = [];
@@ -1517,6 +1519,30 @@ async function onCalculate() {
 
             if (result.requestReroute) return onCalculate();
 
+            // ── 不要TEEMO停車のpost-pruning ───────────────────────────────────────
+            // 第1パスでSOC低下中にTEEMOを選んだが、後のSA/PA追加で不要になったケースを除去。
+            // socBefore>=40% → SA/PAを挟んだ後もルートにTEEMOが残っている → 除去して再計算。
+            // _prunedTEEMOs で「1キーにつき1回だけ試みる」を保証（無限ループ防止）。
+            if (!result.isDead) {
+                let _didPrune = false;
+                for (const stop of result.stops) {
+                    const _t = stop.charger.type;
+                    if (_t !== 'teemo' && _t !== 'flash') continue;
+                    if (stop.socBefore < 40) continue; // 本当に必要な停車
+                    const _pk = `${stop.charger.lat.toFixed(4)},${stop.charger.lng.toFixed(4)}`;
+                    if (_prunedTEEMOs.has(_pk)) continue; // 既に試みた
+                    const _pi = autoChargers.findIndex(ac => (ac.key || `${ac.lat.toFixed(4)},${ac.lng.toFixed(4)}`) === _pk);
+                    if (_pi >= 0) {
+                        autoChargers.splice(_pi, 1);
+                        _prunedTEEMOs.add(_pk);
+                        _didPrune = true;
+                        break;
+                    }
+                }
+                if (_didPrune) return onCalculate();
+            }
+            // ─────────────────────────────────────────────────────────────────────
+
             currentSim = result;
 
             // ① 到着SOC自動調整（チェック時・1回のみ）
@@ -2160,6 +2186,7 @@ window.retryWithLowerKw = function(newMinKw) {
     if (radio) radio.checked = true;
     userIgnoredChargers = [];
     rejectedChargers = [];
+    _prunedTEEMOs = new Set();
     userWaypoints = [];
     autoChargers = [];
     onCalculate();
@@ -2192,6 +2219,7 @@ window.forceChg = function(lat, lng, idx, name, type) {
     // Google Mapsが北海道方面へ迂回するルートを生成するバグを防ぐ
     autoChargers = [];
     rejectedChargers = [];
+    _prunedTEEMOs = new Set();
     // origLat/origLng: 充電器DBの実座標（シミュレーション内のallChargerWpsマッチングに使用）
     // lat/lng: ルートパスにスナップした座標（Google Maps waypoint routing に使用）
     userWaypoints.push({ lat: wpLat, lng: wpLng, origLat: found.lat, origLng: found.lng, name: found.name, powerKw: found.powerKw, type: found.type, isSOS: false });
@@ -2689,6 +2717,12 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.6</span><span class="cl-date">2026-05-10</span>
+        <ul class="cl-items">
+          <li>【電欠バグ修正】東京→青森等でSA/PA充電後もTEEMOに立ち寄り続ける問題を修正: シミュレーション完了後にTEEMO停車のSOC入り値が40%以上なら「不要停車」と判断してautoChargers から除去し再計算（_prunedTEEMOs で1キー1回のみ試みを保証し無限ループ防止）</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.5</span><span class="cl-date">2026-05-10</span>
         <ul class="cl-items">
