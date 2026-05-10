@@ -138,7 +138,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.4<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.5<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-08</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
@@ -939,7 +939,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
         // Step2: SA/PAが無い場合のみFLASH/TEEMO等の下道充電器をwaypointとしてリルート
         const continuousDrivingMin = time - lastChargeTime;
         if (currentRoadName) lastHighwayKm = km;
-        const onOrNearHighway = currentRoadName || (km - lastHighwayKm < 30); // JCT grace 30km
+        const onOrNearHighway = currentRoadName || (km - lastHighwayKm < 60); // JCT grace 60km（仙台付近の乗継等でも高速判定を維持）
         // 目的地まで届くSOCがあれば充電不要（ただし休憩は別途判定）
         const kmToGoal = totalKm - km;
         const _rate = totalDrivingKm > 10 ? totalDrivingKwh / totalDrivingKm : batteryKwh / (6.5 * 100);
@@ -1053,13 +1053,22 @@ async function runSimulation(segments, elevations, params, onProgress) {
                 });
                 // 先手TEEMOの場合は半径を15kmに拡大（空港経由等で通常7kmでは届かないケース対策）
                 const teemoRadius = _proactiveTEEMO ? 15.0 : 7.0;
+                // 60km以内にSOCが届くSA/PAが存在するか（socTriggerに関わらずチェック）
+                const _anySaPaReachable = chargerDB.some(c => {
+                    if (c.type !== 'sa_pa') return false;
+                    const dist = haversine(c.lat, c.lng, s.lat, s.lng);
+                    if (dist > 60) return false;
+                    if (!isValidDirection(c.name, currentTripIsUpbound)) return false;
+                    if (userIgnoredChargers.includes(`${c.lat.toFixed(4)},${c.lng.toFixed(4)}`)) return false;
+                    return currentSoc >= (dist * _rate / batteryKwh) * 100 + thresholdSocPct;
+                });
                 // 最短充電モードでは下道充電器(TEEMO/FLASH)へのリルートを禁止（ルート膨張防止）
                 const _offRouteCandidates = (_upcomingSaPa || strategyQuickChg) ? [] : chargerDB.filter(c => {
                     if (c.type === 'sa_pa') return false;
                     // SA/PAが10km以内 → TEEMOへの迂回を抑制（御在所SA等が近い場合）
                     if (c.type === 'teemo' && _nearSaPa) return false;
-                    // 高速上 + 緊急でも先手でもない → TEEMO除外
-                    if (c.type === 'teemo' && onOrNearHighway && !_socTrigger && !_proactiveTEEMO) return false;
+                    // 高速上 + 届くSA/PAあり + 先手でもない → TEEMO除外（!_socTrigger→_anySaPaReachableに置換）
+                    if (c.type === 'teemo' && onOrNearHighway && _anySaPaReachable && !_proactiveTEEMO) return false;
                     // 高速上ではTEEMO/FLASH以外（eMP等一般道充電器）へのリルートを禁止
                     if (onOrNearHighway && c.type !== 'teemo' && c.type !== 'flash') return false;
                     const dist = haversine(c.lat, c.lng, s.lat, s.lng);
@@ -2680,6 +2689,12 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.5</span><span class="cl-date">2026-05-10</span>
+        <ul class="cl-items">
+          <li>【電欠バグ修正】東京→青森等でTEEMO（一般道）が高速上で選ばれ続ける問題を修正: ①JCT乗継グレース期間30km→60kmに延長、②TEEMO除外条件を「SOC30%未満かどうか」から「60km以内にSA/PAが届くか」に変更（より直接的な判定）</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.4</span><span class="cl-date">2026-05-09</span>
         <ul class="cl-items">
