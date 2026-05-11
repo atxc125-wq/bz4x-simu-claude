@@ -138,7 +138,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.11<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.12<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-08</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
@@ -167,6 +167,10 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
                 <label style="cursor:pointer; display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--muted);">
                     <input type="checkbox" id="avoid-highways" style="width:auto; margin:0;">
                     🛣 高速道路を避ける
+                </label>
+                <label style="cursor:pointer; display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--muted);">
+                    <input type="checkbox" id="avoid-ferries" style="width:auto; margin:0;">
+                    ⛴ フェリーを使わない
                 </label>
             </div>
         </div>
@@ -881,6 +885,17 @@ async function runSimulation(segments, elevations, params, onProgress) {
             }
         }
         
+        // フェリー乗船中: SOC消費なし、時間のみ経過
+        if (s.isFerry) {
+            if (i === 0 || !segments[i-1].isFerry) {
+                simLog.push({ km: Math.round(km), name: 'フェリー乗船', action: 'ferry' });
+            }
+            km += s.distKm;
+            time += (s.distKm / s.speed) * 60;
+            profile.push({ km, time, soc: (socKwh / batteryKwh) * 100, speed: 0, elev: currentElev, isFerry: true });
+            continue;
+        }
+
         const currentTripIsUpbound = isUpboundLegs[currentLegIdx] || false;
 
         if (startElev === null) startElev = currentElev;
@@ -1245,6 +1260,7 @@ async function fetchTollAmount(originLoc, destLoc, waypoints = [], originName = 
         extraComputations: ['TOLLS'],
         routeModifiers: {
             avoidHighways,
+            avoidFerries: document.getElementById('avoid-ferries').checked,
             vehicleInfo: { emissionType: 'ELECTRIC' }, // BZ4X=EV（料金区分は普通車）
             tollPasses: ['JP_ETC2', 'JP_ETC']
         }
@@ -1418,7 +1434,7 @@ async function onCalculate() {
         combinedWps.unshift({ location: waypointVal, stopover: true });
     }
 
-    directionsService.route({ origin, destination: dest, waypoints: combinedWps, optimizeWaypoints: false, travelMode: 'DRIVING', avoidTolls: document.getElementById('avoid-tolls').checked, avoidHighways: document.getElementById('avoid-highways').checked }, async (res, status) => {
+    directionsService.route({ origin, destination: dest, waypoints: combinedWps, optimizeWaypoints: false, travelMode: 'DRIVING', avoidTolls: document.getElementById('avoid-tolls').checked, avoidHighways: document.getElementById('avoid-highways').checked, avoidFerries: document.getElementById('avoid-ferries').checked }, async (res, status) => {
         if (status !== 'OK') return hideLoading() || alert('ルート解析失敗');
 
         // Google Maps の住所から「○○府○○市」形式に短縮
@@ -1477,12 +1493,14 @@ async function onCalculate() {
             const trafficRatio = (leg.duration_in_traffic && leg.duration.value > 0)
                 ? leg.duration_in_traffic.value / leg.duration.value : 1;
             leg.steps.forEach(step => {
-                const speed = (step.distance.value / (step.duration.value * trafficRatio)) * 3.6 || 60;
+                const isFerry = /フェリー|ferry/i.test(step.instructions)
+                    || (step.travel_mode && step.travel_mode !== 'DRIVING');
+                const speed = (step.distance.value / (step.duration.value * trafficRatio)) * 3.6 || 20;
                 const path = step.path;
-                const roadName = extractRoadName(step.instructions);
+                const roadName = isFerry ? null : extractRoadName(step.instructions);
                 for(let i=0; i < path.length - 1; i++) {
                     const distKm = google.maps.geometry.spherical.computeDistanceBetween(path[i], path[i+1]) / 1000;
-                    segments.push({ distKm, speed, lat: path[i].lat(), lng: path[i].lng(), roadName });
+                    segments.push({ distKm, speed, lat: path[i].lat(), lng: path[i].lng(), roadName, isFerry: isFerry || false });
                 }
             });
             if (legIdx < legs.length - 1) waypointIndexes.push(segments.length - 1);
@@ -1871,6 +1889,8 @@ function renderUI() {
             return `<tr style="opacity:0.65"><td style="color:#64748b">${e.km}km</td><td>🏁到着</td><td colspan="4" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.name}</td><td style="color:#64748b">SOC ${e.soc}%</td></tr>`;
           } else if (e.action === 'dead') {
             return `<tr style="opacity:0.65"><td style="color:#ef4444">${e.km}km</td><td>💀電欠</td><td colspan="4" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.name}</td><td style="color:#ef4444">SOC 0%</td></tr>`;
+          } else if (e.action === 'ferry') {
+            return `<tr style="opacity:0.75"><td style="color:#38bdf8">${e.km}km</td><td>⛴乗船</td><td colspan="5" style="color:#38bdf8;">フェリー乗船中（消費なし）</td></tr>`;
           } else if (e.action === 'stop') {
             const icon = e.trigger === '休憩' ? '🛌' : e.trigger && e.trigger.startsWith('閾値') ? '🔴' : '🟡';
             return `<tr><td style="color:#64748b">${e.km}km</td><td>${icon}停</td><td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nameShort}</td><td>${e.kw}kW</td><td>${e.socBefore}→${e.socAfter}%</td><td>${e.duration}分</td><td style="color:#64748b">[${e.trigger}]</td></tr>`;
@@ -1883,6 +1903,7 @@ function renderUI() {
             if (e.action === 'depart') return `0km\t出発\t${e.name}\t\t\t\tSOC ${e.soc}%`;
             if (e.action === 'arrive') return `${e.km}km\t到着\t${e.name}\t\t\t\tSOC ${e.soc}%`;
             if (e.action === 'dead')   return `${e.km}km\t電欠\t${e.name}\t\t\t\tSOC 0%`;
+            if (e.action === 'ferry')  return `${e.km}km\tフェリー乗船\t\t\t消費なし`;
             if (e.action === 'stop')   return `${e.km}km\t停\t${e.name}\t${e.kw}kW\t${e.socBefore}→${e.socAfter}%\t${e.duration}分\t[${e.trigger}]`;
             return `${e.km}km\tスキ\t${e.name}\t${e.kw}kW\t${e.soc}%\t-\t[${e.reason}]`;
           }).join('\n');
@@ -2759,6 +2780,12 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.12</span><span class="cl-date">2026-05-11</span>
+        <ul class="cl-items">
+          <li>【フェリー対応】「⛴ フェリーを使わない」チェックボックスを追加（avoidFerries）。フェリーを含むルートでは乗船中のSOC消費をゼロに（speed=0・SOC変化なし）。シミュレーションログに「⛴乗船」行を表示。グラフのSOC線はフェリー区間でフラットになる</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.11</span><span class="cl-date">2026-05-11</span>
         <ul class="cl-items">
