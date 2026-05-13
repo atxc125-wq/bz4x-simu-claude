@@ -1,0 +1,47 @@
+name: GitHub Pages デプロイ
+
+on:
+  push:
+    branches: [claude/fix-simulation-button-MIf4L, main]
+  workflow_dispatch:
+
+# GitHub Pages デプロイに必要な権限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同時デプロイを防ぐ（進行中のデプロイはキャンセルせず完了待ち）
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: API キーをビルド成果物に注入
+        run: |
+          mkdir -p _site
+          cp -r . _site/
+          # .github や Python スクリプトはサイトに含めない
+          rm -rf _site/.github _site/build_*.py _site/*.log _site/_site
+          # プレースホルダーを Secret の値に置換（index.html のみ）
+          sed -i "s|__GMAPS_API_KEY__|${{ secrets.GMAPS_API_KEY }}|g" _site/index.html
+          echo "✅ API キー注入完了"
+
+      - name: Pages アーティファクトをアップロード
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: GitHub Pages にデプロイ
+        id: deployment
+        uses: actions/deploy-pages@v4

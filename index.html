@@ -2726,9 +2726,10 @@ function chartZoomReset() {
 })();
 
 window.onload = () => {
-    // ★ ここにGCPで制限をかけた「標準APIキー」を直接書きます
-    const DEFAULT_API_KEY = 'AIzaSyBov_holyXbQRTOZgr21AuNvZ3PDz-PeiM'; 
-    
+    // キーはビルド時に GitHub Actions が __GMAPS_API_KEY__ を実際の値に置換します
+    // ローカル開発時は空文字になりUIの入力欄を使ってください
+    const DEFAULT_API_KEY = '__GMAPS_API_KEY__';
+
     const userKey = localStorage.getItem('gmaps_key');
     const apiKeyInput = document.getElementById('api-key');
     
