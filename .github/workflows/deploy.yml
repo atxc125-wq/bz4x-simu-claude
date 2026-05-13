@@ -30,9 +30,14 @@ jobs:
       - name: API キーをビルド成果物に注入
         run: |
           mkdir -p _site
-          cp -r . _site/
-          # .github や Python スクリプトはサイトに含めない
-          rm -rf _site/.github _site/build_*.py _site/*.log _site/_site
+          # rsync で _site 自身・不要ファイルを除外してコピー
+          rsync -a \
+            --exclude='_site' \
+            --exclude='.github' \
+            --exclude='build_*.py' \
+            --exclude='*.log' \
+            --exclude='*.md' \
+            . _site/
           # プレースホルダーを Secret の値に置換（index.html のみ）
           sed -i "s|__GMAPS_API_KEY__|${{ secrets.GMAPS_API_KEY }}|g" _site/index.html
           echo "✅ API キー注入完了"
