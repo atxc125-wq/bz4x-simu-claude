@@ -133,7 +133,8 @@ def fetch_toyota_csvs():
 
         except Exception as e:
             log.error(f"{pref}.csv の処理中にエラー: {e}")
-            
+        time.sleep(1)
+
     return chargers
 
 def main():

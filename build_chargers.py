@@ -69,6 +69,7 @@ def scrape_flash():
     out = []
     try:
         r = requests.get("https://ev-charger.jp/area/", headers=HEADERS, timeout=20)
+        time.sleep(1)
         soup = BeautifulSoup(r.text, "html.parser")
         blocks = soup.find_all("div", class_=re.compile(r"weluka-col-inner"))
         for block in blocks:
@@ -93,7 +94,9 @@ def scrape_emp():
     for page in range(1, 30):  # 最大29ページまで（約580件対応）
         try:
             r = requests.get(f"{search_url}&page={page}", headers=HEADERS, timeout=20)
-            lines = [t.strip() for t in BeautifulSoup(r.text, "html.parser").get_text(separator="\n").splitlines() if t.strip()]
+            soup = BeautifulSoup(r.text, "html.parser")
+            lines = [t.strip() for t in soup.get_text(separator="\n").splitlines() if t.strip()]
+            found = 0
             for i, line in enumerate(lines):
                 if "【所在地" in line:
                     addr = re.sub(r'.*【所在地\s*】\s*', '', line).strip()
@@ -109,6 +112,11 @@ def scrape_emp():
                         if kw and kw not in powers: powers.append(kw)
                     is_hw = any(x in (name + addr) for x in ["SA", "PA", "サービスエリア", "パーキングエリア", "高速", "自動車道"])
                     out.append({"name": name, "address": addr, "type": "sa_pa" if is_hw else "emp", "powers": powers or [50]})
+                    found += 1
+            time.sleep(1)
+            if found == 0:
+                log.info(f"EMP page {page}: 件数0 → 最終ページとみなし終了")
+                break
         except Exception as e:
             log.error(f"EMP page {page} error: {e}")
             break
