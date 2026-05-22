@@ -660,9 +660,11 @@ async function fetchTemp(lat, lng, dateStr) {
 }
 
 function getVehicleAcceptanceKw(soc) {
-    // 実測(2026-05 TEEMO 150kW, 23%→88%, 30min)に基づき50〜80%帯を下方修正
-    // 熱制限込みの保守値: 旅行シミュとして充電時間を安全側に見積もる
-    const curve = [[0,115],[10,115],[20,135],[30,140],[40,130],[50,110],[60,90],[70,75],[80,60],[90,50],[100,40]];
+    // 実測(2026-05 TEEMO 150kW, 23%→88%, 30min)に基づき補正:
+    // ・30%=140kW, 87%=68kW は実測確定値
+    // ・50〜70%は熱制限込みの保守値
+    // ・80〜90%は車両BMS申告値(67.9kW@87%)から逆算: 80%→75, 90%→65で87%=68kW
+    const curve = [[0,115],[10,115],[20,135],[30,140],[40,130],[50,110],[60,90],[70,75],[80,75],[90,65],[100,45]];
     for (let i=0; i<curve.length-1; i++) {
         if (soc >= curve[i][0] && soc < curve[i+1][0]) {
             const ratio = (soc - curve[i][0]) / (curve[i+1][0] - curve[i][0]);
@@ -672,9 +674,9 @@ function getVehicleAcceptanceKw(soc) {
     return 45;
 }
 
-// 実測バッテリー電圧カーブ (BZ4X): 9%→385V, 21%→395V, 52%→409V, 72%→426V
+// 実測バッテリー電圧カーブ (BZ4X): 9%→385V, 21%→395V, 52%→409V, 72%→426V, 87%→442V(2026-05実測)
 function getBatteryVoltage(soc) {
-    const curve = [[0, 378], [9, 385], [21, 395], [52, 409], [72, 426], [100, 440]];
+    const curve = [[0, 378], [9, 385], [21, 395], [52, 409], [72, 426], [87, 442], [100, 450]];
     for (let i = 0; i < curve.length - 1; i++) {
         if (soc >= curve[i][0] && soc <= curve[i+1][0]) {
             const r = (soc - curve[i][0]) / (curve[i+1][0] - curve[i][0]);
