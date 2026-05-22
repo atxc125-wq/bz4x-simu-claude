@@ -138,7 +138,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.12<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.13<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-08</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
@@ -660,7 +660,9 @@ async function fetchTemp(lat, lng, dateStr) {
 }
 
 function getVehicleAcceptanceKw(soc) {
-    const curve = [[0,115],[10,115],[20,135],[30,140],[40,135],[50,125],[60,110],[70,90],[80,75],[90,55],[100,45]];
+    // 実測(2026-05 TEEMO 150kW, 23%→88%, 30min)に基づき50〜80%帯を下方修正
+    // 熱制限込みの保守値: 旅行シミュとして充電時間を安全側に見積もる
+    const curve = [[0,115],[10,115],[20,135],[30,140],[40,130],[50,110],[60,90],[70,75],[80,60],[90,50],[100,40]];
     for (let i=0; i<curve.length-1; i++) {
         if (soc >= curve[i][0] && soc < curve[i+1][0]) {
             const ratio = (soc - curve[i][0]) / (curve[i+1][0] - curve[i][0]);
@@ -693,8 +695,8 @@ function calculateCharging(startSoc, durationMins, chargerInfo) {
         let vehicleMax = getVehicleAcceptanceKw(currentSoc);
         let chargerMax = maxKw;
         if (!isFlash && maxKw > 90) {
-            // 15分ブースト(MAX350A)後は200A定電流制限 → 電圧上昇で緩やかにkW増加
-            if (t > 15) chargerMax = getBatteryVoltage(currentSoc) * 200 / 1000;
+            // 15分ブースト後は160A定電流制限（実測: 86%・433Vで69kW → 69000/433≒160A）
+            if (t > 15) chargerMax = getBatteryVoltage(currentSoc) * 160 / 1000;
         }
         currentSoc += (Math.min(vehicleMax, chargerMax) / 60) / batteryKwh * 100;
     }
@@ -2781,6 +2783,12 @@ window.onload = () => {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.13</span><span class="cl-date">2026-05-22</span>
+        <ul class="cl-items">
+          <li>【充電カーブ実測補正】TEEMO 150kW実充電データ（23%→88%/30分）をもとにgetVehicleAcceptanceKwの50〜80%帯を下方修正（熱制限込みの保守値）。定電流制限も実測逆算値160Aに修正（従来200A）。充電所要時間の過小見積もりを改善</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.12</span><span class="cl-date">2026-05-11</span>
         <ul class="cl-items">
