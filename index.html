@@ -674,9 +674,10 @@ function getVehicleAcceptanceKw(soc) {
     return 45;
 }
 
-// 実測バッテリー電圧カーブ (BZ4X): 9%→385V, 21%→395V, 52%→409V, 72%→426V, 87%→442V(2026-05実測)
+// 実測バッテリー電圧カーブ (BZ4X) ※車内ディスプレイ実測値
+// 23%→368V(t=0:03, 29A≒OCV), 30%→395V(t=2:44, 349A), 87%→442V(t=29:00, 158A)
 function getBatteryVoltage(soc) {
-    const curve = [[0, 378], [9, 385], [21, 395], [52, 409], [72, 426], [87, 442], [100, 450]];
+    const curve = [[0, 355], [23, 368], [30, 395], [52, 409], [72, 426], [87, 442], [100, 450]];
     for (let i = 0; i < curve.length - 1; i++) {
         if (soc >= curve[i][0] && soc <= curve[i+1][0]) {
             const r = (soc - curve[i][0]) / (curve[i+1][0] - curve[i][0]);
