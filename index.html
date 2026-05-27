@@ -152,12 +152,8 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             <div class="field" style="margin-bottom:0;"><label>出発時間</label><input type="time" id="start-time" value="08:00"></div>
         </div>
         
-        <div style="display:flex; align-items:flex-end; gap:6px;">
-          <div class="field" style="flex:1; margin-bottom:0;"><label>出発地</label><div class="input-wrap"><input type="text" id="origin" value="東京"><button class="input-clear" onclick="document.getElementById('origin').value='';document.getElementById('origin').focus()">✕</button></div></div>
-          <button onclick="(function(){var o=document.getElementById('origin'),d=document.getElementById('dest'),t=o.value;o.value=d.value;d.value=t;})()" title="出発地と目的地を入れ替え" style="flex-shrink:0; margin-bottom:10px; padding:6px 10px; background:var(--card); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:var(--muted); font-size:15px; cursor:pointer; line-height:1;">⇅</button>
-          <div class="field" style="flex:1; margin-bottom:0;"><label>目的地</label><div class="input-wrap"><input type="text" id="dest" value="大阪"><button class="input-clear" onclick="document.getElementById('dest').value='';document.getElementById('dest').focus()">✕</button></div></div>
-        </div>
-        <div style="height:10px;"></div>
+        <div class="field"><label style="display:flex; justify-content:space-between; align-items:center;">出発地 <button onclick="(function(){var o=document.getElementById('origin'),d=document.getElementById('dest'),t=o.value;o.value=d.value;d.value=t;})()" title="出発地と目的地を入れ替え" style="padding:2px 8px; background:var(--card); border:1px solid rgba(255,255,255,0.15); border-radius:5px; color:var(--muted); font-size:11px; cursor:pointer; font-weight:normal;">⇅ 入れ替え</button></label><div class="input-wrap"><input type="text" id="origin" value="東京"><button class="input-clear" onclick="document.getElementById('origin').value='';document.getElementById('origin').focus()">✕</button></div></div>
+        <div class="field"><label>目的地</label><div class="input-wrap"><input type="text" id="dest" value="大阪"><button class="input-clear" onclick="document.getElementById('dest').value='';document.getElementById('dest').focus()">✕</button></div></div>
         <div class="field"><label>経由地 (往復の場合は目的地)</label><div class="input-wrap"><input type="text" id="waypoint" placeholder="例: 大阪城"><button class="input-clear" onclick="document.getElementById('waypoint').value='';document.getElementById('waypoint').focus()">✕</button></div></div>
         <div class="field" style="margin-top:-4px;">
             <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:5px;">
