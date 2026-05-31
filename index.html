@@ -260,6 +260,18 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
         </div>
         <button id="calc-btn" style="margin-top:8px;">シミュレーション開始</button>
         <div id="dead-alert"></div>
+        <details style="margin-top:12px;">
+          <summary style="cursor:pointer; font-size:11px; color:var(--muted); user-select:none;">🔬 走行ログ検証（デバッグ）</summary>
+          <div style="padding-top:8px; display:flex; flex-direction:column; gap:6px;">
+            <input type="file" id="timeline-json-file" accept=".json" style="display:none" onchange="loadTimelineJSON(this.files[0])">
+            <button onclick="document.getElementById('timeline-json-file').click()" style="font-size:11px; padding:5px 10px; background:var(--card); border:1px solid rgba(255,255,255,0.15); border-radius:6px; color:var(--muted); cursor:pointer;">📂 タイムライン JSON を読み込む</button>
+            <div id="timeline-controls" style="display:none; flex-direction:column; gap:5px;">
+              <select id="timeline-date-select" onchange="applyTimelineDate(this.value)" style="font-size:11px; padding:4px 6px; background:var(--card); border:1px solid rgba(255,255,255,0.15); border-radius:6px; color:var(--fg);"></select>
+              <button onclick="clearTimelineOverlay()" style="font-size:11px; padding:4px 8px; background:var(--card); border:1px solid rgba(255,255,255,0.15); border-radius:6px; color:var(--muted); cursor:pointer;">✕ オーバーレイを消す</button>
+            </div>
+            <div id="timeline-status" style="font-size:10px; color:var(--muted);"></div>
+          </div>
+        </details>
     </div>
     <div class="section" id="results" style="display:none; border-bottom:none;">
         <div style="font-size:10px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">シミュレーション結果</div>
@@ -2807,6 +2819,85 @@ window.onload = () => {
         document.head.appendChild(s);
     }
 };
+// ── タイムラインJSON 走行ログ検証 ──────────────────────────────────────
+let _timelineSegments = [];
+let _timelineOverlays = [];
+
+function _parseTimelineLatLng(str) {
+    // "35.123456°, 139.123456°" → {lat, lng}
+    const parts = str.replace(/°/g, '').split(',').map(s => parseFloat(s.trim()));
+    return isNaN(parts[0]) || isNaN(parts[1]) ? null : { lat: parts[0], lng: parts[1] };
+}
+
+function loadTimelineJSON(file) {
+    const status = document.getElementById('timeline-status');
+    status.textContent = '読み込み中… (数秒かかります)';
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            _timelineSegments = (data.semanticSegments || []).filter(s => s.timelinePath && s.timelinePath.length > 0);
+            if (_timelineSegments.length === 0) { status.textContent = '走行セグメントが見つかりませんでした'; return; }
+
+            // 日付一覧を抽出（+09:00 付きなのでそのまま substring(0,10)）
+            const dateSet = new Set(_timelineSegments.map(s => s.startTime.substring(0, 10)));
+            const dates = [...dateSet].sort().reverse();
+
+            const sel = document.getElementById('timeline-date-select');
+            sel.innerHTML = '<option value="">-- 日付を選択 --</option>' + dates.map(d => `<option value="${d}">${d}</option>`).join('');
+            document.getElementById('timeline-controls').style.display = 'flex';
+            status.textContent = `${_timelineSegments.length} 件の走行セグメント (${dates.length} 日分) を読み込みました`;
+        } catch(err) {
+            status.textContent = '解析エラー: ' + err.message;
+        }
+    };
+    reader.readAsText(file);
+}
+
+function applyTimelineDate(date) {
+    clearTimelineOverlay();
+    if (!date || !googleMap) return;
+    const segs = _timelineSegments.filter(s => s.startTime.startsWith(date));
+    if (segs.length === 0) return;
+
+    const bounds = new google.maps.LatLngBounds();
+    segs.forEach(seg => {
+        const path = seg.timelinePath.map(p => _parseTimelineLatLng(p.point)).filter(Boolean);
+        if (path.length < 2) return;
+        path.forEach(p => bounds.extend(p));
+
+        const line = new google.maps.Polyline({
+            path, map: googleMap, geodesic: true,
+            strokeColor: '#22c55e', strokeOpacity: 0.75, strokeWeight: 4
+        });
+        _timelineOverlays.push(line);
+
+        // 停車点（5分以上の時間ギャップ）を検出してマーカー表示
+        for (let i = 1; i < seg.timelinePath.length; i++) {
+            const t0 = new Date(seg.timelinePath[i-1].time), t1 = new Date(seg.timelinePath[i].time);
+            const gapMin = (t1 - t0) / 60000;
+            if (gapMin >= 5) {
+                const pos = _parseTimelineLatLng(seg.timelinePath[i-1].point);
+                if (!pos) continue;
+                const m = new google.maps.Marker({
+                    position: pos, map: googleMap,
+                    title: `${Math.round(gapMin)}分停車`,
+                    icon: { path: google.maps.SymbolPath.CIRCLE, scale: 7,
+                            fillColor: '#f59e0b', fillOpacity: 1, strokeColor: '#1e293b', strokeWeight: 2 }
+                });
+                _timelineOverlays.push(m);
+            }
+        }
+    });
+
+    googleMap.fitBounds(bounds);
+    document.getElementById('timeline-status').textContent = `${date}: ${segs.length} セグメント表示中 (🟢 実走ルート / 🟡 5分以上停車)`;
+}
+
+function clearTimelineOverlay() {
+    _timelineOverlays.forEach(o => o.setMap(null));
+    _timelineOverlays = [];
+}
 </script>
 
 <div id="cl-overlay" onclick="if(event.target===this)this.classList.remove('open')">
