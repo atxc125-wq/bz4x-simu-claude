@@ -154,7 +154,12 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
         
         <div class="field"><label style="display:flex; justify-content:space-between; align-items:center;">出発地 <button onclick="(function(){var o=document.getElementById('origin'),d=document.getElementById('dest'),t=o.value;o.value=d.value;d.value=t;})()" title="出発地と目的地を入れ替え" style="padding:2px 8px; background:var(--card); border:1px solid rgba(255,255,255,0.15); border-radius:5px; color:var(--muted); font-size:11px; cursor:pointer; font-weight:normal;">⇅ 入れ替え</button></label><div class="input-wrap"><input type="text" id="origin" value="東京"><button class="input-clear" onclick="document.getElementById('origin').value='';document.getElementById('origin').focus()">✕</button></div></div>
         <div class="field"><label>目的地</label><div class="input-wrap"><input type="text" id="dest" value="大阪"><button class="input-clear" onclick="document.getElementById('dest').value='';document.getElementById('dest').focus()">✕</button></div></div>
-        <div class="field"><label>経由地 (往復の場合は目的地)</label><div class="input-wrap"><input type="text" id="waypoint" placeholder="例: 大阪城"><button class="input-clear" onclick="document.getElementById('waypoint').value='';document.getElementById('waypoint').focus()">✕</button></div></div>
+        <div id="waypoints-container">
+          <div class="field waypoint-row">
+            <label style="display:flex; justify-content:space-between; align-items:center;">経由地 <button onclick="addWaypointRow()" style="padding:2px 8px; background:var(--card); border:1px solid rgba(255,255,255,0.15); border-radius:5px; color:var(--muted); font-size:11px; cursor:pointer; font-weight:normal;">＋ 追加</button></label>
+            <div class="input-wrap"><input type="text" class="waypoint-input" placeholder="例: 大阪城"><button class="input-clear" onclick="this.previousElementSibling.value='';this.previousElementSibling.focus()">✕</button></div>
+          </div>
+        </div>
         <div class="field" style="margin-top:-4px;">
             <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:5px;">
                 <label style="cursor:pointer; display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--muted);">
@@ -406,8 +411,24 @@ function initApp() {
     placesService = new google.maps.places.PlacesService(googleMap);
     
     new google.maps.places.Autocomplete(document.getElementById('origin'));
-    new google.maps.places.Autocomplete(document.getElementById('waypoint'));
+    new google.maps.places.Autocomplete(document.querySelector('.waypoint-input'));
     new google.maps.places.Autocomplete(document.getElementById('dest'));
+
+    window.addWaypointRow = function() {
+        const container = document.getElementById('waypoints-container');
+        const row = document.createElement('div');
+        row.className = 'field waypoint-row';
+        row.innerHTML = '<div class="input-wrap"><input type="text" class="waypoint-input" placeholder="経由地を追加"><button class="input-clear" onclick="removeWaypointRow(this.closest(\'.waypoint-row\'))">−</button></div>';
+        container.appendChild(row);
+        const input = row.querySelector('.waypoint-input');
+        new google.maps.places.Autocomplete(input);
+        input.focus();
+    };
+    window.removeWaypointRow = function(row) {
+        const rows = document.querySelectorAll('.waypoint-row');
+        if (rows.length > 1) row.remove();
+        else row.querySelector('.waypoint-input').value = '';
+    };
 
     // マップ長押し（モバイル）/ 右クリック（PC）→ 出発地・経由地・目的地セットメニュー
     let _ctxLatLng = null, _lpTimer = null, _ctxGeoPromise = null, _ctxGeo = null;
@@ -490,7 +511,13 @@ function initApp() {
     window.setFromMap = async function(field) {
         _hideCtx();
         if (!_ctxLatLng) return;
-        const el = document.getElementById(field);
+        let el;
+        if (field === 'waypoint') {
+            el = Array.from(document.querySelectorAll('.waypoint-input')).find(i => !i.value.trim());
+            if (!el) { window.addWaypointRow(); el = document.querySelectorAll('.waypoint-input')[document.querySelectorAll('.waypoint-input').length - 1]; }
+        } else {
+            el = document.getElementById(field);
+        }
         el.value = '取得中…';
         const result = _ctxGeoPromise ? await _ctxGeoPromise : await _reverseGeocode(_ctxLatLng);
         el.value = result?.address || `${_ctxLatLng.lat().toFixed(5)},${_ctxLatLng.lng().toFixed(5)}`;
@@ -1411,10 +1438,15 @@ function renderCostSummary(tollInfo) {
         </div>`;
 }
 
+function getWaypointValues() {
+    return Array.from(document.querySelectorAll('.waypoint-input'))
+        .map(el => el.value.trim()).filter(v => v.length > 0);
+}
+
 async function onCalculate() {
     if(chargerDB.length === 0) return alert('充電器データがロードされていません！');
     const origin = document.getElementById('origin').value;
-    const waypointVal = document.getElementById('waypoint').value;
+    const waypointVals = getWaypointValues();
     const dest = document.getElementById('dest').value;
 
     // ローディングメッセージ: 初回 or 再計算（経由地追加）
@@ -1436,9 +1468,7 @@ async function onCalculate() {
     const combinedWps = [...regularWps, ...autoChargers, ...destAreaWps].map(w => ({
         location: new google.maps.LatLng(w.lat, w.lng), stopover: true
     }));
-    if (waypointVal) {
-        combinedWps.unshift({ location: waypointVal, stopover: true });
-    }
+    [...waypointVals].reverse().forEach(v => combinedWps.unshift({ location: v, stopover: true }));
 
     directionsService.route({ origin, destination: dest, waypoints: combinedWps, optimizeWaypoints: false, travelMode: 'DRIVING', avoidTolls: document.getElementById('avoid-tolls').checked, avoidHighways: document.getElementById('avoid-highways').checked, avoidFerries: document.getElementById('avoid-ferries').checked }, async (res, status) => {
         if (status !== 'OK') return hideLoading() || alert('ルート解析失敗');
@@ -1679,7 +1709,7 @@ async function onCalculate() {
                     .filter(w => w.type !== 'sa_pa')
                     .map(w => ({ loc: new google.maps.LatLng(w.origLat ?? w.lat, w.origLng ?? w.lng), name: w.name }));
                 const _tollWps = [
-                    ...(waypointVal ? [{ loc: _legs[0].end_location, name: waypointVal }] : []),
+                    ...waypointVals.map((name, i) => ({ loc: _legs[i].end_location, name })),
                     ..._makeWpList(regularWps),
                     ..._makeWpList(autoChargers),
                     ..._makeWpList(destAreaWps)
@@ -1698,9 +1728,8 @@ function buildGoogleMapsUrl(withStops) {
     const origin = document.getElementById('origin').value.trim();
     const dest   = document.getElementById('dest').value.trim();
     if (!origin || !dest) return null;
-    const waypointVal = document.getElementById('waypoint').value.trim();
     const segments = [encodeURIComponent(origin)];
-    if (waypointVal) segments.push(encodeURIComponent(waypointVal));
+    getWaypointValues().forEach(v => segments.push(encodeURIComponent(v)));
     if (withStops && currentSim) {
         currentSim.stops.forEach(st => {
             // origLat/origLng がある場合はDB実座標を使用
