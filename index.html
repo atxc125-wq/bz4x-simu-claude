@@ -277,7 +277,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
         <div style="font-size:10px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">シミュレーション結果</div>
         <div class="stat-grid">
             <div class="stat">
-                <div class="lbl">到着SOC</div>
+                <div class="lbl" id="r-soc-lbl">到着SOC</div>
                 <div class="val" id="r-soc">--%</div>
                 <div id="r-stops" style="font-size:10px; color:var(--muted); margin-top:3px;"></div>
             </div>
@@ -1768,7 +1768,11 @@ function renderUI() {
       const diff = targetSoc !== null ? arr - targetSoc : null;
       const color = currentSim.isDead ? '#ef4444' : diff === null ? '#e2e8f0' : Math.abs(diff) <= 5 ? '#10b981' : diff > 5 ? '#f97316' : '#ef4444';
       document.getElementById('r-soc').style.color = color;
-      document.getElementById('r-soc').innerHTML = currentSim.isDead ? `0${u('%')}` : arr.toFixed(0) + u('%'); }
+      const noCharge = currentSim.stops.length === 0 && !currentSim.isDead;
+      document.getElementById('r-soc-lbl').textContent = noCharge ? 'SOC' : '到着SOC';
+      document.getElementById('r-soc').innerHTML = currentSim.isDead ? `0${u('%')}` :
+          noCharge ? `${Math.round(currentSim.startSocPct)}${u('%')} → ${arr.toFixed(0)}${u('%')}` :
+          arr.toFixed(0) + u('%'); }
     document.getElementById('r-eta').innerHTML = Math.floor(currentSim.eta/60) + u('h') + ' ' + Math.round(currentSim.eta%60) + u('m');
     document.getElementById('r-temp').innerHTML = currentSim.avgTemp.toFixed(1) + u('℃');
     document.getElementById('r-dist').innerHTML = Math.round(currentSim.totalKm) + u('km');
