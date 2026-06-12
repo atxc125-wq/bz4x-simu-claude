@@ -1771,7 +1771,7 @@ function renderUI() {
       const noCharge = currentSim.stops.length === 0 && !currentSim.isDead;
       document.getElementById('r-soc-lbl').textContent = noCharge ? 'SOC' : '到着SOC';
       document.getElementById('r-soc').innerHTML = currentSim.isDead ? `0${u('%')}` :
-          noCharge ? `${Math.round(currentSim.startSocPct)}${u('%')} → ${arr.toFixed(0)}${u('%')}` :
+          noCharge ? `${Math.round(currentSim.startSocPct)}${u('%')}<span class="unit"> → </span>${arr.toFixed(0)}${u('%')}` :
           arr.toFixed(0) + u('%'); }
     document.getElementById('r-eta').innerHTML = Math.floor(currentSim.eta/60) + u('h') + ' ' + Math.round(currentSim.eta%60) + u('m');
     document.getElementById('r-temp').innerHTML = currentSim.avgTemp.toFixed(1) + u('℃');
