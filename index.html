@@ -138,7 +138,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.14<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.15<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-08</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
@@ -727,15 +727,21 @@ function getBatteryVoltage(soc) {
     return 440;
 }
 
-function calculateCharging(startSoc, durationMins, chargerInfo) {
+function calculateCharging(startSoc, durationMins, chargerInfo, rampInfo = null) {
     const batteryKwh = 71.4;
     let currentSoc = startSoc;
     const isFlash = chargerInfo.type === 'flash' || chargerInfo.name.toUpperCase().includes('FLASH') || chargerInfo.name.includes('フラッシュ') || parseInt(chargerInfo.powerKw) >= 200;
     const maxKw = parseInt(chargerInfo.powerKw) || 50;
+    // プレコン無し時の立ち上がり遅れ（実測: 羽生PA 20℃・47%開始時57kW≒理論値の半分、約30分かけて理論値まで回復）
+    // 気温が高いほど電池が元々温かく立ち上がりが速いと推定し、回復時間を20℃=30分基準に補正
+    const rampMin = rampInfo ? Math.max(10, Math.min(45, 30 - (rampInfo.temp - 20) * 1.15)) : 0;
 
     for (let t = 1; t <= durationMins; t++) {
         if (currentSoc >= 100) break;
         let vehicleMax = getVehicleAcceptanceKw(currentSoc);
+        if (rampInfo && !rampInfo.preconditioned) {
+            vehicleMax *= Math.min(1, 0.5 + 0.5 * t / rampMin);
+        }
         let chargerMax = maxKw;
         if (!isFlash && maxKw > 90) {
             // 15分ブースト後は160A定電流制限（実測: 86%・433Vで69kW → 69000/433≒160A）
@@ -805,7 +811,7 @@ function buildRouteChargerList(segments, chargerDB, minKw, isUpboundLegs, waypoi
 // 戻り値 0 = このSA/PAはスキップ（次の150kW機まで十分なSOCあり）
 function calcQuickChgDuration(socBefore, km, totalKm, routeChargerList,
                                thresholdSocPct, batteryKwh,
-                               totalDrivingKwh, totalDrivingKm, chargerInfo) {
+                               totalDrivingKwh, totalDrivingKm, chargerInfo, rampInfo = null) {
     const _rate = totalDrivingKm > 10
         ? totalDrivingKwh / totalDrivingKm
         : batteryKwh / (6.5 * 100);
@@ -822,7 +828,7 @@ function calcQuickChgDuration(socBefore, km, totalKm, routeChargerList,
         // 既に届くSOC → return 0 でスキップを指示（ただし150kW機は最低_minDur確保）
         if (target <= socBefore) return chargerPowerKw >= 150 ? _minDur : 0;
         let t = 1;
-        while (t < 90 && calculateCharging(socBefore, t, chargerInfo) < target) t++;
+        while (t < 90 && calculateCharging(socBefore, t, chargerInfo, rampInfo) < target) t++;
         return Math.max(_minDur, t);
     }
 
@@ -837,7 +843,7 @@ function calcQuickChgDuration(socBefore, km, totalKm, routeChargerList,
     const targetSoc = Math.min(80, Math.max(kneeSOC, Math.ceil(socBefore) + 5));
     if (targetSoc <= socBefore) return 5;
     let t = 1;
-    while (t < 30 && calculateCharging(socBefore, t, chargerInfo) < targetSoc) t++;
+    while (t < 30 && calculateCharging(socBefore, t, chargerInfo, rampInfo) < targetSoc) t++;
     return Math.max(5, t);
 }
 
@@ -904,19 +910,20 @@ async function runSimulation(segments, elevations, params, onProgress) {
                 const defaultDur = (strategyBoost15 && parseInt(hit.powerKw) >= 150) ? 15 : 30;
                 const socBefore0 = (socKwh / batteryKwh) * 100;
                 const chargerInfo0 = { name: hit.name, lat: hit.lat, lng: hit.lng, powerKw: hit.powerKw, type: hit.type || 'emp' };
+                const rampInfo0 = { temp: lastLocalTemp, preconditioned: lastLocalTemp <= preconTempThreshold && parseInt(hit.powerKw) >= 90 };
                 const quickDur = (strategyQuickChg && routeChargerList)
-                    ? Math.max(5, calcQuickChgDuration(socBefore0, km, totalKm, routeChargerList, thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm, chargerInfo0))
+                    ? Math.max(5, calcQuickChgDuration(socBefore0, km, totalKm, routeChargerList, thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm, chargerInfo0, rampInfo0))
                     : defaultDur;
                 const duration = userCustomDurations[chgKey] || Math.min(defaultDur, quickDur);
                 const socBefore = (socKwh / batteryKwh) * 100;
-                
+
                 const chargerInfo = { name: (hit.isSOS ? `🆘 ` : '') + hit.name, lat: hit.lat, lng: hit.lng, powerKw: hit.powerKw, type: hit.type || 'emp' };
-                const socAfter = calculateCharging(socBefore, duration, chargerInfo);
-                
+                const socAfter = calculateCharging(socBefore, duration, chargerInfo, rampInfo0);
+
                 for(let t=1; t<=duration; t++) {
-                    const tempSoc = calculateCharging(socBefore, t, chargerInfo);
+                    const tempSoc = calculateCharging(socBefore, t, chargerInfo, rampInfo0);
                     if(t%5===0 || t===duration) {
-                        const avgKw = ((tempSoc - (t<=5?socBefore:calculateCharging(socBefore,t-5,chargerInfo))) / 100) * batteryKwh * 60 / Math.min(t,5);
+                        const avgKw = ((tempSoc - (t<=5?socBefore:calculateCharging(socBefore,t-5,chargerInfo,rampInfo0))) / 100) * batteryKwh * 60 / Math.min(t,5);
                         profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev, chargingKw: avgKw });
                     }
                 }
@@ -1087,10 +1094,12 @@ async function runSimulation(segments, elevations, params, onProgress) {
                 if (saPa) {
                     const chgKey = `${saPa.lat.toFixed(4)},${saPa.lng.toFixed(4)}`;
                     if (!stops.some(st => `${st.charger.lat.toFixed(4)},${st.charger.lng.toFixed(4)}` === chgKey)) {
+                        const _isPrecon = localTemp <= preconTempThreshold && parseInt(saPa.powerKw) >= 90;
+                        const _rampInfo = { temp: localTemp, preconditioned: _isPrecon };
                         const _quickDur = (!needRestStop && strategyQuickChg && routeChargerList && !userCustomDurations[chgKey])
                             ? calcQuickChgDuration((socKwh / batteryKwh) * 100, km, totalKm, routeChargerList,
                                 thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm,
-                                { powerKw: saPa.powerKw, name: saPa.name, lat: saPa.lat, lng: saPa.lng, type: 'sa_pa' })
+                                { powerKw: saPa.powerKw, name: saPa.name, lat: saPa.lat, lng: saPa.lng, type: 'sa_pa' }, _rampInfo)
                             : -1;
                         if (_quickDur === 0) {
                             const _last = simLog[simLog.length - 1];
@@ -1103,7 +1112,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                             const defaultDur = needRestStop ? 15 : (strategyBoost15 && parseInt(saPa.powerKw) >= 150) ? 15 : 30;
                             let duration = (_quickDur > 0) ? Math.min(userCustomDurations[chgKey] || defaultDur, _quickDur)
                                                            : userCustomDurations[chgKey] || defaultDur;
-                            if (localTemp <= preconTempThreshold && parseInt(saPa.powerKw) >= 90) {
+                            if (_isPrecon) {
                                 socKwh = Math.max(0.1, socKwh - 3);
                                 const preconStartT = time - 30;
                                 for (let j = profile.length - 1; j >= 0 && profile[j].time >= preconStartT; j--) {
@@ -1114,11 +1123,11 @@ async function runSimulation(segments, elevations, params, onProgress) {
                             }
                             const socBefore = (socKwh / batteryKwh) * 100;
                             const chargerInfo = { name: saPa.name, lat: saPa.lat, lng: saPa.lng, powerKw: saPa.powerKw, type: 'sa_pa' };
-                            const socAfter = calculateCharging(socBefore, duration, chargerInfo);
+                            const socAfter = calculateCharging(socBefore, duration, chargerInfo, _rampInfo);
                             for (let t = 1; t <= duration; t++) {
-                                const tempSoc = calculateCharging(socBefore, t, chargerInfo);
+                                const tempSoc = calculateCharging(socBefore, t, chargerInfo, _rampInfo);
                                 if (t % 5 === 0 || t === duration) {
-                                    const avgKw = ((tempSoc - (t<=5?socBefore:calculateCharging(socBefore,t-5,chargerInfo))) / 100) * batteryKwh * 60 / Math.min(t,5);
+                                    const avgKw = ((tempSoc - (t<=5?socBefore:calculateCharging(socBefore,t-5,chargerInfo,_rampInfo))) / 100) * batteryKwh * 60 / Math.min(t,5);
                                     profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev, chargingKw: avgKw });
                                 }
                             }
@@ -1167,10 +1176,12 @@ async function runSimulation(segments, elevations, params, onProgress) {
                         );
                         if (emergencySaPa) {
                             const chgKey = eKey(emergencySaPa);
+                            const _isPrecon3 = localTemp <= preconTempThreshold && parseInt(emergencySaPa.powerKw) >= 90;
+                            const _rampInfo3 = { temp: localTemp, preconditioned: _isPrecon3 };
                             const _quickDur3 = (!needRestStop && strategyQuickChg && routeChargerList && !userCustomDurations[chgKey])
                                 ? calcQuickChgDuration((socKwh / batteryKwh) * 100, km, totalKm, routeChargerList,
                                     thresholdSocPct, batteryKwh, totalDrivingKwh, totalDrivingKm,
-                                    { powerKw: emergencySaPa.powerKw, name: emergencySaPa.name, lat: emergencySaPa.lat, lng: emergencySaPa.lng, type: 'sa_pa' })
+                                    { powerKw: emergencySaPa.powerKw, name: emergencySaPa.name, lat: emergencySaPa.lat, lng: emergencySaPa.lng, type: 'sa_pa' }, _rampInfo3)
                                 : -1;
                             if (_quickDur3 === 0) {
                                 const _last3 = simLog[simLog.length - 1];
@@ -1183,7 +1194,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                                 const defaultDur = (strategyBoost15 && parseInt(emergencySaPa.powerKw) >= 150) ? 15 : 30;
                                 let duration = (_quickDur3 > 0) ? Math.min(userCustomDurations[chgKey] || defaultDur, _quickDur3)
                                                                 : userCustomDurations[chgKey] || defaultDur;
-                                if (localTemp <= preconTempThreshold && parseInt(emergencySaPa.powerKw) >= 90) {
+                                if (_isPrecon3) {
                                     socKwh = Math.max(0.1, socKwh - 3);
                                     const preconStartT = time - 30;
                                     for (let j = profile.length - 1; j >= 0 && profile[j].time >= preconStartT; j--) {
@@ -1194,11 +1205,11 @@ async function runSimulation(segments, elevations, params, onProgress) {
                                 }
                                 const socBefore = (socKwh / batteryKwh) * 100;
                                 const chargerInfo = { name: emergencySaPa.name, lat: emergencySaPa.lat, lng: emergencySaPa.lng, powerKw: emergencySaPa.powerKw, type: 'sa_pa' };
-                                const socAfter = calculateCharging(socBefore, duration, chargerInfo);
+                                const socAfter = calculateCharging(socBefore, duration, chargerInfo, _rampInfo3);
                                 for (let t = 1; t <= duration; t++) {
-                                    const tempSoc = calculateCharging(socBefore, t, chargerInfo);
+                                    const tempSoc = calculateCharging(socBefore, t, chargerInfo, _rampInfo3);
                                     if (t % 5 === 0 || t === duration) {
-                                        const avgKw = ((tempSoc - (t<=5?socBefore:calculateCharging(socBefore,t-5,chargerInfo))) / 100) * batteryKwh * 60 / Math.min(t,5);
+                                        const avgKw = ((tempSoc - (t<=5?socBefore:calculateCharging(socBefore,t-5,chargerInfo,_rampInfo3))) / 100) * batteryKwh * 60 / Math.min(t,5);
                                         profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev, chargingKw: avgKw });
                                     }
                                 }
@@ -2914,6 +2925,12 @@ function clearTimelineOverlay() {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.15</span><span class="cl-date">2026-06-20</span>
+        <ul class="cl-items">
+          <li>【充電カーブ：立ち上がり遅れを追加】実測（羽生PA・22℃・47%開始時57kW≒理論値の半分、約26分で47→83%）をもとに、プレコン未実施時は充電開始から理論受入電力の50%スタートで徐々に立ち上がるロジックを追加。立ち上がり時間は気温が高いほど短縮（20℃=30分、34℃=14分で目安値に到達）。プレコン実施済みの場合は立ち上がり遅れなし</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.14</span><span class="cl-date">2026-06-20</span>
         <ul class="cl-items">
