@@ -138,7 +138,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.15<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.16<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-08</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
@@ -732,20 +732,24 @@ function calculateCharging(startSoc, durationMins, chargerInfo, rampInfo = null)
     let currentSoc = startSoc;
     const isFlash = chargerInfo.type === 'flash' || chargerInfo.name.toUpperCase().includes('FLASH') || chargerInfo.name.includes('フラッシュ') || parseInt(chargerInfo.powerKw) >= 200;
     const maxKw = parseInt(chargerInfo.powerKw) || 50;
-    // プレコン無し時の立ち上がり遅れ（実測: 羽生PA 20℃・47%開始時57kW≒理論値の半分、約30分かけて理論値まで回復）
-    // 気温が高いほど電池が元々温かく立ち上がりが速いと推定し、回復時間を20℃=30分基準に補正
-    const rampMin = rampInfo ? Math.max(10, Math.min(45, 30 - (rampInfo.temp - 20) * 1.15)) : 0;
+    // プレコン無し時の立ち上がり遅れ（実測: 羽生PA 22℃・47%開始時57kW≒理論値の半分、約26分で47→83%）
+    // 30℃timelapse実測（19%スタートで開始から理論値どおりフル受電）では立ち上がり遅れが一切見られなかったため、
+    // 気温30℃以上では遅れ無し、22℃を基準に0.5倍スタート・30分で回復という形に補正
+    const rampF = rampInfo ? Math.max(0, Math.min(1, (rampInfo.temp - 22) / 8)) : 1;
+    const rampStartRatio = 0.5 + 0.5 * rampF;
+    const rampMin = Math.max(1, 30 - 30 * rampF);
 
     for (let t = 1; t <= durationMins; t++) {
         if (currentSoc >= 100) break;
         let vehicleMax = getVehicleAcceptanceKw(currentSoc);
         if (rampInfo && !rampInfo.preconditioned) {
-            vehicleMax *= Math.min(1, 0.5 + 0.5 * t / rampMin);
+            vehicleMax *= Math.min(1, rampStartRatio + (1 - rampStartRatio) * t / rampMin);
         }
         let chargerMax = maxKw;
         if (!isFlash && maxKw > 90) {
-            // 15分ブースト後は160A定電流制限（実測: 86%・433Vで69kW → 69000/433≒160A）
-            if (t > 15) chargerMax = getBatteryVoltage(currentSoc) * 160 / 1000;
+            // 満充電付近（実測: 86-87%・433Vで69kW → 69000/433≒160A）は160A定電流制限。
+            // 30℃timelapse実測でSOC82%まで電流制限なくカーブどおり受電できていたため、時間ではなくSOCで判定
+            if (currentSoc >= 85) chargerMax = getBatteryVoltage(currentSoc) * 160 / 1000;
         }
         currentSoc += (Math.min(vehicleMax, chargerMax) / 60) / batteryKwh * 100;
     }
@@ -2925,6 +2929,12 @@ function clearTimelineOverlay() {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.16</span><span class="cl-date">2026-06-20</span>
+        <ul class="cl-items">
+          <li>【充電カーブ：高温域での補正を見直し】新たな実測（外気温30℃・19%スタートのタイムラプス記録）で、立ち上がり遅れが一切無くSOC82%まで理論カーブどおりに受電できていたことが判明。これを受け、①立ち上がり遅れは22℃を基準に発生し30℃以上では無し（旧版は34℃でも遅れありとしていたのを修正）、②満充電間際の160A定電流制限は「充電開始15分後」ではなく「SOC85%以上」を条件に変更（実測の制限発生ポイントがSOCに依存していたため）</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.15</span><span class="cl-date">2026-06-20</span>
         <ul class="cl-items">
