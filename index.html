@@ -138,7 +138,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.13<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.14<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-08</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
@@ -200,7 +200,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
                 <span style="font-size:12px; color:var(--muted); font-weight:600;">⚙️ 玄人設定（電費・気温カスタマイズ）</span>
             </label>
             <div id="expert-panel" style="display:none; margin-top:8px; padding:10px; background:rgba(255,255,255,0.04); border-radius:8px; border:1px solid rgba(255,255,255,0.1);">
-                <div style="font-size:10px; color:var(--muted); margin-bottom:8px; opacity:0.8;">速度別電費（空欄=速度依存自動計算）</div>
+                <div style="font-size:10px; color:var(--muted); margin-bottom:8px; opacity:0.8;">速度別電費（空欄=速度依存自動計算）※20℃時の基準値。気温に応じて自動補正されます</div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
                     <div>
                         <label style="font-size:10px; text-transform:none; letter-spacing:0; margin-bottom:2px;">一般道 40km/h</label>
@@ -212,7 +212,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
                     <div>
                         <label style="font-size:10px; text-transform:none; letter-spacing:0; margin-bottom:2px;">高速 100km/h</label>
                         <div style="display:flex; align-items:center; gap:3px;">
-                            <input type="number" id="hwy-eff" step="0.1" min="3" max="15" placeholder="5.4">
+                            <input type="number" id="hwy-eff" step="0.1" min="3" max="15" placeholder="7.5">
                             <span style="font-size:10px; color:var(--muted); white-space:nowrap;">km/kWh</span>
                         </div>
                     </div>
@@ -974,14 +974,17 @@ async function runSimulation(segments, elevations, params, onProgress) {
         const nextElev = elevations[Math.min(elevations.length-1, Math.floor(nextProgress * elevations.length))] || currentElev;
         const elevEnergy = ((nextElev - currentElev) * 2200 * 9.8) / 3.6e6;
 
-        let baseEff;
-        if (expertMode && cityEff && hwyEff) {
-            // 40km/h→cityEff、100km/h→hwyEff の一次補間
-            const t = Math.max(0, Math.min(1, (s.speed - 40) / 60));
-            baseEff = Math.max(3.0, cityEff + (hwyEff - cityEff) * t);
-        } else {
-            baseEff = s.speed <= 40 ? 9.5 : Math.max(3.0, 9.5 - 0.06875 * (s.speed - 40));
-        }
+        // 気温による走行効率補正（実測ベース）: 20℃を基準、0℃で街乗り8・高速5.5km/kWh相当まで低下。線形補間、20℃超は変化なし
+        const useExpertEff = expertMode && cityEff && hwyEff;
+        const cityRef20 = useExpertEff ? cityEff : 9.5;
+        const hwyRef20 = useExpertEff ? hwyEff : 7.5;
+        const cityRatio0C = 8 / 9.5, hwyRatio0C = 5.5 / 7.5;
+        const tempFactor = Math.min(1, localTemp / 20);
+        const cityEffAtTemp = cityRef20 * (cityRatio0C + (1 - cityRatio0C) * tempFactor);
+        const hwyEffAtTemp = hwyRef20 * (hwyRatio0C + (1 - hwyRatio0C) * tempFactor);
+        // 40km/h→cityEffAtTemp、100km/h→hwyEffAtTemp の一次補間
+        const t = Math.max(0, Math.min(1, (s.speed - 40) / 60));
+        const baseEff = Math.max(3.0, cityEffAtTemp + (hwyEffAtTemp - cityEffAtTemp) * t);
         const hvacKw = localTemp < 20 ? (20 - localTemp) * 0.19 : (localTemp - 20) * 0.1;
         const hvacEnergy = hvacKw * (s.distKm / s.speed);
         const energy = (s.distKm / baseEff) + elevEnergy + hvacEnergy;
@@ -2911,6 +2914,12 @@ function clearTimelineOverlay() {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.14</span><span class="cl-date">2026-06-20</span>
+        <ul class="cl-items">
+          <li>【走行効率の気温補正】実測（夏季：街乗り9.5・高速7.5km/kWh／冬季：高速5.5km/kWh相当）をもとに、走行効率にも気温補正を追加。20℃を基準に0℃で街乗り8・高速5.5km/kWhまで線形低下（暖房消費とは別枠で加算）。玄人設定の街乗り/高速入力値にも同じ比率で適用</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.13</span><span class="cl-date">2026-05-22</span>
         <ul class="cl-items">
