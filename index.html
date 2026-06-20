@@ -138,7 +138,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.16<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.17<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-08</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
@@ -747,9 +747,12 @@ function calculateCharging(startSoc, durationMins, chargerInfo, rampInfo = null)
         }
         let chargerMax = maxKw;
         if (!isFlash && maxKw > 90) {
+            // 充電開始15分後、200A相当の電流制限が一時的に発動（実測: 30℃timelapseでSOC54%・受電可能102kWに対し
+            // 実電力93.7kWまで頭打ち）。SOCが上がりカーブ自体が200A相当を下回ると見えなくなる自己解消型の制限
+            if (t >= 15) chargerMax = Math.min(chargerMax, getBatteryVoltage(currentSoc) * 200 / 1000);
             // 満充電付近（実測: 86-87%・433Vで69kW → 69000/433≒160A）は160A定電流制限。
-            // 30℃timelapse実測でSOC82%まで電流制限なくカーブどおり受電できていたため、時間ではなくSOCで判定
-            if (currentSoc >= 85) chargerMax = getBatteryVoltage(currentSoc) * 160 / 1000;
+            // 30℃timelapse実測でSOC82%まで上記200A制限以外の制限なくカーブどおり受電できていたため、時間ではなくSOCで判定
+            if (currentSoc >= 85) chargerMax = Math.min(chargerMax, getBatteryVoltage(currentSoc) * 160 / 1000);
         }
         currentSoc += (Math.min(vehicleMax, chargerMax) / 60) / batteryKwh * 100;
     }
@@ -2929,6 +2932,12 @@ function clearTimelineOverlay() {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.17</span><span class="cl-date">2026-06-20</span>
+        <ul class="cl-items">
+          <li>【充電カーブ：開始15分後の一時的な200A制限を追加】実測（30℃timelapse、SOC54%で受電可能102kWに対し実電力93.7kWで頭打ち＝充電開始ちょうど15分後）をもとに、充電開始から15分後に200A相当の電流制限が発動するロジックを追加。SOCが上がりカーブ自体が200A相当を下回ると制限の影響は自然に消える（満充電間際の160A制限とは別枠で、より低いSOC帯で一時的に効く）</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.16</span><span class="cl-date">2026-06-20</span>
         <ul class="cl-items">
