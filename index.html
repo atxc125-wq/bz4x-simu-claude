@@ -138,7 +138,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.18<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.19<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-08</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
@@ -729,7 +729,7 @@ function getBatteryVoltage(soc) {
 }
 
 function calculateCharging(startSoc, durationMins, chargerInfo, rampInfo = null) {
-    const batteryKwh = 71.4;
+    const batteryKwh = 74.69;
     let currentSoc = startSoc;
     const isFlash = chargerInfo.type === 'flash' || chargerInfo.name.toUpperCase().includes('FLASH') || chargerInfo.name.includes('フラッシュ') || parseInt(chargerInfo.powerKw) >= 200;
     const maxKw = parseInt(chargerInfo.powerKw) || 50;
@@ -1386,7 +1386,7 @@ function renderCostSummary(tollInfo) {
     const costEl = document.getElementById('cost-summary');
     if (!costEl || !currentSim) return;
 
-    const BATTERY_KWH = 71.4;
+    const BATTERY_KWH = 74.69;
     const HOME_YEN_PER_KWH = 31;
     const chargedSoc = currentSim.stops.reduce((s, st) => s + (st.socAfter - st.socBefore), 0);
     const consumedKwh = ((currentSim.startSocPct || 100) + chargedSoc - (currentSim.isDead ? 0 : currentSim.arrivalSoc)) / 100 * BATTERY_KWH;
@@ -1597,7 +1597,7 @@ async function onCalculate() {
             const hwyEffVal  = parseFloat(document.getElementById('hwy-eff').value);
             const manualTempVal = parseFloat(document.getElementById('manual-temp').value);
             const params = {
-                batteryKwh: 71.4,
+                batteryKwh: 74.69,
                 startSocPct: parseFloat(document.getElementById('start-soc').value),
                 thresholdSocPct: parseFloat(document.getElementById('threshold-soc').value),
                 tripDate: document.getElementById('trip-date').value,
@@ -1690,7 +1690,7 @@ async function onCalculate() {
                     // 不足 → Google Places APIで目的地周辺の一般道充電器を探して追加
                     const dest = currentDetailedPath[currentDetailedPath.length - 1];
                     const destLat = dest.lat(), destLng = dest.lng();
-                    const neededKwh = (targetArrivalSoc - result.arrivalSoc) / 100 * 71.4;
+                    const neededKwh = (targetArrivalSoc - result.arrivalSoc) / 100 * 74.69;
 
                     let pick = null;
                     // ① Google Places API（新API→旧APIフォールバック）
@@ -1815,7 +1815,7 @@ function renderUI() {
         document.getElementById('r-charge').textContent =
             chargeMins > 0 ? (chH > 0 ? `充電 ${chH}h${chM}m` : `充電 ${chM}分`) : '';
         const chargedSoc = currentSim.stops.reduce((s, st) => s + (st.socAfter - st.socBefore), 0);
-        const consumedKwh = ((currentSim.startSocPct || 100) + chargedSoc - (currentSim.isDead ? 0 : currentSim.arrivalSoc)) / 100 * 71.4;
+        const consumedKwh = ((currentSim.startSocPct || 100) + chargedSoc - (currentSim.isDead ? 0 : currentSim.arrivalSoc)) / 100 * 74.69;
         const eff = consumedKwh > 0.1 ? currentSim.totalKm / consumedKwh : 0;
         document.getElementById('r-eff').innerHTML = eff > 0 ? eff.toFixed(1) + u('km/kWh') : '--';
     }
@@ -1871,7 +1871,7 @@ function renderUI() {
         else if (st.charger.type !== 'sa_pa') div.style.borderColor = '#64748b';
         const isOffRoute = st.charger.type && st.charger.type !== 'sa_pa';
         const roadBadge = st.detectedRoad ? `<span style="background:rgba(234,179,8,0.15);color:#fbbf24;border:1px solid rgba(234,179,8,0.3);border-radius:4px;font-size:10px;font-weight:bold;padding:2px 6px;">🛣 ${st.detectedRoad}</span>` : (isOffRoute ? `<span style="background:rgba(148,163,184,0.15);color:#94a3b8;border:1px solid rgba(148,163,184,0.3);border-radius:4px;font-size:10px;font-weight:bold;padding:2px 6px;">🏙 一般道</span>` : '');
-        const stopCost = calcChargingCost(st, 71.4);
+        const stopCost = calcChargingCost(st, 74.69);
         div.innerHTML = `
             <div class="chg-specs">
                 <span class="chg-chip ${getKwClass(st.charger.powerKw)}">⚡ ${kw}</span>
@@ -1882,7 +1882,7 @@ function renderUI() {
             </div>
             <div style="font-weight:700; color:var(--text); font-size:1.1rem; margin-bottom:6px;">${st.charger.name}</div>
 
-            <div style="font-size:12px; color:var(--muted); margin-bottom:4px;">到着 ${st.socBefore.toFixed(0)}% ➔ 出発 ${st.socAfter.toFixed(0)}%<span style="margin-left:8px; opacity:0.7;">(平均 ${(((st.socAfter - st.socBefore) / 100 * 71.4) / (st.duration / 60)).toFixed(0)} kW・¥${(stopCost.yen / ((st.socAfter - st.socBefore) / 100 * 71.4)).toFixed(0)}/kWh)</span></div>
+            <div style="font-size:12px; color:var(--muted); margin-bottom:4px;">到着 ${st.socBefore.toFixed(0)}% ➔ 出発 ${st.socAfter.toFixed(0)}%<span style="margin-left:8px; opacity:0.7;">(平均 ${(((st.socAfter - st.socBefore) / 100 * 74.69) / (st.duration / 60)).toFixed(0)} kW・¥${(stopCost.yen / ((st.socAfter - st.socBefore) / 100 * 74.69)).toFixed(0)}/kWh)</span></div>
             <div style="font-size:11px; color:#fbbf24; margin-bottom:8px;">💴 ¥${stopCost.yen.toLocaleString()} <span style="opacity:0.6;">(${stopCost.detail})</span></div>
             
             <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
@@ -2933,6 +2933,12 @@ function clearTimelineOverlay() {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.19</span><span class="cl-date">2026-06-24</span>
+        <ul class="cl-items">
+          <li>【バッテリー総容量を71.4kWh→74.69kWhに修正】71.4kWhは出典不明の旧来値で、車両カタログの実数値（191Ah×391V＝74.69kWh、トヨタ公式の急速充電カーブが基準にしているTypeD容量と同じ）と食い違っていた。コスト計算・消費電力換算・充電シミュレーションのSOC積算など全箇所を74.69kWhに統一。実測3パターン（羽生PA・30℃timelapse・34℃セッション）で再検証し、いずれも一致度の悪化なし（羽生PA到達SOC誤差0.4pt→0.8pt悪化も30℃データの200A発動タイミングと34℃データの過大推定は改善）</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.18</span><span class="cl-date">2026-06-20</span>
         <ul class="cl-items">
