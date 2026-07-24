@@ -138,7 +138,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.19<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.20<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-08</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
@@ -700,12 +700,12 @@ async function fetchTemp(lat, lng, dateStr) {
 }
 
 function getVehicleAcceptanceKw(soc) {
-    // 実測(2026-05 TEEMO 150kW, 23%→88%, 30min)に基づき補正:
-    // ・30%=140kW, 87%=68kW は実測確定値
-    // ・50〜70%は熱制限込みの保守値
-    // ・トヨタ公式BEV実用情報の急速充電カーブ(TypeD 74.69kWh)で「80%超で充電量を抑制」と
-    //   明記されているのを踏まえ、70%→85%の間を直線でつないで満充電間際の傾きを反映
-    const curve = [[0,115],[10,115],[20,135],[30,140],[40,130],[50,110],[60,90],[70,75],[85,60],[90,52],[100,45]];
+    // 実測複数データに基づくキャリブレーション:
+    // ・30%=140kW, 87%=68kW は実測確定値（TEEMO 150kW, 23%→88%, 30min）
+    // ・60〜80%帯: 27℃夜間timelapse（新電元150kW, 30%→87%）で60%=120kW/70%=100kW/80%=83kW実測。
+    //   ただし高温電池（高速走行後）では同帯が大幅低下するため、折衷値として70%=90kW/80%=75kWに設定
+    // ・80%超: トヨタ公式充電カーブで「80%超から抑制」と明記、85%=60kW/90%=52kWで傾きを反映
+    const curve = [[0,115],[10,115],[20,135],[30,140],[40,130],[50,110],[60,90],[70,90],[80,75],[85,60],[90,52],[100,45]];
     for (let i=0; i<curve.length-1; i++) {
         if (soc >= curve[i][0] && soc < curve[i+1][0]) {
             const ratio = (soc - curve[i][0]) / (curve[i+1][0] - curve[i][0]);
@@ -2933,6 +2933,12 @@ function clearTimelineOverlay() {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.20</span><span class="cl-date">2026-07-24</span>
+        <ul class="cl-items">
+          <li>【充電カーブ70〜80%帯を上方修正】27℃夜間timelapse実測（新電元150kW, SOC30%→87%）で60%=120kW・70%=100kW・80%=83kWを確認。高温電池（高速走行後）との折衷値として、SOC70%の受電上限を75kW→90kW、SOC80%の中間点として80kW=75kWを新設。羽生PA(22℃)・30℃timelapse・34℃セッションの既存3データと再検証し、いずれも適合度の悪化なし</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.19</span><span class="cl-date">2026-06-24</span>
         <ul class="cl-items">
