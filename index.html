@@ -41,6 +41,16 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', syste
 .input-wrap input { flex: 1; padding-right: 28px !important; }
 .input-clear { position: absolute; right: 6px; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 0; line-height: 1; opacity: 0.6; }
 .input-clear:hover { opacity: 1; color: var(--text); }
+.loc-hist-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); z-index: 9000; overflow: hidden; display: none; }
+.loc-hist-dropdown.open { display: block; }
+.loc-hist-item { display: flex; align-items: center; padding: 8px 10px; gap: 6px; cursor: pointer; font-size: 13px; color: var(--text); transition: background 0.15s; }
+.loc-hist-item:hover { background: rgba(6,182,212,0.1); }
+.loc-hist-item .loc-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.loc-hist-del { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 13px; padding: 0 2px; opacity: 0.5; flex-shrink: 0; }
+.loc-hist-del:hover { opacity: 1; color: #ef4444; }
+.loc-hist-footer { padding: 6px 10px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; }
+.loc-hist-clear { background: none; border: none; color: var(--muted); font-size: 11px; cursor: pointer; padding: 2px 4px; }
+.loc-hist-clear:hover { color: #ef4444; }
 label { display: block; font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; font-weight: 600; }
 input, select { width: 100%; background: var(--card-bg); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 10px; font-size: 14px; transition: border 0.2s; }
 input:focus, select:focus { outline: none; border-color: var(--accent2); }
@@ -138,7 +148,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.21<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.22<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-08</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
@@ -152,8 +162,8 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             <div class="field" style="margin-bottom:0;"><label>出発時間</label><input type="time" id="start-time" value="08:00"></div>
         </div>
         
-        <div class="field"><label style="display:flex; justify-content:space-between; align-items:center;">出発地 <button onclick="(function(){var o=document.getElementById('origin'),d=document.getElementById('dest'),t=o.value;o.value=d.value;d.value=t;})()" title="出発地と目的地を入れ替え" style="padding:2px 8px; background:var(--card); border:1px solid rgba(255,255,255,0.15); border-radius:5px; color:var(--muted); font-size:11px; cursor:pointer; font-weight:normal;">⇅ 入れ替え</button></label><div class="input-wrap"><input type="text" id="origin" value="東京"><button class="input-clear" onclick="document.getElementById('origin').value='';document.getElementById('origin').focus()">✕</button></div></div>
-        <div class="field"><label>目的地</label><div class="input-wrap"><input type="text" id="dest" value="大阪"><button class="input-clear" onclick="document.getElementById('dest').value='';document.getElementById('dest').focus()">✕</button></div></div>
+        <div class="field"><label style="display:flex; justify-content:space-between; align-items:center;">出発地 <button onclick="(function(){var o=document.getElementById('origin'),d=document.getElementById('dest'),t=o.value;o.value=d.value;d.value=t;})()" title="出発地と目的地を入れ替え" style="padding:2px 8px; background:var(--card); border:1px solid rgba(255,255,255,0.15); border-radius:5px; color:var(--muted); font-size:11px; cursor:pointer; font-weight:normal;">⇅ 入れ替え</button></label><div class="input-wrap"><input type="text" id="origin" value="東京" autocomplete="off"><button class="input-clear" onclick="document.getElementById('origin').value='';document.getElementById('origin').focus()">✕</button><div class="loc-hist-dropdown" id="loc-hist-origin"></div></div></div>
+        <div class="field"><label>目的地</label><div class="input-wrap"><input type="text" id="dest" value="大阪" autocomplete="off"><button class="input-clear" onclick="document.getElementById('dest').value='';document.getElementById('dest').focus()">✕</button><div class="loc-hist-dropdown" id="loc-hist-dest"></div></div></div>
         <div id="waypoints-container">
           <div class="field waypoint-row">
             <label style="display:flex; justify-content:space-between; align-items:center;">経由地 <button onclick="addWaypointRow()" style="padding:2px 8px; background:var(--card); border:1px solid rgba(255,255,255,0.15); border-radius:5px; color:var(--muted); font-size:11px; cursor:pointer; font-weight:normal;">＋ 追加</button></label>
@@ -559,6 +569,73 @@ function initApp() {
         document.getElementById('expert-panel').style.display = this.checked ? 'block' : 'none';
     });
 
+    // --- Location history ---
+    const LOC_KEY = 'bz4x-loc-history';
+    const LOC_MAX = 10;
+
+    function getLocHistory() {
+        try { return JSON.parse(localStorage.getItem(LOC_KEY) || '[]'); } catch(e) { return []; }
+    }
+    function saveLocHistory(val) {
+        if (!val) return;
+        let h = getLocHistory().filter(x => x !== val);
+        h.unshift(val);
+        if (h.length > LOC_MAX) h = h.slice(0, LOC_MAX);
+        try { localStorage.setItem(LOC_KEY, JSON.stringify(h)); } catch(e) {}
+    }
+    function removeLocHistory(val) {
+        const h = getLocHistory().filter(x => x !== val);
+        try { localStorage.setItem(LOC_KEY, JSON.stringify(h)); } catch(e) {}
+    }
+    function clearLocHistory() {
+        try { localStorage.removeItem(LOC_KEY); } catch(e) {}
+    }
+
+    function renderLocDropdown(inputId, filter) {
+        const dd = document.getElementById('loc-hist-' + inputId);
+        const all = getLocHistory();
+        const items = filter ? all.filter(x => x.toLowerCase().includes(filter.toLowerCase())) : all;
+        if (!items.length) { dd.classList.remove('open'); return; }
+        let html = items.map(name => {
+            const safe = name.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+            return `<div class="loc-hist-item" data-val="${safe}"><span style="font-size:12px;opacity:0.5;">🕐</span><span class="loc-name">${safe}</span><button class="loc-hist-del" data-val="${safe}" tabindex="-1">✕</button></div>`;
+        }).join('');
+        html += `<div class="loc-hist-footer"><button class="loc-hist-clear" id="loc-hist-clear-${inputId}">🗑 履歴をすべてクリア</button></div>`;
+        dd.innerHTML = html;
+        dd.classList.add('open');
+
+        dd.querySelectorAll('.loc-hist-item').forEach(el => {
+            el.addEventListener('mousedown', e => {
+                if (e.target.classList.contains('loc-hist-del')) return;
+                document.getElementById(inputId).value = el.dataset.val;
+                dd.classList.remove('open');
+            });
+        });
+        dd.querySelectorAll('.loc-hist-del').forEach(btn => {
+            btn.addEventListener('mousedown', e => {
+                e.stopPropagation();
+                removeLocHistory(btn.dataset.val);
+                renderLocDropdown(inputId, filter);
+            });
+        });
+        const clrBtn = document.getElementById('loc-hist-clear-' + inputId);
+        if (clrBtn) clrBtn.addEventListener('mousedown', e => {
+            e.stopPropagation();
+            clearLocHistory();
+            dd.classList.remove('open');
+        });
+    }
+
+    function attachLocHistory(inputId) {
+        const inp = document.getElementById(inputId);
+        const dd = document.getElementById('loc-hist-' + inputId);
+        inp.addEventListener('focus', () => renderLocDropdown(inputId, inp.value));
+        inp.addEventListener('input', () => renderLocDropdown(inputId, inp.value));
+        inp.addEventListener('blur', () => setTimeout(() => dd.classList.remove('open'), 150));
+    }
+    attachLocHistory('origin');
+    attachLocHistory('dest');
+
     function updateHwySpeedDisplay() {
         const speed = parseInt(document.getElementById('hwy-speed').value) || 100;
         const hwyBase = parseFloat(document.getElementById('hwy-eff').value) || 7.5;
@@ -580,6 +657,10 @@ function initApp() {
     });
 
     document.getElementById('calc-btn').addEventListener('click', () => {
+        const _originVal = document.getElementById('origin').value.trim();
+        const _destVal = document.getElementById('dest').value.trim();
+        if (_originVal) saveLocHistory(_originVal);
+        if (_destVal) saveLocHistory(_destVal);
         autoChargers = [];
         rejectedChargers = [];
         _prunedTEEMOs = new Set();
@@ -2924,7 +3005,7 @@ function downloadSimResult() {
     const ts = new Date().toLocaleString('ja-JP', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
     ctx.fillStyle = MUTED;
     ctx.font = '9px system-ui,sans-serif';
-    ctx.fillText('v2.5.21', PAD, y + 20);
+    ctx.fillText('v2.5.22', PAD, y + 20);
     ctx.textAlign = 'right';
     ctx.fillText(ts, W - PAD, y + 20);
     ctx.textAlign = 'left';
@@ -3179,6 +3260,12 @@ function clearTimelineOverlay() {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.22</span><span class="cl-date">2026-08-26</span>
+        <ul class="cl-items">
+          <li>【発着地の入力履歴を追加】出発地・目的地の入力欄にフォーカスすると最近の履歴（最大10件）がドロップダウン表示。シミュレーション実行時に自動保存。個別削除・一括クリア対応。データはデバイス内のみ（localStorage）に保存</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.21</span><span class="cl-date">2026-08-26</span>
         <ul class="cl-items">
