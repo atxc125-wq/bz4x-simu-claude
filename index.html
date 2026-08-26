@@ -138,7 +138,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.20<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.21<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-08</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
@@ -201,7 +201,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             </label>
             <div id="expert-panel" style="display:none; margin-top:8px; padding:10px; background:rgba(255,255,255,0.04); border-radius:8px; border:1px solid rgba(255,255,255,0.1);">
                 <div style="font-size:10px; color:var(--muted); margin-bottom:8px; opacity:0.8;">速度別電費（空欄=速度依存自動計算）※20℃時の基準値。気温に応じて自動補正されます</div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:6px;">
                     <div>
                         <label style="font-size:10px; text-transform:none; letter-spacing:0; margin-bottom:2px;">一般道 40km/h</label>
                         <div style="display:flex; align-items:center; gap:3px;">
@@ -210,11 +210,30 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
                         </div>
                     </div>
                     <div>
-                        <label style="font-size:10px; text-transform:none; letter-spacing:0; margin-bottom:2px;">高速 100km/h</label>
+                        <label style="font-size:10px; text-transform:none; letter-spacing:0; margin-bottom:2px;">高速 100km/h基準</label>
                         <div style="display:flex; align-items:center; gap:3px;">
                             <input type="number" id="hwy-eff" step="0.1" min="3" max="15" placeholder="7.5">
                             <span style="font-size:10px; color:var(--muted); white-space:nowrap;">km/kWh</span>
                         </div>
+                    </div>
+                </div>
+                <div style="margin-bottom:8px; padding:7px 8px; background:rgba(147,197,253,0.07); border-radius:6px; border:1px solid rgba(147,197,253,0.15);">
+                    <label style="font-size:10px; text-transform:none; letter-spacing:0; margin-bottom:4px; display:block; color:var(--muted);">🚗 高速巡航速度（80km/h以上のセグメントに適用・時間・電費を自動補正）</label>
+                    <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                        <select id="hwy-speed" style="padding:4px 8px; font-size:12px; background:var(--card-bg); color:var(--text); border:1px solid rgba(255,255,255,0.2); border-radius:6px;">
+                            <option value="80">80</option>
+                            <option value="90">90</option>
+                            <option value="95">95</option>
+                            <option value="100" selected>100</option>
+                            <option value="105">105</option>
+                            <option value="110">110</option>
+                            <option value="115">115</option>
+                            <option value="120">120</option>
+                            <option value="125">125</option>
+                            <option value="130">130</option>
+                        </select>
+                        <span style="font-size:10px; color:var(--muted);">km/h</span>
+                        <span style="font-size:10px; color:var(--muted);">→ 実効電費: <strong id="hwy-cruise-eff-display" style="color:#93c5fd;">7.5 km/kWh</strong></span>
                     </div>
                 </div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:6px;">
@@ -539,6 +558,19 @@ function initApp() {
         document.getElementById('expert-panel').style.display = this.checked ? 'block' : 'none';
     });
 
+    function updateHwySpeedDisplay() {
+        const speed = parseInt(document.getElementById('hwy-speed').value) || 100;
+        const hwyBase = parseFloat(document.getElementById('hwy-eff').value) || 7.5;
+        // bZ4X空力定数: C_roll=172.5N (Cr=0.008, m=2200kg, g=9.81), C_aero=0.4454 (Cd=0.29, A=2.56m², ρ=1.2kg/m³)
+        const vRef = 100/3.6, v = speed/3.6, cR = 172.5, cA = 0.4454;
+        const ratio = (cR + cA*vRef*vRef) / (cR + cA*v*v);
+        const eff = (hwyBase * ratio).toFixed(1);
+        document.getElementById('hwy-cruise-eff-display').textContent = eff + ' km/kWh';
+    }
+    document.getElementById('hwy-speed').addEventListener('change', updateHwySpeedDisplay);
+    document.getElementById('hwy-eff').addEventListener('input', updateHwySpeedDisplay);
+    updateHwySpeedDisplay();
+
     document.getElementById('target-arrival-soc-enabled').addEventListener('change', function() {
         const inp = document.getElementById('target-arrival-soc');
         inp.disabled = !this.checked;
@@ -857,7 +889,7 @@ function calcQuickChgDuration(socBefore, km, totalKm, routeChargerList,
 
 // ★ 引数を1つのparamsオブジェクトに集約（エラー防止）
 async function runSimulation(segments, elevations, params, onProgress) {
-    const { batteryKwh, startSocPct, thresholdSocPct, tripDate, startHour, waypointIndexes, isUpboundLegs, allChargerWps, expertMode, cityEff, hwyEff, manualTemp, altCorrection, preconTempThreshold = 15, preconDest = false, strategyMinKw = 0, strategyBoost15 = false, strategyRest = false, restIntervalMin = 90, strategyQuickChg = false, routeChargerList = null, targetArrivalSocPct = thresholdSocPct, originName = '出発地', destName = '目的地' } = params;
+    const { batteryKwh, startSocPct, thresholdSocPct, tripDate, startHour, waypointIndexes, isUpboundLegs, allChargerWps, expertMode, cityEff, hwyEff, hwySpeed = 100, manualTemp, altCorrection, preconTempThreshold = 15, preconDest = false, strategyMinKw = 0, strategyBoost15 = false, strategyRest = false, restIntervalMin = 90, strategyQuickChg = false, routeChargerList = null, targetArrivalSocPct = thresholdSocPct, originName = '出発地', destName = '目的地' } = params;
     const minKw = strategyMinKw;
     let socKwh = (startSocPct / 100) * batteryKwh, km = 0, time = 0;
     const profile = [], stops = [], simLog = [];
@@ -873,6 +905,9 @@ async function runSimulation(segments, elevations, params, onProgress) {
     let tempSum = 0, tempCount = 0;
     const totalKm = segments.reduce((sum, s) => sum + s.distKm, 0);
     const hwyKm   = segments.reduce((sum, s) => s.roadName ? sum + s.distKm : sum, 0);
+    // 巡航速度の空力電費補正比（bZ4X: C_roll=172.5N, C_aero=0.4454kg/m）
+    const _vRef = 100/3.6, _cR = 172.5, _cA = 0.4454;
+    const cruiseEffRatio = (_cR + _cA*_vRef*_vRef) / (_cR + _cA*(hwySpeed/3.6)*(hwySpeed/3.6));
     let lastProgressKm = -50;
 
     let currentLegIdx = 0;
@@ -989,19 +1024,22 @@ async function runSimulation(segments, elevations, params, onProgress) {
         const nextElev = elevations[Math.min(elevations.length-1, Math.floor(nextProgress * elevations.length))] || currentElev;
         const elevEnergy = ((nextElev - currentElev) * 2200 * 9.8) / 3.6e6;
 
+        // 巡航速度オーバーライド: 80km/h以上のセグメントはhwySpeedで走行
+        const isHwySegment = s.speed >= 80;
+        const effSpeed = isHwySegment ? hwySpeed : s.speed;
         // 気温による走行効率補正（実測ベース）: 20℃を基準、0℃で街乗り8・高速5.5km/kWh相当まで低下。線形補間、20℃超は変化なし
         const useExpertEff = expertMode && cityEff && hwyEff;
         const cityRef20 = useExpertEff ? cityEff : 9.5;
-        const hwyRef20 = useExpertEff ? hwyEff : 7.5;
+        const hwyRef20 = (useExpertEff ? hwyEff : 7.5) * cruiseEffRatio;
         const cityRatio0C = 8 / 9.5, hwyRatio0C = 5.5 / 7.5;
         const tempFactor = Math.min(1, localTemp / 20);
         const cityEffAtTemp = cityRef20 * (cityRatio0C + (1 - cityRatio0C) * tempFactor);
         const hwyEffAtTemp = hwyRef20 * (hwyRatio0C + (1 - hwyRatio0C) * tempFactor);
-        // 40km/h→cityEffAtTemp、100km/h→hwyEffAtTemp の一次補間
-        const t = Math.max(0, Math.min(1, (s.speed - 40) / 60));
+        // city 40km/h → hwy effSpeed の一次補間
+        const t = Math.max(0, Math.min(1, (effSpeed - 40) / 60));
         const baseEff = Math.max(3.0, cityEffAtTemp + (hwyEffAtTemp - cityEffAtTemp) * t);
         const hvacKw = localTemp < 20 ? (20 - localTemp) * 0.19 : (localTemp - 20) * 0.1;
-        const hvacEnergy = hvacKw * (s.distKm / s.speed);
+        const hvacEnergy = hvacKw * (s.distKm / effSpeed);
         const energy = (s.distKm / baseEff) + elevEnergy + hvacEnergy;
         let currentSoc = (socKwh / batteryKwh) * 100;
 
@@ -1262,7 +1300,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
 
         socKwh -= energy;
         totalDrivingKwh += energy; totalDrivingKm += s.distKm;
-        km += s.distKm; time += (s.distKm/s.speed)*60;
+        km += s.distKm; time += (s.distKm/effSpeed)*60;
         profile.push({ km, time, soc: (socKwh/batteryKwh)*100, speed: s.speed, elev: currentElev });
     }
     
@@ -1608,6 +1646,7 @@ async function onCalculate() {
                 expertMode: document.getElementById('expert-mode').checked,
                 cityEff: isNaN(cityEffVal) ? null : cityEffVal,
                 hwyEff:  isNaN(hwyEffVal)  ? null : hwyEffVal,
+                hwySpeed: parseInt(document.getElementById('hwy-speed').value) || 100,
                 manualTemp: isNaN(manualTempVal) ? null : manualTempVal,
                 altCorrection: document.getElementById('alt-correction').checked,
                 preconTempThreshold: parseFloat(document.getElementById('precon-temp').value) || 15,
@@ -2933,6 +2972,12 @@ function clearTimelineOverlay() {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.21</span><span class="cl-date">2026-08-26</span>
+        <ul class="cl-items">
+          <li>【高速巡航速度設定を追加】⚙️玄人設定に「高速巡航速度」セレクター（80〜130km/h）を追加。bZ4X空力定数（Cd=0.29, A=2.56m², Cr=0.008, m=2200kg）に基づく物理計算で電費・所要時間を自動補正。100km/h基準から120km/hにすると実効電費は約23%低下、80km/hは約26%向上</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.20</span><span class="cl-date">2026-07-24</span>
         <ul class="cl-items">
