@@ -1301,7 +1301,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
         socKwh -= energy;
         totalDrivingKwh += energy; totalDrivingKm += s.distKm;
         km += s.distKm; time += (s.distKm/effSpeed)*60;
-        profile.push({ km, time, soc: (socKwh/batteryKwh)*100, speed: s.speed, elev: currentElev });
+        profile.push({ km, time, soc: (socKwh/batteryKwh)*100, speed: effSpeed, elev: currentElev });
     }
     
     warningLocation = warningLocation || deadLocation;
