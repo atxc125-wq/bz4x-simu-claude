@@ -2846,7 +2846,7 @@ function downloadSimResult() {
     const dpr    = window.devicePixelRatio || 1;
     const chartW = chartCanvas.clientWidth;
     const chartH = chartCanvas.clientHeight;
-    const W      = Math.max(chartW, 680);
+    const W      = chartW;  // chart は等倍で描画（歪み防止）
     const PAD    = 20;
     const stops  = currentSim.stops || [];
 
@@ -2882,6 +2882,14 @@ function downloadSimResult() {
     ctx.fillRect(0, y, W, 6);
     y += 6;
 
+    // Google Maps の長い住所から都市名（市/区/町/村）レベルまで抽出
+    function shortLocName(addr) {
+        let s = String(addr).replace(/^日本[、,]\s*/, '').trim();
+        const m = s.match(/^(.+?[都道府県市区町村])/);
+        if (m) return m[1];
+        return s.split(/[、,]/)[0].trim() || addr;
+    }
+
     // ── ヘッダー ──
     const origin   = document.getElementById('origin').value || '出発地';
     const dest     = document.getElementById('dest').value   || '目的地';
@@ -2898,19 +2906,21 @@ function downloadSimResult() {
     ctx.fillText(`巡航 ${hwSpeed} km/h`, W - PAD, y);
     ctx.textAlign = 'left';
 
-    // ルート（大文字）
+    // ルート（大文字）— 都市名レベルに短縮して表示
     y += 22;
     ctx.font = 'bold 20px system-ui,sans-serif';
     ctx.fillStyle = INK;
     const arrow    = '  →  ';
     const arrowW   = ctx.measureText(arrow).width;
     const nameMaxW = (W - PAD * 2 - arrowW) / 2;
-    let   oText    = origin;
+    const oFull = shortLocName(origin);
+    let   oText = oFull;
     while (oText.length > 1 && ctx.measureText(oText).width > nameMaxW) oText = oText.slice(0, -1);
-    if (oText !== origin) oText += '…';
-    let   dText    = dest;
+    if (oText !== oFull) oText += '…';
+    const dFull = shortLocName(dest);
+    let   dText = dFull;
     while (dText.length > 1 && ctx.measureText(dText).width > nameMaxW) dText = dText.slice(0, -1);
-    if (dText !== dest)   dText += '…';
+    if (dText !== dFull) dText += '…';
     ctx.fillText(oText + arrow + dText, PAD, y);
 
     // 日付（右寄せ）
@@ -3015,8 +3025,8 @@ function downloadSimResult() {
         const url = URL.createObjectURL(blob);
         const a   = document.createElement('a');
         a.href    = url;
-        const o   = origin.replace(/[^\w぀-鿿]/g, '').slice(0, 8);
-        const d2  = dest.replace(/[^\w぀-鿿]/g, '').slice(0, 8);
+        const o   = shortLocName(origin).replace(/[^\w぀-鿿]/g, '').slice(0, 8);
+        const d2  = shortLocName(dest).replace(/[^\w぀-鿿]/g, '').slice(0, 8);
         a.download = `bz4x_${o}_${d2}_${tripDate || 'result'}.png`;
         a.click();
         URL.revokeObjectURL(url);
