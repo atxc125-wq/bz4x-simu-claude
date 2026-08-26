@@ -2755,134 +2755,187 @@ function downloadSimResult() {
     if (!chartCanvas || !currentSim) { alert('先にシミュレーションを実行してください'); return; }
 
     const isDark = !document.documentElement.classList.contains('light');
-    const bg    = isDark ? '#1a1a19' : '#f9f9f7';
-    const ink   = isDark ? '#ffffff' : '#0b0b0b';
-    const muted = isDark ? '#898781' : '#52514e';
-    const card  = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)';
+    const BG     = isDark ? '#111110' : '#f4f3f0';
+    const PANEL  = isDark ? '#1e1e1c' : '#ffffff';
+    const INK    = isDark ? '#f0efec' : '#0b0b0b';
+    const MUTED  = isDark ? '#898781' : '#6b6a67';
+    const BORDER = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.12)';
+    const ACCENT = '#2563eb';
 
-    const dpr = window.devicePixelRatio || 1;
-    const W   = chartCanvas.clientWidth;
-    const PAD = 16;
+    const dpr    = window.devicePixelRatio || 1;
+    const chartW = chartCanvas.clientWidth;
     const chartH = chartCanvas.clientHeight;
+    const W      = Math.max(chartW, 680);
+    const PAD    = 20;
+    const stops  = currentSim.stops || [];
 
-    const stops = currentSim.stops || [];
-    const headerH = 72;
-    const statsH  = 96;
-    const stopsH  = stops.length > 0 ? 24 + stops.length * 22 + 10 : 0;
-    const divH    = 1 + PAD;
-    const footerH = 28;
-    const totalH  = PAD + headerH + statsH + stopsH + divH + chartH + footerH + PAD;
-
+    // 先にキャンバス作成（fillTruncでctxを使うため）
+    const TILE_H   = 80;
+    const STOPS_H  = stops.length > 0 ? 28 + stops.length * 30 + 10 : 0;
+    const totalH   = 6 + 84 + 16 + TILE_H + 16 + STOPS_H + 10 + chartH + 30 + PAD;
     const out = document.createElement('canvas');
     out.width  = Math.round(W * dpr);
     out.height = Math.round(totalH * dpr);
-    const ctx = out.getContext('2d');
+    const ctx  = out.getContext('2d');
     ctx.scale(dpr, dpr);
 
-    // 背景
-    ctx.fillStyle = bg;
+    // テキスト幅を測って省略するヘルパー
+    function fillTrunc(text, x, y, maxW) {
+        let t = String(text);
+        if (ctx.measureText(t).width <= maxW) { ctx.fillText(t, x, y); return; }
+        while (t.length > 1 && ctx.measureText(t + '…').width > maxW) t = t.slice(0, -1);
+        ctx.fillText(t + '…', x, y);
+    }
+
+    // ── 背景 ──
+    ctx.fillStyle = BG;
     ctx.fillRect(0, 0, W, totalH);
 
-    let y = PAD;
+    let y = 0;
 
-    // ヘッダー
-    ctx.fillStyle = muted;
-    ctx.font = '10px system-ui,sans-serif';
-    ctx.fillText('bZ4X EV トリップシミュレーター', PAD, y + 13);
+    // ── アクセントバー（グラデーション）──
+    const grad = ctx.createLinearGradient(0, 0, W, 0);
+    grad.addColorStop(0, ACCENT);
+    grad.addColorStop(1, '#7c3aed');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, y, W, 6);
+    y += 6;
 
-    const origin = (document.getElementById('origin').value || '出発地').slice(0, 22);
-    const dest   = (document.getElementById('dest').value   || '目的地').slice(0, 22);
-    ctx.fillStyle = ink;
-    ctx.font = 'bold 17px system-ui,sans-serif';
-    ctx.fillText(`${origin}  →  ${dest}`, PAD, y + 38);
-
+    // ── ヘッダー ──
+    const origin   = document.getElementById('origin').value || '出発地';
+    const dest     = document.getElementById('dest').value   || '目的地';
     const tripDate = document.getElementById('trip-date').value || '';
-    ctx.fillStyle = muted;
-    ctx.font = '11px system-ui,sans-serif';
+    const hwSpeed  = parseInt(document.getElementById('hwy-speed')?.value) || 100;
+
+    // ブランドラベル
+    y += 14;
+    ctx.fillStyle = MUTED;
+    ctx.font = '10px system-ui,sans-serif';
+    ctx.fillText('bZ4X EV トリップシミュレーター', PAD, y);
     ctx.textAlign = 'right';
-    ctx.fillText(tripDate, W - PAD, y + 38);
+    ctx.fillStyle = '#60a5fa';
+    ctx.fillText(`巡航 ${hwSpeed} km/h`, W - PAD, y);
     ctx.textAlign = 'left';
 
-    const hwSpeed = parseInt(document.getElementById('hwy-speed')?.value) || 100;
-    if (hwSpeed !== 100) {
-        ctx.fillStyle = '#93c5fd';
-        ctx.font = '11px system-ui,sans-serif';
-        ctx.textAlign = 'right';
-        ctx.fillText(`巡航${hwSpeed}km/h`, W - PAD, y + 55);
-        ctx.textAlign = 'left';
-    }
-    y += headerH;
+    // ルート（大文字）
+    y += 22;
+    ctx.font = 'bold 20px system-ui,sans-serif';
+    ctx.fillStyle = INK;
+    const arrow    = '  →  ';
+    const arrowW   = ctx.measureText(arrow).width;
+    const nameMaxW = (W - PAD * 2 - arrowW) / 2;
+    let   oText    = origin;
+    while (oText.length > 1 && ctx.measureText(oText).width > nameMaxW) oText = oText.slice(0, -1);
+    if (oText !== origin) oText += '…';
+    let   dText    = dest;
+    while (dText.length > 1 && ctx.measureText(dText).width > nameMaxW) dText = dText.slice(0, -1);
+    if (dText !== dest)   dText += '…';
+    ctx.fillText(oText + arrow + dText, PAD, y);
 
-    // 統計タイル
+    // 日付（右寄せ）
+    ctx.textAlign = 'right';
+    ctx.font = '12px system-ui,sans-serif';
+    ctx.fillStyle = MUTED;
+    ctx.fillText(tripDate, W - PAD, y);
+    ctx.textAlign = 'left';
+
+    y += 16;
+
+    // ── 統計タイル ──
+    const socPct = currentSim.isDead ? 0 : (currentSim.arrivalSoc || 0);
+    const socColor = currentSim.isDead ? '#ef4444' : socPct >= 30 ? '#10b981' : socPct >= 20 ? '#f97316' : '#ef4444';
     const statItems = [
-        { lbl: document.getElementById('r-soc-lbl')?.textContent || '到着SOC', val: document.getElementById('r-soc')?.textContent || '--' },
-        { lbl: '走行距離',   val: document.getElementById('r-dist')?.textContent || '--' },
-        { lbl: '総所要時間', val: document.getElementById('r-eta')?.textContent  || '--' },
-        { lbl: '平均気温',   val: document.getElementById('r-temp')?.textContent || '--' },
-        { lbl: '総合電費',   val: document.getElementById('r-eff')?.textContent  || '--' },
+        { lbl: document.getElementById('r-soc-lbl')?.textContent || '到着SOC', val: document.getElementById('r-soc')?.textContent || '--',  clr: socColor },
+        { lbl: '走行距離',   val: document.getElementById('r-dist')?.textContent || '--', clr: INK },
+        { lbl: '総所要時間', val: document.getElementById('r-eta')?.textContent  || '--', clr: INK },
+        { lbl: '平均気温',   val: document.getElementById('r-temp')?.textContent || '--', clr: INK },
+        { lbl: '総合電費',   val: document.getElementById('r-eff')?.textContent  || '--', clr: '#60a5fa' },
     ];
-    const colW = (W - PAD * 2 - 6 * (statItems.length - 1)) / statItems.length;
-    statItems.forEach((s, i) => {
-        const cx = PAD + i * (colW + 6);
-        ctx.fillStyle = card;
-        _roundRect(ctx, cx, y, colW, 80, 7);
-        ctx.fill();
-        ctx.fillStyle = muted;
-        ctx.font = '9px system-ui,sans-serif';
-        ctx.fillText(s.lbl, cx + 7, y + 16);
-        ctx.fillStyle = ink;
-        ctx.font = 'bold 14px system-ui,sans-serif';
-        // 長いテキストを縮小
-        const maxW = colW - 14;
-        let fs = 14;
-        while (ctx.measureText(s.val).width > maxW && fs > 9) {
-            fs--;
-            ctx.font = `bold ${fs}px system-ui,sans-serif`;
-        }
-        ctx.fillText(s.val, cx + 7, y + 52);
-    });
-    y += statsH;
+    const GAP  = 6;
+    const tilW = (W - PAD * 2 - GAP * (statItems.length - 1)) / statItems.length;
 
-    // 充電停車リスト
-    if (stops.length > 0) {
-        ctx.fillStyle = muted;
+    statItems.forEach((s, i) => {
+        const tx = PAD + i * (tilW + GAP);
+        // カード
+        ctx.fillStyle = PANEL;
+        _roundRect(ctx, tx, y, tilW, TILE_H, 8); ctx.fill();
+        ctx.strokeStyle = BORDER; ctx.lineWidth = 1;
+        _roundRect(ctx, tx, y, tilW, TILE_H, 8); ctx.stroke();
+        // ラベル
+        ctx.fillStyle = MUTED;
         ctx.font = '9px system-ui,sans-serif';
-        ctx.fillText('充電停車', PAD, y + 13);
-        y += 20;
+        ctx.fillText(s.lbl, tx + 10, y + 18);
+        // 値（フォントサイズを自動縮小）
+        let fs = 19;
+        ctx.font = `bold ${fs}px system-ui,sans-serif`;
+        while (ctx.measureText(s.val).width > tilW - 16 && fs > 10) { fs--; ctx.font = `bold ${fs}px system-ui,sans-serif`; }
+        ctx.fillStyle = s.clr;
+        ctx.fillText(s.val, tx + 10, y + 58);
+    });
+    y += TILE_H + 16;
+
+    // ── 充電停車テーブル ──
+    if (stops.length > 0) {
+        // セクションヘッダー
+        ctx.fillStyle = MUTED;
+        ctx.font = 'bold 9px system-ui,sans-serif';
+        ctx.fillText('充電停車', PAD, y + 12);
+        ctx.strokeStyle = BORDER; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(PAD, y + 17); ctx.lineTo(W - PAD, y + 17); ctx.stroke();
+        y += 24;
+
+        // 列定義
+        const cName = PAD;
+        const cSoc  = PAD + (W - PAD * 2) * 0.42;
+        const cDur  = PAD + (W - PAD * 2) * 0.70;
+        const cKw   = PAD + (W - PAD * 2) * 0.84;
+        const nameMaxW = cSoc - cName - 8;
+        const socMaxW  = cDur - cSoc  - 8;
+        const durMaxW  = cKw  - cDur  - 8;
+        const kwMaxW   = W - PAD - cKw;
+
         stops.forEach(st => {
-            const name = (st.charger?.name || '').replace(/^🆘\s*/, '').slice(0, 28);
-            const added = Math.round(st.socAfter - st.socBefore);
-            const line = `• ${name}  ${Math.round(st.socBefore)}%→${Math.round(st.socAfter)}% (+${added}%)  ${st.duration}分  ${st.charger?.powerKw || '?'}kW`;
-            ctx.fillStyle = ink;
-            ctx.font = '11px system-ui,sans-serif';
-            ctx.fillText(line, PAD, y + 13);
-            y += 22;
+            const name   = (st.charger?.name || '').replace(/^🆘\s*/, '');
+            const added  = Math.round(st.socAfter - st.socBefore);
+            const socStr = `${Math.round(st.socBefore)}% → ${Math.round(st.socAfter)}%  +${added}%`;
+            const durStr = `${st.duration}分`;
+            const kwStr  = `${st.charger?.powerKw || '?'}kW`;
+
+            ctx.font = '12px system-ui,sans-serif';
+            ctx.fillStyle = INK;       fillTrunc(name,   cName, y + 18, nameMaxW);
+            ctx.fillStyle = '#10b981'; fillTrunc(socStr, cSoc,  y + 18, socMaxW);
+            ctx.fillStyle = MUTED;     fillTrunc(durStr, cDur,  y + 18, durMaxW);
+            ctx.fillStyle = '#60a5fa'; fillTrunc(kwStr,  cKw,   y + 18, kwMaxW);
+            y += 30;
         });
-        y += 10;
+        y += 8;
     }
 
-    // 区切り線
-    ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(W - PAD, y); ctx.stroke();
-    y += PAD;
+    // ── 区切り線 ──
+    ctx.strokeStyle = BORDER; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    y += 10;
 
-    // チャート
+    // ── チャート ──
     ctx.drawImage(chartCanvas, 0, y, W, chartH);
-    y += chartH + 8;
+    y += chartH;
 
-    // フッター
-    ctx.fillStyle = muted;
+    // ── フッター ──
+    const ts = new Date().toLocaleString('ja-JP', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+    ctx.fillStyle = MUTED;
     ctx.font = '9px system-ui,sans-serif';
-    ctx.fillText(`v2.5.21  ${new Date().toLocaleString('ja-JP')}`, PAD, y + 13);
+    ctx.fillText('v2.5.21', PAD, y + 20);
+    ctx.textAlign = 'right';
+    ctx.fillText(ts, W - PAD, y + 20);
+    ctx.textAlign = 'left';
 
-    // ダウンロード
+    // ── ダウンロード ──
     out.toBlob(blob => {
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        const o = origin.replace(/[^\w぀-ヿ一-鿿]/g, '').slice(0, 8);
-        const d2 = dest.replace(/[^\w぀-ヿ一-鿿]/g, '').slice(0, 8);
+        const a   = document.createElement('a');
+        a.href    = url;
+        const o   = origin.replace(/[^\w぀-鿿]/g, '').slice(0, 8);
+        const d2  = dest.replace(/[^\w぀-鿿]/g, '').slice(0, 8);
         a.download = `bz4x_${o}_${d2}_${tripDate || 'result'}.png`;
         a.click();
         URL.revokeObjectURL(url);
