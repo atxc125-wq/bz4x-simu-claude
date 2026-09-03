@@ -162,7 +162,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             <div class="field" style="margin-bottom:0;"><label>出発時間</label><input type="time" id="start-time" value="08:00"></div>
         </div>
         
-        <div class="field"><label style="display:flex; justify-content:space-between; align-items:center;">出発地 <button onclick="(function(){var o=document.getElementById('origin'),d=document.getElementById('dest'),t=o.value;o.value=d.value;d.value=t;})()" title="出発地と目的地を入れ替え" style="padding:2px 8px; background:var(--card); border:1px solid rgba(255,255,255,0.15); border-radius:5px; color:var(--muted); font-size:11px; cursor:pointer; font-weight:normal;">⇅ 入れ替え</button></label><div class="input-wrap"><input type="text" id="origin" value="東京" autocomplete="off"><button class="input-clear" onclick="document.getElementById('origin').value='';document.getElementById('origin').focus()">✕</button><div class="loc-hist-dropdown" id="loc-hist-origin"></div></div></div>
+        <div class="field"><label style="display:flex; justify-content:space-between; align-items:center;">出発地 <span style="display:flex;gap:6px;"><button id="btn-gps" onclick="useCurrentLocation()" title="現在地を出発地に設定" style="padding:2px 8px; background:var(--card); border:1px solid rgba(255,255,255,0.15); border-radius:5px; color:var(--muted); font-size:11px; cursor:pointer; font-weight:normal;">📍 現在地</button><button onclick="(function(){var o=document.getElementById('origin'),d=document.getElementById('dest'),t=o.value;o.value=d.value;d.value=t;})()" title="出発地と目的地を入れ替え" style="padding:2px 8px; background:var(--card); border:1px solid rgba(255,255,255,0.15); border-radius:5px; color:var(--muted); font-size:11px; cursor:pointer; font-weight:normal;">⇅ 入れ替え</button></span></label><div class="input-wrap"><input type="text" id="origin" value="東京" autocomplete="off"><button class="input-clear" onclick="document.getElementById('origin').value='';document.getElementById('origin').focus()">✕</button><div class="loc-hist-dropdown" id="loc-hist-origin"></div></div></div>
         <div class="field"><label>目的地</label><div class="input-wrap"><input type="text" id="dest" value="大阪" autocomplete="off"><button class="input-clear" onclick="document.getElementById('dest').value='';document.getElementById('dest').focus()">✕</button><div class="loc-hist-dropdown" id="loc-hist-dest"></div></div></div>
         <div id="waypoints-container">
           <div class="field waypoint-row">
@@ -635,6 +635,39 @@ function initApp() {
     }
     attachLocHistory('origin');
     attachLocHistory('dest');
+
+    // --- 現在地ボタン ---
+    window.useCurrentLocation = function() {
+        const btn = document.getElementById('btn-gps');
+        if (!navigator.geolocation) {
+            alert('このブラウザは位置情報に対応していません');
+            return;
+        }
+        btn.textContent = '⏳ 取得中…';
+        btn.disabled = true;
+        navigator.geolocation.getCurrentPosition(
+            pos => {
+                const latlng = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+                new google.maps.Geocoder().geocode({ location: latlng, language: 'ja' }, (results, status) => {
+                    btn.textContent = '📍 現在地';
+                    btn.disabled = false;
+                    if (status === 'OK' && results[0]) {
+                        document.getElementById('origin').value = results[0].formatted_address;
+                    } else {
+                        // フォールバック: 座標をそのまま
+                        document.getElementById('origin').value = `${pos.coords.latitude.toFixed(5)},${pos.coords.longitude.toFixed(5)}`;
+                    }
+                });
+            },
+            err => {
+                btn.textContent = '📍 現在地';
+                btn.disabled = false;
+                const msg = { 1: '位置情報の使用が許可されていません', 2: '位置情報を取得できませんでした', 3: '位置情報の取得がタイムアウトしました' };
+                alert(msg[err.code] || '位置情報の取得に失敗しました');
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    };
 
     function updateHwySpeedDisplay() {
         const speed = parseInt(document.getElementById('hwy-speed').value) || 100;
