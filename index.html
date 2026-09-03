@@ -148,7 +148,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.22<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.23<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-05-08</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
@@ -2868,198 +2868,233 @@ function downloadSimResult() {
     const chartCanvas = document.getElementById('combo-chart');
     if (!chartCanvas || !currentSim) { alert('先にシミュレーションを実行してください'); return; }
 
-    const isDark = !document.documentElement.classList.contains('light');
-    const BG     = isDark ? '#111110' : '#f4f3f0';
-    const PANEL  = isDark ? '#1e1e1c' : '#ffffff';
-    const INK    = isDark ? '#f0efec' : '#0b0b0b';
-    const MUTED  = isDark ? '#898781' : '#6b6a67';
-    const BORDER = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.12)';
-    const ACCENT = '#2563eb';
+    // ── Design tokens (always dark — looks intentional & cool) ──
+    const BG      = '#0d1117';
+    const SURFACE = '#161b22';
+    const CARD    = '#1c2333';
+    const INK     = '#e6edf3';
+    const MUTED   = '#7d8590';
+    const BORDER  = 'rgba(255,255,255,0.1)';
+    const CYAN    = '#38bdf8';
+    const GREEN   = '#3fb950';
+    const ORANGE  = '#f97316';
+    const RED     = '#f85149';
+    const FONT    = '"Hiragino Sans","Noto Sans JP","Yu Gothic","Meiryo",system-ui,sans-serif';
 
     const dpr    = window.devicePixelRatio || 1;
     const chartW = chartCanvas.clientWidth;
     const chartH = chartCanvas.clientHeight;
-    const W      = chartW;  // chart は等倍で描画（歪み防止）
-    const PAD    = 20;
+    const W      = chartW;
+    const PAD    = 18;
     const stops  = currentSim.stops || [];
 
-    // 先にキャンバス作成（fillTruncでctxを使うため）
-    const TILE_H   = 80;
-    const STOPS_H  = stops.length > 0 ? 28 + stops.length * 30 + 10 : 0;
-    const totalH   = 6 + 84 + 16 + TILE_H + 16 + STOPS_H + 10 + chartH + 30 + PAD;
+    // ── Layout ──
+    const HDR_H   = 108;
+    const STAT_H  = 84;
+    const STOP_RH = 38;
+    const STOPS_H = stops.length > 0 ? 28 + stops.length * STOP_RH + 8 : 0;
+    const FOOT_H  = 36;
+    const totalH  = 4 + 12 + HDR_H + 12 + STAT_H + 14 + STOPS_H + chartH + FOOT_H;
+
     const out = document.createElement('canvas');
     out.width  = Math.round(W * dpr);
     out.height = Math.round(totalH * dpr);
     const ctx  = out.getContext('2d');
     ctx.scale(dpr, dpr);
 
-    // テキスト幅を測って省略するヘルパー
-    function fillTrunc(text, x, y, maxW) {
+    // ── Helpers ──
+    function ft(text, x, y2, maxW) {  // fill with truncation
         let t = String(text);
-        if (ctx.measureText(t).width <= maxW) { ctx.fillText(t, x, y); return; }
+        if (ctx.measureText(t).width <= maxW) { ctx.fillText(t, x, y2); return; }
         while (t.length > 1 && ctx.measureText(t + '…').width > maxW) t = t.slice(0, -1);
-        ctx.fillText(t + '…', x, y);
+        ctx.fillText(t + '…', x, y2);
+    }
+    function shortLoc(addr) {
+        const s = String(addr).trim();
+        if (/^-?\d+\.\d+[,\s]/.test(s)) return '現在地';   // GPS coordinates
+        const clean = s.replace(/^日本[、,]\s*/, '').trim();
+        const m = clean.match(/^(.+?[都道府県市区町村])/);
+        return m ? m[1] : clean.split(/[、,]/)[0].trim() || s;
     }
 
-    // ── 背景 ──
+    // ── Background ──
     ctx.fillStyle = BG;
     ctx.fillRect(0, 0, W, totalH);
 
     let y = 0;
 
-    // ── アクセントバー（グラデーション）──
-    const grad = ctx.createLinearGradient(0, 0, W, 0);
-    grad.addColorStop(0, ACCENT);
-    grad.addColorStop(1, '#7c3aed');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, y, W, 6);
-    y += 6;
+    // ── Top gradient bar ──
+    const gbar = ctx.createLinearGradient(0, 0, W, 0);
+    gbar.addColorStop(0,   '#2563eb');
+    gbar.addColorStop(0.5, '#0891b2');
+    gbar.addColorStop(1,   '#7c3aed');
+    ctx.fillStyle = gbar;
+    ctx.fillRect(0, 0, W, 4);
+    y = 4 + 12;
 
-    // Google Maps の長い住所から都市名（市/区/町/村）レベルまで抽出
-    function shortLocName(addr) {
-        let s = String(addr).replace(/^日本[、,]\s*/, '').trim();
-        const m = s.match(/^(.+?[都道府県市区町村])/);
-        if (m) return m[1];
-        return s.split(/[、,]/)[0].trim() || addr;
-    }
-
-    // ── ヘッダー ──
+    // ── Header card ──
     const origin   = document.getElementById('origin').value || '出発地';
     const dest     = document.getElementById('dest').value   || '目的地';
     const tripDate = document.getElementById('trip-date').value || '';
     const hwSpeed  = parseInt(document.getElementById('hwy-speed')?.value) || 100;
+    const oShort   = shortLoc(origin);
+    const dShort   = shortLoc(dest);
 
-    // ブランドラベル
-    y += 14;
+    ctx.fillStyle = SURFACE;
+    _roundRect(ctx, PAD, y, W - PAD*2, HDR_H, 10); ctx.fill();
+
+    // subtle left accent strip
+    const lgrad = ctx.createLinearGradient(0, y, 0, y + HDR_H);
+    lgrad.addColorStop(0, '#2563eb'); lgrad.addColorStop(1, '#7c3aed');
+    ctx.fillStyle = lgrad;
+    _roundRect(ctx, PAD, y, 3, HDR_H, 2); ctx.fill();
+
+    // brand row
+    ctx.font = `10px ${FONT}`;
     ctx.fillStyle = MUTED;
-    ctx.font = '10px system-ui,sans-serif';
-    ctx.fillText('bZ4X EV トリップシミュレーター', PAD, y);
+    ctx.textBaseline = 'top';
+    ctx.fillText('bZ4X EV トリップシミュレーター', PAD + 16, y + 14);
+    ctx.fillStyle = CYAN;
     ctx.textAlign = 'right';
-    ctx.fillStyle = '#60a5fa';
-    ctx.fillText(`巡航 ${hwSpeed} km/h`, W - PAD, y);
+    ctx.fillText(`巡航 ${hwSpeed} km/h`, W - PAD - 14, y + 14);
     ctx.textAlign = 'left';
 
-    // ルート（大文字）— 都市名レベルに短縮して表示
-    y += 22;
-    ctx.font = 'bold 20px system-ui,sans-serif';
+    // route — big
+    const routeY = y + 46;
+    ctx.font = `bold 26px ${FONT}`;
     ctx.fillStyle = INK;
-    const arrow    = '  →  ';
-    const arrowW   = ctx.measureText(arrow).width;
-    const nameMaxW = (W - PAD * 2 - arrowW) / 2;
-    const oFull = shortLocName(origin);
-    let   oText = oFull;
-    while (oText.length > 1 && ctx.measureText(oText).width > nameMaxW) oText = oText.slice(0, -1);
-    if (oText !== oFull) oText += '…';
-    const dFull = shortLocName(dest);
-    let   dText = dFull;
-    while (dText.length > 1 && ctx.measureText(dText).width > nameMaxW) dText = dText.slice(0, -1);
-    if (dText !== dFull) dText += '…';
-    ctx.fillText(oText + arrow + dText, PAD, y);
+    ctx.textBaseline = 'alphabetic';
+    const arrow  = '  →  ';
+    const arrowW = ctx.measureText(arrow).width;
+    const halfW  = (W - PAD*2 - 30 - arrowW) / 2;
+    let oTxt = oShort; while (oTxt.length > 1 && ctx.measureText(oTxt).width > halfW) oTxt = oTxt.slice(0,-1); if (oTxt !== oShort) oTxt += '…';
+    let dTxt = dShort; while (dTxt.length > 1 && ctx.measureText(dTxt).width > halfW) dTxt = dTxt.slice(0,-1); if (dTxt !== dShort) dTxt += '…';
+    ctx.fillText(oTxt + arrow + dTxt, PAD + 16, routeY);
 
-    // 日付（右寄せ）
-    ctx.textAlign = 'right';
-    ctx.font = '12px system-ui,sans-serif';
+    // date + dist sub-line
+    ctx.font = `12px ${FONT}`;
     ctx.fillStyle = MUTED;
-    ctx.fillText(tripDate, W - PAD, y);
-    ctx.textAlign = 'left';
+    const distTxt = document.getElementById('r-dist')?.textContent || '';
+    const etaTxt  = document.getElementById('r-eta')?.textContent  || '';
+    const subLine = [tripDate, distTxt, etaTxt].filter(Boolean).join('   ·   ');
+    ctx.fillText(subLine, PAD + 16, y + HDR_H - 18);
 
-    y += 16;
+    y += HDR_H + 12;
 
-    // ── 統計タイル ──
-    const socPct = currentSim.isDead ? 0 : (currentSim.arrivalSoc || 0);
-    const socColor = currentSim.isDead ? '#ef4444' : socPct >= 30 ? '#10b981' : socPct >= 20 ? '#f97316' : '#ef4444';
+    // ── Stats row ──
+    const socPct   = currentSim.isDead ? 0 : (currentSim.arrivalSoc || 0);
+    const socColor = currentSim.isDead ? RED : socPct >= 30 ? GREEN : socPct >= 20 ? ORANGE : RED;
     const statItems = [
-        { lbl: document.getElementById('r-soc-lbl')?.textContent || '到着SOC', val: document.getElementById('r-soc')?.textContent || '--',  clr: socColor },
-        { lbl: '走行距離',   val: document.getElementById('r-dist')?.textContent || '--', clr: INK },
-        { lbl: '総所要時間', val: document.getElementById('r-eta')?.textContent  || '--', clr: INK },
-        { lbl: '平均気温',   val: document.getElementById('r-temp')?.textContent || '--', clr: INK },
-        { lbl: '総合電費',   val: document.getElementById('r-eff')?.textContent  || '--', clr: '#60a5fa' },
+        { icon: '🔋', lbl: document.getElementById('r-soc-lbl')?.textContent || '到着SOC', val: document.getElementById('r-soc')?.textContent  || '--', clr: socColor },
+        { icon: '🛣',  lbl: '走行距離',  val: document.getElementById('r-dist')?.textContent || '--', clr: INK },
+        { icon: '⏱',  lbl: '所要時間',  val: document.getElementById('r-eta')?.textContent  || '--', clr: INK },
+        { icon: '🌡',  lbl: '平均気温',  val: document.getElementById('r-temp')?.textContent || '--', clr: INK },
+        { icon: '⚡',  lbl: '総合電費',  val: document.getElementById('r-eff')?.textContent  || '--', clr: CYAN },
     ];
     const GAP  = 6;
-    const tilW = (W - PAD * 2 - GAP * (statItems.length - 1)) / statItems.length;
+    const tilW = (W - PAD*2 - GAP*(statItems.length-1)) / statItems.length;
 
     statItems.forEach((s, i) => {
-        const tx = PAD + i * (tilW + GAP);
-        // カード
-        ctx.fillStyle = PANEL;
-        _roundRect(ctx, tx, y, tilW, TILE_H, 8); ctx.fill();
-        ctx.strokeStyle = BORDER; ctx.lineWidth = 1;
-        _roundRect(ctx, tx, y, tilW, TILE_H, 8); ctx.stroke();
-        // ラベル
-        ctx.fillStyle = MUTED;
-        ctx.font = '9px system-ui,sans-serif';
-        ctx.fillText(s.lbl, tx + 10, y + 18);
-        // 値（フォントサイズを自動縮小）
-        let fs = 19;
-        ctx.font = `bold ${fs}px system-ui,sans-serif`;
-        while (ctx.measureText(s.val).width > tilW - 16 && fs > 10) { fs--; ctx.font = `bold ${fs}px system-ui,sans-serif`; }
+        const tx = PAD + i*(tilW+GAP);
+        // card bg
+        ctx.fillStyle = CARD;
+        _roundRect(ctx, tx, y, tilW, STAT_H, 8); ctx.fill();
+        // colored top accent
         ctx.fillStyle = s.clr;
-        ctx.fillText(s.val, tx + 10, y + 58);
-    });
-    y += TILE_H + 16;
-
-    // ── 充電停車テーブル ──
-    if (stops.length > 0) {
-        // セクションヘッダー
+        ctx.beginPath();
+        ctx.moveTo(tx+8, y); ctx.lineTo(tx+tilW-8, y);
+        ctx.lineTo(tx+tilW-8, y+3); ctx.lineTo(tx+8, y+3);
+        ctx.closePath(); ctx.fill();
+        // icon + label
+        ctx.font = `9px ${FONT}`;
         ctx.fillStyle = MUTED;
-        ctx.font = 'bold 9px system-ui,sans-serif';
-        ctx.fillText('充電停車', PAD, y + 12);
-        ctx.strokeStyle = BORDER; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(PAD, y + 17); ctx.lineTo(W - PAD, y + 17); ctx.stroke();
+        ctx.textBaseline = 'top';
+        ctx.fillText(s.icon + ' ' + s.lbl, tx+10, y+12);
+        // value
+        let fs = 20;
+        ctx.textBaseline = 'alphabetic';
+        ctx.font = `bold ${fs}px ${FONT}`;
+        while (ctx.measureText(s.val).width > tilW-16 && fs > 10) { fs--; ctx.font = `bold ${fs}px ${FONT}`; }
+        ctx.fillStyle = s.clr;
+        ctx.fillText(s.val, tx+10, y+STAT_H-16);
+    });
+    y += STAT_H + 14;
+
+    // ── Charging stops ──
+    if (stops.length > 0) {
+        // section header
+        ctx.font = `bold 9px ${FONT}`;
+        ctx.fillStyle = MUTED;
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillText('⚡ 充電停車', PAD, y+12);
+        ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(PAD+64, y+7); ctx.lineTo(W-PAD, y+7); ctx.stroke();
         y += 24;
 
-        // 列定義
-        const cName = PAD;
-        const cSoc  = PAD + (W - PAD * 2) * 0.42;
-        const cDur  = PAD + (W - PAD * 2) * 0.70;
-        const cKw   = PAD + (W - PAD * 2) * 0.84;
-        const nameMaxW = cSoc - cName - 8;
-        const socMaxW  = cDur - cSoc  - 8;
-        const durMaxW  = cKw  - cDur  - 8;
-        const kwMaxW   = W - PAD - cKw;
+        const cName = PAD + 14;
+        const cSoc  = PAD + (W-PAD*2)*0.42;
+        const cDur  = PAD + (W-PAD*2)*0.70;
+        const cKw   = PAD + (W-PAD*2)*0.84;
 
-        stops.forEach(st => {
+        stops.forEach((st, idx) => {
+            const rowBg = idx % 2 === 0 ? 'rgba(255,255,255,0.025)' : 'transparent';
+            ctx.fillStyle = rowBg;
+            ctx.fillRect(PAD, y, W-PAD*2, STOP_RH);
+
             const name   = (st.charger?.name || '').replace(/^🆘\s*/, '');
             const added  = Math.round(st.socAfter - st.socBefore);
             const socStr = `${Math.round(st.socBefore)}% → ${Math.round(st.socAfter)}%  +${added}%`;
             const durStr = `${st.duration}分`;
             const kwStr  = `${st.charger?.powerKw || '?'}kW`;
 
-            ctx.font = '12px system-ui,sans-serif';
-            ctx.fillStyle = INK;       fillTrunc(name,   cName, y + 18, nameMaxW);
-            ctx.fillStyle = '#10b981'; fillTrunc(socStr, cSoc,  y + 18, socMaxW);
-            ctx.fillStyle = MUTED;     fillTrunc(durStr, cDur,  y + 18, durMaxW);
-            ctx.fillStyle = '#60a5fa'; fillTrunc(kwStr,  cKw,   y + 18, kwMaxW);
-            y += 30;
+            // dot
+            ctx.fillStyle = GREEN;
+            ctx.beginPath(); ctx.arc(PAD+6, y+STOP_RH/2, 3.5, 0, Math.PI*2); ctx.fill();
+
+            ctx.font = `12px ${FONT}`;
+            ctx.textBaseline = 'alphabetic';
+            const midY = y + STOP_RH/2 + 5;
+            ctx.fillStyle = INK;    ft(name,   cName, midY, cSoc - cName - 8);
+            ctx.fillStyle = GREEN;  ft(socStr, cSoc,  midY, cDur - cSoc  - 8);
+            ctx.fillStyle = MUTED;  ft(durStr, cDur,  midY, cKw  - cDur  - 8);
+            // kW pill
+            const kw = st.charger?.powerKw || '?';
+            const kwLabel = `${kw}kW`;
+            const kwW = ctx.measureText(kwLabel).width + 12;
+            ctx.fillStyle = 'rgba(56,189,248,0.15)';
+            _roundRect(ctx, cKw, y+STOP_RH/2-9, kwW, 18, 4); ctx.fill();
+            ctx.strokeStyle = 'rgba(56,189,248,0.4)'; ctx.lineWidth = 0.5;
+            _roundRect(ctx, cKw, y+STOP_RH/2-9, kwW, 18, 4); ctx.stroke();
+            ctx.fillStyle = CYAN;
+            ctx.fillText(kwLabel, cKw+6, midY);
+            y += STOP_RH;
         });
         y += 8;
     }
 
-    // ── 区切り線 ──
-    ctx.strokeStyle = BORDER; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-    y += 10;
-
-    // ── チャート ──
+    // ── Chart (full bleed, no extra border) ──
     ctx.drawImage(chartCanvas, 0, y, W, chartH);
     y += chartH;
 
-    // ── フッター ──
+    // ── Footer ──
     const ts = new Date().toLocaleString('ja-JP', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    ctx.fillRect(0, y, W, FOOT_H);
     ctx.fillStyle = MUTED;
-    ctx.font = '9px system-ui,sans-serif';
-    ctx.fillText('v2.5.22', PAD, y + 20);
+    ctx.font = `9px ${FONT}`;
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText('v2.5.23', PAD, y + 22);
     ctx.textAlign = 'right';
-    ctx.fillText(ts, W - PAD, y + 20);
+    ctx.fillText(ts, W - PAD, y + 22);
     ctx.textAlign = 'left';
 
-    // ── ダウンロード ──
+    // ── Download ──
     out.toBlob(blob => {
         const url = URL.createObjectURL(blob);
         const a   = document.createElement('a');
         a.href    = url;
-        const o   = shortLocName(origin).replace(/[^\w぀-鿿]/g, '').slice(0, 8);
-        const d2  = shortLocName(dest).replace(/[^\w぀-鿿]/g, '').slice(0, 8);
+        const o  = oShort.replace(/[^\w぀-鿿]/g, '').slice(0, 8) || 'origin';
+        const d2 = dShort.replace(/[^\w぀-鿿]/g, '').slice(0, 8) || 'dest';
         a.download = `bz4x_${o}_${d2}_${tripDate || 'result'}.png`;
         a.click();
         URL.revokeObjectURL(url);
@@ -3303,6 +3338,12 @@ function clearTimelineOverlay() {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.23</span><span class="cl-date">2026-09-03</span>
+        <ul class="cl-items">
+          <li>【ダウンロード画像をリデザイン】常時ダークモード・グラデーションアクセント・左カラーストライプ付きヘッダーカード・statsタイルにカラートップライン+アイコン・充電停車をkWピル+ゼブラ行に刷新。GPS座標を「現在地」と表示。住所は都市名レベルに短縮</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.22</span><span class="cl-date">2026-08-26</span>
         <ul class="cl-items">
