@@ -148,9 +148,9 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.23<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.24<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
-            <span style="color:var(--muted); font-size:10px;">更新: 2026-05-08</span>
+            <span style="color:var(--muted); font-size:10px;">更新: 2026-09-05</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
         </div>
         <div id="db-status" style="margin-top: 4px;"></div>
@@ -3104,7 +3104,7 @@ function downloadSimResult() {
     ctx.fillStyle = MUTED;
     ctx.font = `9px ${FONT}`;
     ctx.textBaseline = 'alphabetic';
-    ctx.fillText('v2.5.23', PAD, y + 22);
+    ctx.fillText('v2.5.24', PAD, y + 22);
     ctx.textAlign = 'right';
     ctx.fillText(ts, W - PAD, y + 22);
     ctx.textAlign = 'left';
@@ -3359,6 +3359,12 @@ function clearTimelineOverlay() {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.24</span><span class="cl-date">2026-09-05</span>
+        <ul class="cl-items">
+          <li>【SOC表示非線形モデルを実装】実機充電実験（7〜18%）の実測データに基づき、表示SOC 20%以下での電池残量圧縮を再現。actualEnergy()/displaySOC()変換関数を追加し、プロファイル・充電前後表示・到着SOC・電費計算をすべて表示値ベースに統一（リザーブ3kWh@0%、20%で線形に接続）</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.23</span><span class="cl-date">2026-09-03</span>
         <ul class="cl-items">
