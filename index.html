@@ -148,7 +148,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.24<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.25<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-09-05</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
@@ -1002,17 +1002,16 @@ function calcQuickChgDuration(socBefore, km, totalKm, routeChargerList,
     return Math.max(5, t);
 }
 
-// SOC表示非線形変換 (実測ベース: 20%以下で二次圧縮、リザーブ3kWh@0%)
+// SOC表示非線形変換 (放電優先: 20%以下均一50%圧縮、リザーブ7.47kWh@0%)
 function actualEnergy(dispPct) {
     if (dispPct >= 20) return dispPct * 0.747;
-    if (dispPct <= 0)  return 3.0;
-    return 0.0075 * dispPct * dispPct + 0.447 * dispPct + 3.0;
+    if (dispPct <= 0)  return 7.47;
+    return 7.47 + dispPct * 0.3735;
 }
 function displaySOC(kwhVal) {
     if (kwhVal >= 14.94) return kwhVal / 0.747;
-    if (kwhVal <= 3.0)   return 0;
-    const D = 0.447 * 0.447 + 4 * 0.0075 * (kwhVal - 3.0);
-    return (-0.447 + Math.sqrt(D)) / 0.015;
+    if (kwhVal <= 7.47)  return 0;
+    return (kwhVal - 7.47) / 0.3735;
 }
 
 // ★ 引数を1つのparamsオブジェクトに集約（エラー防止）
@@ -3104,7 +3103,7 @@ function downloadSimResult() {
     ctx.fillStyle = MUTED;
     ctx.font = `9px ${FONT}`;
     ctx.textBaseline = 'alphabetic';
-    ctx.fillText('v2.5.24', PAD, y + 22);
+    ctx.fillText('v2.5.25', PAD, y + 22);
     ctx.textAlign = 'right';
     ctx.fillText(ts, W - PAD, y + 22);
     ctx.textAlign = 'left';
@@ -3359,6 +3358,12 @@ function clearTimelineOverlay() {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.25</span><span class="cl-date">2026-09-05</span>
+        <ul class="cl-items">
+          <li>【SOC表示非線形モデルを放電優先に更新】20%以下を均一50%圧縮（0.3735 kWh/表示%）に変更。リザーブ7.47 kWh@0%。昨日のトリップ（18%→7%、32km）と整合する放電モデルを採用</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.24</span><span class="cl-date">2026-09-05</span>
         <ul class="cl-items">
