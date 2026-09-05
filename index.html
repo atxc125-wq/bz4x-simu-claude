@@ -760,7 +760,7 @@ function getAuthNetwork(name, powerKw, type) {
 // FLASH: ¥44/kWh | TEEMO: ≤50kW=¥40/分、~150kW=¥60/分、150kW+=¥80/分 | eMP(TEEMO会員): ¥80/分
 function calcChargingCost(stop, batteryKwh) {
     const auth = getAuthNetwork(stop.charger.name, stop.charger.powerKw, stop.charger.type);
-    const kWhAdded = Math.max(0, (stop.socAfter - stop.socBefore) / 100 * batteryKwh);
+    const kWhAdded = stop.kwhAdded != null ? stop.kwhAdded : Math.max(0, (stop.socAfter - stop.socBefore) / 100 * batteryKwh);
     if (auth === 'FLASH') {
         return { yen: Math.round(kWhAdded * 44), detail: `${kWhAdded.toFixed(1)}kWh×¥44` };
     }
@@ -1002,11 +1002,24 @@ function calcQuickChgDuration(socBefore, km, totalKm, routeChargerList,
     return Math.max(5, t);
 }
 
+// SOC表示非線形変換 (実測ベース: 20%以下で二次圧縮、リザーブ3kWh@0%)
+function actualEnergy(dispPct) {
+    if (dispPct >= 20) return dispPct * 0.747;
+    if (dispPct <= 0)  return 3.0;
+    return 0.0075 * dispPct * dispPct + 0.447 * dispPct + 3.0;
+}
+function displaySOC(kwhVal) {
+    if (kwhVal >= 14.94) return kwhVal / 0.747;
+    if (kwhVal <= 3.0)   return 0;
+    const D = 0.447 * 0.447 + 4 * 0.0075 * (kwhVal - 3.0);
+    return (-0.447 + Math.sqrt(D)) / 0.015;
+}
+
 // ★ 引数を1つのparamsオブジェクトに集約（エラー防止）
 async function runSimulation(segments, elevations, params, onProgress) {
     const { batteryKwh, startSocPct, thresholdSocPct, tripDate, startHour, waypointIndexes, isUpboundLegs, allChargerWps, expertMode, cityEff, hwyEff, hwySpeed = 100, manualTemp, altCorrection, preconTempThreshold = 15, preconDest = false, strategyMinKw = 0, strategyBoost15 = false, strategyRest = false, restIntervalMin = 90, strategyQuickChg = false, routeChargerList = null, targetArrivalSocPct = thresholdSocPct, originName = '出発地', destName = '目的地' } = params;
     const minKw = strategyMinKw;
-    let socKwh = (startSocPct / 100) * batteryKwh, km = 0, time = 0;
+    let socKwh = actualEnergy(startSocPct), km = 0, time = 0;
     const profile = [], stops = [], simLog = [];
     simLog.push({ km: 0, name: originName, soc: startSocPct, action: 'depart' });
     let lastChargeKm = -999, lastWeatherKm = -999, curBaseTemp = 15, lastWeatherElev = 0;
@@ -1082,12 +1095,14 @@ async function runSimulation(segments, elevations, params, onProgress) {
                     const tempSoc = calculateCharging(socBefore, t, chargerInfo, rampInfo0);
                     if(t%5===0 || t===duration) {
                         const avgKw = ((tempSoc - (t<=5?socBefore:calculateCharging(socBefore,t-5,chargerInfo,rampInfo0))) / 100) * batteryKwh * 60 / Math.min(t,5);
-                        profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev, chargingKw: avgKw });
+                        profile.push({ km, time: time + t, soc: displaySOC((tempSoc / 100) * batteryKwh), speed: 0, elev: currentElev, chargingKw: avgKw });
                     }
                 }
-                
-                stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, km, isUpbound: isUpboundLegs[currentLegIdx-1], detectedRoad: hit.type === 'sa_pa' ? (currentRoadName || '不明') : null });
-                simLog.push({ km: Math.round(km), name: hit.name, kw: parseInt(hit.powerKw), socBefore: Math.round(socBefore), socAfter: Math.round(socAfter), duration, action: 'stop', trigger: hit.isSOS ? '緊急' : '先手' });
+                const _kwhAdded = (socAfter - socBefore) / 100 * batteryKwh;
+                const _dispBefore = displaySOC(socKwh);
+                const _dispAfter = displaySOC((socAfter / 100) * batteryKwh);
+                stops.push({ charger: chargerInfo, socBefore: _dispBefore, socAfter: _dispAfter, kwhAdded: _kwhAdded, duration, time, km, isUpbound: isUpboundLegs[currentLegIdx-1], detectedRoad: hit.type === 'sa_pa' ? (currentRoadName || '不明') : null });
+                simLog.push({ km: Math.round(km), name: hit.name, kw: parseInt(hit.powerKw), socBefore: Math.round(_dispBefore), socAfter: Math.round(_dispAfter), duration, action: 'stop', trigger: hit.isSOS ? '緊急' : '先手' });
                 time += duration;
                 lastChargeTime = time;
                 socKwh = (socAfter / 100) * batteryKwh;
@@ -1102,7 +1117,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
             }
             km += s.distKm;
             time += (s.distKm / s.speed) * 60;
-            profile.push({ km, time, soc: (socKwh / batteryKwh) * 100, speed: 0, elev: currentElev, isFerry: true });
+            profile.push({ km, time, soc: displaySOC(socKwh), speed: 0, elev: currentElev, isFerry: true });
             continue;
         }
 
@@ -1156,7 +1171,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
         const hvacKw = localTemp < 20 ? (20 - localTemp) * 0.19 : (localTemp - 20) * 0.1;
         const hvacEnergy = hvacKw * (s.distKm / effSpeed);
         const energy = (s.distKm / baseEff) + elevEnergy + hvacEnergy;
-        let currentSoc = (socKwh / batteryKwh) * 100;
+        let currentSoc = displaySOC(socKwh);
 
         if (currentSoc <= 20 && !warningLocation) {
             warningLocation = { lat: s.lat, lng: s.lng };
@@ -1265,7 +1280,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                         if (_quickDur === 0) {
                             const _last = simLog[simLog.length - 1];
                             if (!_last || _last.name !== saPa.name || _last.action !== 'skip') {
-                                simLog.push({ km: Math.round(km), name: saPa.name, kw: parseInt(saPa.powerKw), soc: Math.round((socKwh/batteryKwh)*100), action: 'skip', reason: 'quickChg: 届く' });
+                                simLog.push({ km: Math.round(km), name: saPa.name, kw: parseInt(saPa.powerKw), soc: Math.round(displaySOC(socKwh)), action: 'skip', reason: 'quickChg: 届く' });
                             }
                         }
                         if (_quickDur !== 0) {
@@ -1289,11 +1304,14 @@ async function runSimulation(segments, elevations, params, onProgress) {
                                 const tempSoc = calculateCharging(socBefore, t, chargerInfo, _rampInfo);
                                 if (t % 5 === 0 || t === duration) {
                                     const avgKw = ((tempSoc - (t<=5?socBefore:calculateCharging(socBefore,t-5,chargerInfo,_rampInfo))) / 100) * batteryKwh * 60 / Math.min(t,5);
-                                    profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev, chargingKw: avgKw });
+                                    profile.push({ km, time: time + t, soc: displaySOC((tempSoc / 100) * batteryKwh), speed: 0, elev: currentElev, chargingKw: avgKw });
                                 }
                             }
-                            stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, km, isUpbound: currentTripIsUpbound, detectedRoad: currentRoadName || '不明' });
-                            simLog.push({ km: Math.round(km), name: saPa.name, kw: parseInt(saPa.powerKw), socBefore: Math.round(socBefore), socAfter: Math.round(socAfter), duration, action: 'stop', trigger: _logTrigger });
+                            const _kwhAdded2 = (socAfter - socBefore) / 100 * batteryKwh;
+                            const _dispBefore2 = displaySOC(socKwh);
+                            const _dispAfter2 = displaySOC((socAfter / 100) * batteryKwh);
+                            stops.push({ charger: chargerInfo, socBefore: _dispBefore2, socAfter: _dispAfter2, kwhAdded: _kwhAdded2, duration, time, km, isUpbound: currentTripIsUpbound, detectedRoad: currentRoadName || '不明' });
+                            simLog.push({ km: Math.round(km), name: saPa.name, kw: parseInt(saPa.powerKw), socBefore: Math.round(_dispBefore2), socAfter: Math.round(_dispAfter2), duration, action: 'stop', trigger: _logTrigger });
                             time += duration;
                             lastChargeTime = time;
                             socKwh = (socAfter / 100) * batteryKwh;
@@ -1347,7 +1365,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
                             if (_quickDur3 === 0) {
                                 const _last3 = simLog[simLog.length - 1];
                                 if (!_last3 || _last3.name !== emergencySaPa.name || _last3.action !== 'skip') {
-                                    simLog.push({ km: Math.round(km), name: emergencySaPa.name, kw: parseInt(emergencySaPa.powerKw), soc: Math.round((socKwh/batteryKwh)*100), action: 'skip', reason: 'quickChg: 届く' });
+                                    simLog.push({ km: Math.round(km), name: emergencySaPa.name, kw: parseInt(emergencySaPa.powerKw), soc: Math.round(displaySOC(socKwh)), action: 'skip', reason: 'quickChg: 届く' });
                                 }
                             }
                             if (_quickDur3 !== 0) {
@@ -1371,11 +1389,14 @@ async function runSimulation(segments, elevations, params, onProgress) {
                                     const tempSoc = calculateCharging(socBefore, t, chargerInfo, _rampInfo3);
                                     if (t % 5 === 0 || t === duration) {
                                         const avgKw = ((tempSoc - (t<=5?socBefore:calculateCharging(socBefore,t-5,chargerInfo,_rampInfo3))) / 100) * batteryKwh * 60 / Math.min(t,5);
-                                        profile.push({ km, time: time + t, soc: tempSoc, speed: 0, elev: currentElev, chargingKw: avgKw });
+                                        profile.push({ km, time: time + t, soc: displaySOC((tempSoc / 100) * batteryKwh), speed: 0, elev: currentElev, chargingKw: avgKw });
                                     }
                                 }
-                                stops.push({ charger: chargerInfo, socBefore, socAfter, duration, time, km, isUpbound: currentTripIsUpbound, detectedRoad: currentRoadName || '不明' });
-                                simLog.push({ km: Math.round(km), name: emergencySaPa.name, kw: parseInt(emergencySaPa.powerKw), socBefore: Math.round(socBefore), socAfter: Math.round(socAfter), duration, action: 'stop', trigger: '緊急' });
+                                const _kwhAdded3 = (socAfter - socBefore) / 100 * batteryKwh;
+                                const _dispBefore3 = displaySOC(socKwh);
+                                const _dispAfter3 = displaySOC((socAfter / 100) * batteryKwh);
+                                stops.push({ charger: chargerInfo, socBefore: _dispBefore3, socAfter: _dispAfter3, kwhAdded: _kwhAdded3, duration, time, km, isUpbound: currentTripIsUpbound, detectedRoad: currentRoadName || '不明' });
+                                simLog.push({ km: Math.round(km), name: emergencySaPa.name, kw: parseInt(emergencySaPa.powerKw), socBefore: Math.round(_dispBefore3), socAfter: Math.round(_dispAfter3), duration, action: 'stop', trigger: '緊急' });
                                 time += duration; lastChargeTime = time; socKwh = (socAfter / 100) * batteryKwh; lastChargeKm = km;
                             }
                         }
@@ -1416,7 +1437,7 @@ async function runSimulation(segments, elevations, params, onProgress) {
         socKwh -= energy;
         totalDrivingKwh += energy; totalDrivingKm += s.distKm;
         km += s.distKm; time += (s.distKm/effSpeed)*60;
-        profile.push({ km, time, soc: (socKwh/batteryKwh)*100, speed: effSpeed, elev: currentElev });
+        profile.push({ km, time, soc: displaySOC(socKwh), speed: effSpeed, elev: currentElev });
     }
     
     warningLocation = warningLocation || deadLocation;
@@ -1433,9 +1454,9 @@ async function runSimulation(segments, elevations, params, onProgress) {
     }
 
     const avgTemp = tempCount > 0 ? tempSum / tempCount : 15;
-    const _arrivalSoc = isDead ? 0 : Math.round((socKwh/batteryKwh)*100);
+    const _arrivalSoc = isDead ? 0 : Math.round(displaySOC(socKwh));
     simLog.push({ km: Math.round(totalKm), name: destName, soc: _arrivalSoc, action: isDead ? 'dead' : 'arrive' });
-    return { profile, stops, simLog, arrivalSoc: isDead ? 0 : (socKwh/batteryKwh)*100, eta: time, isDead, deadKm: km, deadLocation, warningLocation, warningKm, avgTemp, totalKm, hwyKm, startSocPct };
+    return { profile, stops, simLog, arrivalSoc: isDead ? 0 : displaySOC(socKwh), eta: time, isDead, deadKm: km, deadLocation, warningLocation, warningKm, avgTemp, totalKm, hwyKm, startSocPct };
 }
 
 function showLoading(msg, sub) {
@@ -1541,9 +1562,9 @@ function renderCostSummary(tollInfo) {
 
     const BATTERY_KWH = 74.69;
     const HOME_YEN_PER_KWH = 31;
-    const chargedSoc = currentSim.stops.reduce((s, st) => s + (st.socAfter - st.socBefore), 0);
-    const consumedKwh = ((currentSim.startSocPct || 100) + chargedSoc - (currentSim.isDead ? 0 : currentSim.arrivalSoc)) / 100 * BATTERY_KWH;
-    const commercialKwh = chargedSoc / 100 * BATTERY_KWH;
+    const chargedKwh = currentSim.stops.reduce((s, st) => s + (st.kwhAdded ?? (st.socAfter - st.socBefore) / 100 * BATTERY_KWH), 0);
+    const consumedKwh = actualEnergy(currentSim.startSocPct || 100) + chargedKwh - actualEnergy(currentSim.isDead ? 0 : currentSim.arrivalSoc);
+    const commercialKwh = chargedKwh;
     const homeKwh = Math.max(0, consumedKwh - commercialKwh);
     const homeYen = Math.round(homeKwh * HOME_YEN_PER_KWH);
     const commercialYen = currentSim.stops.reduce((sum, st) => sum + calcChargingCost(st, BATTERY_KWH).yen, 0);
@@ -1968,8 +1989,8 @@ function renderUI() {
         const chH = Math.floor(chargeMins / 60), chM = Math.round(chargeMins % 60);
         document.getElementById('r-charge').textContent =
             chargeMins > 0 ? (chH > 0 ? `充電 ${chH}h${chM}m` : `充電 ${chM}分`) : '';
-        const chargedSoc = currentSim.stops.reduce((s, st) => s + (st.socAfter - st.socBefore), 0);
-        const consumedKwh = ((currentSim.startSocPct || 100) + chargedSoc - (currentSim.isDead ? 0 : currentSim.arrivalSoc)) / 100 * 74.69;
+        const chargedKwh = currentSim.stops.reduce((s, st) => s + (st.kwhAdded ?? (st.socAfter - st.socBefore) / 100 * 74.69), 0);
+        const consumedKwh = actualEnergy(currentSim.startSocPct || 100) + chargedKwh - actualEnergy(currentSim.isDead ? 0 : currentSim.arrivalSoc);
         const eff = consumedKwh > 0.1 ? currentSim.totalKm / consumedKwh : 0;
         document.getElementById('r-eff').innerHTML = eff > 0 ? eff.toFixed(1) + u('km/kWh') : '--';
     }
