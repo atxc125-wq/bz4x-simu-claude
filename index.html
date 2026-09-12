@@ -84,6 +84,17 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
 .map-ctx-item:hover, .map-ctx-item:active { background: rgba(6, 182, 212, 0.15); }
 
 #dead-alert { display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #fca5a5; padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 0.85rem; font-weight: bold; text-align: center; }
+#place-panel { position: fixed; bottom: -320px; left: 50%; transform: translateX(-50%); width: min(440px, 96vw); background: var(--panel); border: 1px solid var(--border); border-radius: 16px 16px 0 0; box-shadow: 0 -4px 28px rgba(0,0,0,0.55); z-index: 9998; transition: bottom 0.3s cubic-bezier(0.4,0,0.2,1); }
+#place-panel.open { bottom: 0; }
+#place-panel-inner { padding: 14px 18px 22px; }
+#place-panel-close { position: absolute; top: 10px; right: 14px; background: none; border: none; font-size: 18px; color: var(--muted); cursor: pointer; padding: 2px 7px; line-height: 1; }
+#place-panel-name { font-size: 16px; font-weight: bold; color: var(--text); margin-bottom: 3px; padding-right: 36px; }
+#place-panel-type { font-size: 11px; color: var(--muted); margin-bottom: 8px; text-transform: capitalize; }
+#place-panel-rating { font-size: 13px; color: #facc15; margin-bottom: 6px; }
+#place-panel-address { font-size: 12px; color: var(--muted); margin-bottom: 5px; line-height: 1.5; }
+#place-panel-hours { font-size: 12px; margin-bottom: 2px; }
+#place-panel-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.place-action-btn { flex: 1; min-width: 80px; padding: 8px 6px; background: rgba(6,182,212,0.08); border: 1px solid var(--accent2); color: var(--accent2); border-radius: 8px; font-size: 12px; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; }
 
 #map { flex: 1.3; background: var(--panel); position: relative; }
 .chart-wrap { padding: 16px 20px; background: var(--panel); flex: 0.7; position: relative; border-top: 1px solid var(--border); display: flex; flex-direction: column; }
@@ -148,7 +159,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
             BZ4X Trip Optimizer
         </h2>
         <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
-            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.25<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
+            <span onclick="document.getElementById('cl-overlay').classList.add('open')" style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="更新履歴">v2.5.26<span style="font-weight:400; opacity:0.7;">詳細タップ</span></span>
             <span onclick="document.getElementById('help-overlay').classList.add('open')" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-size:10px; font-weight:bold; padding:2px 7px; letter-spacing:0.05em; cursor:pointer;" title="使い方">📖 使い方 <span style="font-weight:400; opacity:0.7;">タップ</span></span>
             <span style="color:var(--muted); font-size:10px;">更新: 2026-09-05</span>
             <button id="theme-toggle" onclick="setTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light')" style="background:none; border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:13px; cursor:pointer; line-height:1.4;" title="ライト/ダークモード切替">🌙</button>
@@ -335,6 +346,17 @@ input:focus, select:focus { outline: none; border-color: var(--accent2); }
         <div class="map-ctx-item" style="border-top:1px solid rgba(255,255,255,0.08);" onclick="setFromMap('waypoint')">🔀 経由地にセット</div>
         <div class="map-ctx-item" style="border-top:1px solid rgba(255,255,255,0.08);" onclick="setFromMap('dest')">🏁 目的地にセット</div>
     </div>
+    <div id="place-panel">
+        <button id="place-panel-close" onclick="closePlacePanel()">✕</button>
+        <div id="place-panel-inner">
+            <div id="place-panel-name"></div>
+            <div id="place-panel-type"></div>
+            <div id="place-panel-rating"></div>
+            <div id="place-panel-address"></div>
+            <div id="place-panel-hours"></div>
+            <div id="place-panel-actions"></div>
+        </div>
+    </div>
     <div class="chart-wrap">
         <div class="chart-title">
             <span>SOC / 速度 / 標高 プロファイル</span>
@@ -373,6 +395,7 @@ if (typeof CHARGER_V2_DATA !== 'undefined') {
   }
 }
 let googleMap, directionsService, placesService, elevationService;
+let _isSatellite = false;
 let chargerDB = (typeof CHARGER_DATA !== 'undefined') ? CHARGER_DATA : [];
 let currentSim = null, currentDetailedPath = null;
 let routePolylines = [], comboChart = null, mapMarkers = [], emergencyMarkers = [];
@@ -420,13 +443,88 @@ function setTheme(theme) {
     if (theme === 'light') {
         document.documentElement.classList.add('light');
         document.getElementById('theme-toggle').textContent = '☀️';
-        if (googleMap) googleMap.setOptions({ styles: LIGHT_MAP_STYLES });
+        if (googleMap && !_isSatellite) googleMap.setOptions({ styles: LIGHT_MAP_STYLES });
     } else {
         document.documentElement.classList.remove('light');
         document.getElementById('theme-toggle').textContent = '🌙';
-        if (googleMap) googleMap.setOptions({ styles: DARK_MAP_STYLES });
+        if (googleMap && !_isSatellite) googleMap.setOptions({ styles: DARK_MAP_STYLES });
     }
     localStorage.setItem('bz4x-theme', theme);
+}
+
+function toggleSatellite() {
+    _isSatellite = !_isSatellite;
+    if (_isSatellite) {
+        googleMap.setMapTypeId('hybrid');
+        googleMap.setOptions({ styles: [] });
+    } else {
+        googleMap.setMapTypeId('roadmap');
+        const isLight = document.documentElement.classList.contains('light');
+        googleMap.setOptions({ styles: isLight ? LIGHT_MAP_STYLES : DARK_MAP_STYLES });
+    }
+    const btn = document.getElementById('satellite-btn');
+    if (btn) {
+        btn.textContent = _isSatellite ? '🗺️' : '🛰️';
+        btn.title = _isSatellite ? '地図表示に切替' : '衛星写真に切替';
+    }
+}
+
+const _placeTypeMap = {
+    'gas_station':'ガソリンスタンド','restaurant':'レストラン','cafe':'カフェ',
+    'convenience_store':'コンビニ','supermarket':'スーパー','parking':'駐車場',
+    'hospital':'病院','pharmacy':'薬局','lodging':'ホテル','shopping_mall':'ショッピングモール',
+    'bank':'銀行','atm':'ATM','park':'公園','museum':'博物館','shrine':'神社',
+    'temple':'寺院','school':'学校','tourist_attraction':'観光スポット',
+    'electric_vehicle_charging_station':'EV充電ステーション',
+    'car_dealer':'カーディーラー','car_repair':'整備工場'
+};
+
+function showPlaceInfo(place) {
+    document.getElementById('place-panel-name').textContent = place.name || '';
+    const types = place.types || [];
+    document.getElementById('place-panel-type').textContent =
+        types.map(t => _placeTypeMap[t]).find(Boolean) || types[0]?.replace(/_/g,' ') || '';
+    const ratingEl = document.getElementById('place-panel-rating');
+    if (place.rating) {
+        const full = Math.round(place.rating), empty = 5 - full;
+        ratingEl.textContent = '★'.repeat(full) + '☆'.repeat(empty) +
+            ` ${place.rating}（${(place.user_ratings_total || 0).toLocaleString()}件）`;
+    } else { ratingEl.textContent = ''; }
+    document.getElementById('place-panel-address').textContent =
+        (place.formatted_address || '').replace(/^日本[、,]?\s*/, '');
+    const hoursEl = document.getElementById('place-panel-hours');
+    if (place.opening_hours) {
+        const isOpen = place.opening_hours.isOpen?.();
+        hoursEl.innerHTML = isOpen != null
+            ? `<span style="color:${isOpen ? '#4ade80' : '#f87171'};font-weight:bold;">${isOpen ? '✓ 営業中' : '✗ 営業時間外'}</span>`
+            : '';
+    } else { hoursEl.textContent = ''; }
+    const actEl = document.getElementById('place-panel-actions');
+    actEl.innerHTML = '';
+    if (place.website) {
+        const a = document.createElement('a');
+        a.className = 'place-action-btn'; a.href = place.website;
+        a.target = '_blank'; a.rel = 'noopener'; a.textContent = '🌐 Web';
+        actEl.appendChild(a);
+    }
+    if (place.formatted_phone_number) {
+        const a = document.createElement('a');
+        a.className = 'place-action-btn';
+        a.href = 'tel:' + place.formatted_phone_number.replace(/\s/g,'');
+        a.textContent = '📞 電話';
+        actEl.appendChild(a);
+    }
+    if (place.geometry?.location) {
+        const btn = document.createElement('button');
+        btn.className = 'place-action-btn'; btn.textContent = '🔀 経由地に追加';
+        btn.onclick = () => { window._setCtxPlace(place); closePlacePanel(); };
+        actEl.appendChild(btn);
+    }
+    document.getElementById('place-panel').classList.add('open');
+}
+
+function closePlacePanel() {
+    document.getElementById('place-panel').classList.remove('open');
 }
 
 function initApp() {
@@ -451,7 +549,38 @@ function initApp() {
     directionsService = new google.maps.DirectionsService();
     elevationService = new google.maps.ElevationService();
     placesService = new google.maps.places.PlacesService(googleMap);
-    
+
+    // 衛星写真切替ボタン（マップ右上）
+    const _satBtn = document.createElement('button');
+    _satBtn.id = 'satellite-btn';
+    _satBtn.textContent = '🛰️'; _satBtn.title = '衛星写真に切替';
+    _satBtn.style.cssText = 'margin:8px 8px 0 0; padding:3px 9px; font-size:15px; cursor:pointer; background:var(--panel); border:1px solid var(--border); border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.45); line-height:1.5; transition:background 0.2s;';
+    _satBtn.addEventListener('click', toggleSatellite);
+    googleMap.controls[google.maps.ControlPosition.TOP_RIGHT].push(_satBtn);
+
+    // 施設タップ → 情報パネル表示
+    googleMap.addListener('click', (e) => {
+        if (e.placeId) {
+            e.stop();
+            placesService.getDetails({
+                placeId: e.placeId,
+                fields: ['name','rating','user_ratings_total','formatted_address',
+                         'opening_hours','website','formatted_phone_number','types','geometry']
+            }, (place, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) showPlaceInfo(place);
+            });
+        } else {
+            closePlacePanel();
+        }
+    });
+
+    // 施設パネルから経由地に追加するヘルパー（closureアクセス用）
+    window._setCtxPlace = async function(place) {
+        _ctxLatLng = place.geometry.location;
+        _ctxGeo = { label: place.name, address: place.formatted_address?.replace(/^日本[、,]?\s*/, '') || place.name };
+        window.setFromMap('waypoint');
+    };
+
     new google.maps.places.Autocomplete(document.getElementById('origin'));
     new google.maps.places.Autocomplete(document.querySelector('.waypoint-input'));
     new google.maps.places.Autocomplete(document.getElementById('dest'));
@@ -3103,7 +3232,7 @@ function downloadSimResult() {
     ctx.fillStyle = MUTED;
     ctx.font = `9px ${FONT}`;
     ctx.textBaseline = 'alphabetic';
-    ctx.fillText('v2.5.25', PAD, y + 22);
+    ctx.fillText('v2.5.26', PAD, y + 22);
     ctx.textAlign = 'right';
     ctx.fillText(ts, W - PAD, y + 22);
     ctx.textAlign = 'left';
@@ -3358,6 +3487,13 @@ function clearTimelineOverlay() {
       <button id="cl-close" onclick="document.getElementById('cl-overlay').classList.remove('open')">✕</button>
     </div>
     <div id="cl-body">
+      <div class="cl-ver">
+        <span class="cl-vtag">v2.5.26</span><span class="cl-date">2026-09-12</span>
+        <ul class="cl-items">
+          <li>【マップに衛星写真切替ボタンを追加】🛰️ボタンで地図/衛星写真(hybrid)を即時切替。ダーク/ライトモードと独立して動作</li>
+          <li>【地図の施設タップで情報パネル表示】名称・評価・住所・営業状況・電話・Webを下部パネルに表示。「経由地に追加」ボタンで直接ルートに組み込み可能</li>
+        </ul>
+      </div>
       <div class="cl-ver">
         <span class="cl-vtag">v2.5.25</span><span class="cl-date">2026-09-05</span>
         <ul class="cl-items">
